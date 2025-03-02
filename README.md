@@ -53,7 +53,6 @@ Este projeto faz parte de um desafio para praticar e demonstrar habilidades no d
 - Metodo `addProduct` adiciona um novo produto.
 - Metodo `deleteProduct` remove um produto pelo ID.
 
----
 ## Resumo das Funcionalidades
 - Login funcional
 - Cadastro de produtos com codigo, nome, categoria, quantidade e valor
