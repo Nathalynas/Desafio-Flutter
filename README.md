@@ -21,7 +21,7 @@ Este projeto faz parte de um desafio para praticar e demonstrar habilidades no d
   - `provider.dart`: Gerenciamento de estado
   - `intl.dart`: Formatacao de numeros e moedas
 
-### 2. MyApp - Configuracao do Tema e Provider
+### 2. MyApp - Configuração do Tema e Provider
 - `ChangeNotifierProvider`: Define um Provider para gerenciar o estado global dos produtos.
 - `theme`: Configura o tema do aplicativo.
 - `home: LoginScreen()`: Define a tela inicial como a tela de login.
@@ -44,17 +44,11 @@ Este projeto faz parte de um desafio para praticar e demonstrar habilidades no d
 ### 5. ProductListScreen - Tela de Listagem de Produtos
 - Exibe a listagem dos produtos cadastrados.
 - Icone no canto superior direito permite voltar para o login.
-- Botao para cadastrar um novo produto.
+- Botão para cadastrar um novo produto.
 - Exibe uma tabela de produtos cadastrados.
-- Possui botoes de editar e excluir.
+- Possui botões de editar e excluir.
 
 ### 6. ProductProvider - Gerenciador de Estado
 - Gerencia os produtos cadastrados.
-- Metodo `addProduct` adiciona um novo produto.
-- Metodo `deleteProduct` remove um produto pelo ID.
-
-## Resumo das Funcionalidades
-- Login funcional
-- Cadastro de produtos com codigo, nome, categoria, quantidade e valor
-- Listagem de produtos com edicao e exclusao
-- Gerenciamento de estado com Provider
+- Método `addProduct` adiciona um novo produto.
+- Método `deleteProduct` remove um produto pelo ID.
