@@ -1,7 +1,9 @@
 import 'package:almeidatec/core/colors.dart';
+import 'package:almeidatec/main.dart';
 import 'package:almeidatec/screens/login_screen.dart';
 import 'package:almeidatec/screens/product_form_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../configs.dart';
 import '../providers/product_provider.dart';
@@ -13,10 +15,10 @@ class ProductListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Remove a seta de voltar
-        title: const Text(
-          'Listagem de Produtos',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        automaticallyImplyLeading: false,
+        title: Text(
+          AppLocalizations.of(context)!.productList, // 🔹 Traduzido
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -31,7 +33,16 @@ class ProductListScreen extends StatelessWidget {
             onPressed: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                MaterialPageRoute(
+                  builder:
+                      (context) => LoginScreen(
+                        changeLanguage: (Locale locale) {
+                          final myAppState =
+                              context.findAncestorStateOfType<MyAppState>();
+                          myAppState?.changeLanguage(locale);
+                        },
+                      ),
+                ),
               );
             },
           ),
@@ -63,9 +74,9 @@ class ProductListScreen extends StatelessWidget {
                   ),
                 );
               },
-              child: const Text(
-                'Novo Produto',
-                style: TextStyle(color: Colors.white),
+              child: Text(
+                AppLocalizations.of(context)!.newProduct, // 🔹 Traduzido
+                style: const TextStyle(color: Colors.white),
               ),
             ),
             const SizedBox(height: 20),
@@ -84,18 +95,19 @@ class ProductListScreen extends StatelessWidget {
                             AppColors.primary,
                           ),
                           dataRowColor: WidgetStateProperty.all(
-                            AppColors
-                                .background, // Mesma cor do fundo do projeto
+                            AppColors.background,
                           ),
-                          dividerThickness:
-                              1, // Define a espessura da linha de divisão
-                          columns: _buildColumns(),
+                          dividerThickness: 1,
+                          columns: _buildColumns(context), // 🔹 Traduzido
                           rows:
                               provider.products.isNotEmpty
                                   ? provider.products
                                       .map(
-                                        (product) =>
-                                            _buildRow(product, provider),
+                                        (product) => _buildRow(
+                                          context,
+                                          product,
+                                          provider,
+                                        ),
                                       )
                                       .toList()
                                   : [],
@@ -113,53 +125,69 @@ class ProductListScreen extends StatelessWidget {
   }
 
   // Método para criar as colunas da tabela
-  List<DataColumn> _buildColumns() {
+  List<DataColumn> _buildColumns(BuildContext context) {
     return [
-      const DataColumn(
+      DataColumn(
         label: Text(
-          'Código',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          AppLocalizations.of(context)!.code,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
-      const DataColumn(
+      DataColumn(
         label: Text(
-          'Nome',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          AppLocalizations.of(context)!.name,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
-      const DataColumn(
+      DataColumn(
         label: Text(
-          'Categoria',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          AppLocalizations.of(context)!.category,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
-      const DataColumn(
+      DataColumn(
         label: Text(
-          'Quantidade',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          AppLocalizations.of(context)!.quantity,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
-      const DataColumn(
+      DataColumn(
         label: Text(
-          'Ações',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          AppLocalizations.of(context)!.actions,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
     ];
   }
 
   // Método para criar cada linha da tabela
-  DataRow _buildRow(Map<String, dynamic> product, ProductProvider provider) {
+  DataRow _buildRow(
+    BuildContext context,
+    Map<String, dynamic> product,
+    ProductProvider provider,
+  ) {
     return DataRow(
-      color: WidgetStateProperty.resolveWith<Color?>(
-        (Set<WidgetState> states) {
-          if (states.contains(WidgetState.selected)) {
-            // ignore: deprecated_member_use
-            return AppColors.primary.withOpacity(0.2);
-          }
-          return null; // Use default color
-        },
-      ),
+      color: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.primary.withValues(alpha: 0.2);
+        }
+        return null;
+      }),
       cells: [
         DataCell(
           Text(

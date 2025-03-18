@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../configs.dart';
 import '../providers/product_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProductFormScreen extends StatefulWidget {
   const ProductFormScreen({super.key});
@@ -23,16 +24,23 @@ class ProductFormScreenState extends State<ProductFormScreen> {
     text: 'R\$ 0,00',
   );
 
-  String _selectedCategory = 'Vestido';
+  late String _selectedCategory;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedCategory = "Vestido"; // 🔹 Defina um valor padrão válido
+  }
+
   int productCode = DateTime.now().millisecondsSinceEpoch % 10000;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Cadastro de Produtos',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          AppLocalizations.of(context)!.productForm, // 🔹 Traduzido
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -58,27 +66,32 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                       children: [
                         Expanded(
                           flex: 3,
-                          child: _buildTextField('Nome', _nameController),
+                          child: _buildTextField(
+                            AppLocalizations.of(context)!.name, // 🔹 Traduzido
+                            _nameController,
+                          ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
                           flex: 1,
                           child: _buildTextField(
-                            'Código',
+                            AppLocalizations.of(context)!.code, // 🔹 Traduzido
                             _codeController,
                             keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              NumericInputFormatter(),
-                            ], // Aplicando máscara
+                            inputFormatters: [NumericInputFormatter()],
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
                     _buildDropdown(
-                      'Categoria',
+                      AppLocalizations.of(context)!.category,
                       _selectedCategory,
-                      ['Vestido', 'Calça', 'Camiseta'],
+                      {
+                        "Vestido": AppLocalizations.of(context)!.dress,
+                        "Calça": AppLocalizations.of(context)!.pants,
+                        "Camiseta": AppLocalizations.of(context)!.shirt,
+                      },
                       (value) {
                         setState(() => _selectedCategory = value!);
                       },
@@ -88,23 +101,21 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                       children: [
                         Expanded(
                           child: _buildTextField(
-                            'Quantidade',
+                            AppLocalizations.of(
+                              context,
+                            )!.quantity, // 🔹 Traduzido
                             _quantityController,
                             keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              NumericInputFormatter(),
-                            ], // Apenas números
+                            inputFormatters: [NumericInputFormatter()],
                           ),
                         ),
                         const SizedBox(width: 20),
                         Expanded(
                           child: _buildTextField(
-                            'Valor de Venda',
+                            AppLocalizations.of(context)!.price, // 🔹 Traduzido
                             _priceController,
                             keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              CurrencyInputFormatter(),
-                            ], // Aplicando máscara de moeda
+                            inputFormatters: [CurrencyInputFormatter()],
                           ),
                         ),
                       ],
@@ -138,9 +149,11 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                           });
 
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Produto cadastrado com sucesso!'),
-                              duration: Duration(seconds: 2),
+                            SnackBar(
+                              content: Text(
+                                AppLocalizations.of(context)!.productSuccess,
+                              ), // 🔹 Traduzido
+                              duration: const Duration(seconds: 2),
                             ),
                           );
 
@@ -149,9 +162,9 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                             Navigator.pop(context);
                           });
                         },
-                        child: const Text(
-                          'Salvar',
-                          style: TextStyle(
+                        child: Text(
+                          AppLocalizations.of(context)!.save, // 🔹 Traduzido
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
@@ -168,48 +181,10 @@ class ProductFormScreenState extends State<ProductFormScreen> {
     );
   }
 
-  // Método para criar um TextField reutilizável
-  Widget _buildTextField(
-    String label,
-    TextEditingController controller, {
-    TextInputType? keyboardType,
-    List<TextInputFormatter>? inputFormatters,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 5),
-        TextField(
-          controller: controller,
-          keyboardType: keyboardType,
-          inputFormatters: inputFormatters,
-          decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(radiusBorder),
-              borderSide: BorderSide(color: AppColors.textSecondary),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(radiusBorder),
-              borderSide: BorderSide(color: AppColors.textPrimary),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Método para criar um Dropdown reutilizável
   Widget _buildDropdown(
     String label,
     String value,
-    List<String> options,
+    Map<String, String> options,
     ValueChanged<String?> onChanged,
   ) {
     return Column(
@@ -225,10 +200,10 @@ class ProductFormScreenState extends State<ProductFormScreen> {
         DropdownButtonFormField<String>(
           value: value,
           items:
-              options.map((option) {
+              options.entries.map((entry) {
                 return DropdownMenuItem<String>(
-                  value: option,
-                  child: Text(option),
+                  value: entry.key,
+                  child: Text(entry.value),
                 );
               }).toList(),
           onChanged: onChanged,
@@ -246,4 +221,40 @@ class ProductFormScreenState extends State<ProductFormScreen> {
       ],
     );
   }
+}
+
+Widget _buildTextField(
+  String label,
+  TextEditingController controller, {
+  TextInputType? keyboardType,
+  List<TextInputFormatter>? inputFormatters,
+}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        label,
+        style: TextStyle(
+          color: AppColors.textSecondary,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      const SizedBox(height: 5),
+      TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
+        decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(radiusBorder),
+            borderSide: BorderSide(color: AppColors.textSecondary),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(radiusBorder),
+            borderSide: BorderSide(color: AppColors.textPrimary),
+          ),
+        ),
+      ),
+    ],
+  );
 }
