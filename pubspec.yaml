@@ -30,6 +30,8 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
+  web: true
+  windows: true
   image_path: "assets/icon.png"
 
 flutter:
