@@ -17,29 +17,24 @@ class ProductFormScreen extends StatefulWidget {
 class ProductFormScreenState extends State<ProductFormScreen> {
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _quantityController = TextEditingController(
-    text: '0',
-  );
-  final TextEditingController _priceController = TextEditingController(
-    text: 'R\$ 0,00',
-  );
+  final TextEditingController _quantityController = TextEditingController(text: '0');
+  final TextEditingController _priceController = TextEditingController(text: 'R\$ 0,00');
 
   late String _selectedCategory;
+  int productCode = DateTime.now().millisecondsSinceEpoch % 10000;
 
   @override
   void initState() {
     super.initState();
-    _selectedCategory = "Vestido"; // 🔹 Defina um valor padrão válido
+    _selectedCategory = "Vestido";
   }
-
-  int productCode = DateTime.now().millisecondsSinceEpoch % 10000;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)!.productForm, // 🔹 Traduzido
+          AppLocalizations.of(context)!.productForm,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: AppColors.background,
@@ -62,62 +57,20 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: _buildTextField(
-                            AppLocalizations.of(context)!.name, // 🔹 Traduzido
-                            _nameController,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          flex: 1,
-                          child: _buildTextField(
-                            AppLocalizations.of(context)!.code, // 🔹 Traduzido
-                            _codeController,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [NumericInputFormatter()],
-                          ),
-                        ),
-                      ],
-                    ),
+                    _buildTextField("Nome", _nameController),
                     const SizedBox(height: 20),
                     _buildDropdown(
-                      AppLocalizations.of(context)!.category,
+                      "Categoria",
                       _selectedCategory,
-                      {
-                        "Vestido": AppLocalizations.of(context)!.dress,
-                        "Calça": AppLocalizations.of(context)!.pants,
-                        "Camiseta": AppLocalizations.of(context)!.shirt,
-                      },
-                      (value) {
-                        setState(() => _selectedCategory = value!);
-                      },
+                      {"Vestido": "Vestido", "Calça": "Calça", "Camiseta": "Camiseta"},
+                      (value) => setState(() => _selectedCategory = value!),
                     ),
                     const SizedBox(height: 20),
                     Row(
                       children: [
-                        Expanded(
-                          child: _buildTextField(
-                            AppLocalizations.of(
-                              context,
-                            )!.quantity, // 🔹 Traduzido
-                            _quantityController,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [NumericInputFormatter()],
-                          ),
-                        ),
+                        Expanded(child: _buildTextField("Quantidade", _quantityController)),
                         const SizedBox(width: 20),
-                        Expanded(
-                          child: _buildTextField(
-                            AppLocalizations.of(context)!.price, // 🔹 Traduzido
-                            _priceController,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [CurrencyInputFormatter()],
-                          ),
-                        ),
+                        Expanded(child: _buildTextField("Preço", _priceController)),
                       ],
                     ),
                     const SizedBox(height: 30),
@@ -128,47 +81,10 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(radiusBorder),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 50,
-                            vertical: 15,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                         ),
-                        onPressed: () {
-                          Provider.of<ProductProvider>(
-                            context,
-                            listen: false,
-                          ).addProduct({
-                            'id':
-                                int.tryParse(_codeController.text) ??
-                                productCode,
-                            'name': _nameController.text,
-                            'category': _selectedCategory,
-                            'quantity':
-                                int.tryParse(_quantityController.text) ?? 0,
-                            'price': _priceController.text,
-                          });
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                AppLocalizations.of(context)!.productSuccess,
-                              ), // 🔹 Traduzido
-                              duration: const Duration(seconds: 2),
-                            ),
-                          );
-
-                          Timer(const Duration(milliseconds: 500), () {
-                            if (!mounted) return;
-                            Navigator.pop(context);
-                          });
-                        },
-                        child: Text(
-                          AppLocalizations.of(context)!.save, // 🔹 Traduzido
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        onPressed: () => _showCustomDialog(context),
+                        child: const Text("Salvar", style: TextStyle(color: AppColors.background, fontWeight: FontWeight.bold)),
                       ),
                     ),
                   ],
@@ -181,80 +97,86 @@ class ProductFormScreenState extends State<ProductFormScreen> {
     );
   }
 
-  Widget _buildDropdown(
-    String label,
-    String value,
-    Map<String, String> options,
-    ValueChanged<String?> onChanged,
-  ) {
+Future<void> _showCustomDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Confirmação", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 15),
+                Text("Tem certeza que deseja salvar este produto?"),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text("Cancelar", style: TextStyle(color: AppColors.accent)),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        _saveProduct();
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+                      child: const Text("Salvar", style: TextStyle(color: AppColors.background)),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _saveProduct() {
+    Provider.of<ProductProvider>(context, listen: false).addProduct({
+      'id': int.tryParse(_codeController.text) ?? productCode,
+      'name': _nameController.text,
+      'category': _selectedCategory,
+      'quantity': int.tryParse(_quantityController.text) ?? 0,
+      'price': _priceController.text,
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Produto salvo com sucesso!"), duration: const Duration(seconds: 2)),
+    );
+
+    Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      Navigator.pop(context);
+    });
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, {TextInputType? keyboardType, List<TextInputFormatter>? inputFormatters}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+        TextField(controller: controller, keyboardType: keyboardType, inputFormatters: inputFormatters),
+      ],
+    );
+  }
+
+  Widget _buildDropdown(String label, String value, Map<String, String> options, ValueChanged<String?> onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
         DropdownButtonFormField<String>(
           value: value,
-          items:
-              options.entries.map((entry) {
-                return DropdownMenuItem<String>(
-                  value: entry.key,
-                  child: Text(entry.value),
-                );
-              }).toList(),
+          items: options.entries.map((entry) => DropdownMenuItem(value: entry.key, child: Text(entry.value))).toList(),
           onChanged: onChanged,
-          decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(radiusBorder),
-              borderSide: BorderSide(color: AppColors.textSecondary),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(radiusBorder),
-              borderSide: BorderSide(color: AppColors.textPrimary),
-            ),
-          ),
         ),
       ],
     );
   }
-}
-
-Widget _buildTextField(
-  String label,
-  TextEditingController controller, {
-  TextInputType? keyboardType,
-  List<TextInputFormatter>? inputFormatters,
-}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        label,
-        style: TextStyle(
-          color: AppColors.textSecondary,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      const SizedBox(height: 5),
-      TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        inputFormatters: inputFormatters,
-        decoration: InputDecoration(
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(radiusBorder),
-            borderSide: BorderSide(color: AppColors.textSecondary),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(radiusBorder),
-            borderSide: BorderSide(color: AppColors.textPrimary),
-          ),
-        ),
-      ),
-    ],
-  );
 }
