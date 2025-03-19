@@ -17,8 +17,12 @@ class ProductFormScreen extends StatefulWidget {
 class ProductFormScreenState extends State<ProductFormScreen> {
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _quantityController = TextEditingController(text: '0');
-  final TextEditingController _priceController = TextEditingController(text: 'R\$ 0,00');
+  final TextEditingController _quantityController = TextEditingController(
+    text: '0',
+  );
+  final TextEditingController _priceController = TextEditingController(
+    text: 'R\$ 0,00',
+  );
 
   late String _selectedCategory;
   int productCode = DateTime.now().millisecondsSinceEpoch % 10000;
@@ -35,11 +39,16 @@ class ProductFormScreenState extends State<ProductFormScreen> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.productForm,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: AppColors.background, // Agora fica branco no modo claro
+          ),
         ),
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.primary, // Mantém o fundo roxo
         elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.primary),
+        iconTheme: const IconThemeData(
+          color: AppColors.background,
+        ), // Ícone de voltar branco
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -47,7 +56,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
       ),
       body: Container(
         width: double.infinity,
-        color: AppColors.background,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Center(
           child: SingleChildScrollView(
             child: Padding(
@@ -62,15 +71,26 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                     _buildDropdown(
                       "Categoria",
                       _selectedCategory,
-                      {"Vestido": "Vestido", "Calça": "Calça", "Camiseta": "Camiseta"},
+                      {
+                        "Vestido": "Vestido",
+                        "Calça": "Calça",
+                        "Camiseta": "Camiseta",
+                      },
                       (value) => setState(() => _selectedCategory = value!),
                     ),
                     const SizedBox(height: 20),
                     Row(
                       children: [
-                        Expanded(child: _buildTextField("Quantidade", _quantityController)),
+                        Expanded(
+                          child: _buildTextField(
+                            "Quantidade",
+                            _quantityController,
+                          ),
+                        ),
                         const SizedBox(width: 20),
-                        Expanded(child: _buildTextField("Preço", _priceController)),
+                        Expanded(
+                          child: _buildTextField("Preço", _priceController),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 30),
@@ -81,10 +101,19 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(radiusBorder),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 50,
+                            vertical: 15,
+                          ),
                         ),
                         onPressed: () => _showCustomDialog(context),
-                        child: const Text("Salvar", style: TextStyle(color: AppColors.background, fontWeight: FontWeight.bold)),
+                        child: const Text(
+                          "Salvar",
+                          style: TextStyle(
+                            color: AppColors.background,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -97,18 +126,23 @@ class ProductFormScreenState extends State<ProductFormScreen> {
     );
   }
 
-Future<void> _showCustomDialog(BuildContext context) async {
+  Future<void> _showCustomDialog(BuildContext context) async {
     return showDialog(
       context: context,
       builder: (context) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text("Confirmação", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(
+                  "Confirmação",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 15),
                 Text("Tem certeza que deseja salvar este produto?"),
                 const SizedBox(height: 20),
@@ -117,18 +151,26 @@ Future<void> _showCustomDialog(BuildContext context) async {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: Text("Cancelar", style: TextStyle(color: AppColors.accent)),
+                      child: Text(
+                        "Cancelar",
+                        style: TextStyle(color: AppColors.accent),
+                      ),
                     ),
                     ElevatedButton(
                       onPressed: () {
                         _saveProduct();
                         Navigator.pop(context);
                       },
-                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-                      child: const Text("Salvar", style: TextStyle(color: AppColors.background)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                      ),
+                      child: const Text(
+                        "Salvar",
+                        style: TextStyle(color: AppColors.background),
+                      ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -147,7 +189,10 @@ Future<void> _showCustomDialog(BuildContext context) async {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Produto salvo com sucesso!"), duration: const Duration(seconds: 2)),
+      SnackBar(
+        content: Text("Produto salvo com sucesso!"),
+        duration: const Duration(seconds: 2),
+      ),
     );
 
     Timer(const Duration(milliseconds: 500), () {
@@ -156,25 +201,62 @@ Future<void> _showCustomDialog(BuildContext context) async {
     });
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {TextInputType? keyboardType, List<TextInputFormatter>? inputFormatters}) {
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller, {
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
-        TextField(controller: controller, keyboardType: keyboardType, inputFormatters: inputFormatters),
+        Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          ),
+        ),
+        TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
+          style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
+        ),
       ],
     );
   }
 
-  Widget _buildDropdown(String label, String value, Map<String, String> options, ValueChanged<String?> onChanged) {
+  Widget _buildDropdown(
+    String label,
+    String value,
+    Map<String, String> options,
+    ValueChanged<String?> onChanged,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          ),
+        ),
         DropdownButtonFormField<String>(
           value: value,
-          items: options.entries.map((entry) => DropdownMenuItem(value: entry.key, child: Text(entry.value))).toList(),
+          items:
+              options.entries
+                  .map(
+                    (entry) => DropdownMenuItem(
+                      value: entry.key,
+                      child: Text(entry.value),
+                    ),
+                  )
+                  .toList(),
           onChanged: onChanged,
+          style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
+          dropdownColor: Theme.of(context).cardColor,
         ),
       ],
     );

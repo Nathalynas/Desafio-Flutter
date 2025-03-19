@@ -5,7 +5,7 @@ import '../screens/product_list_screen.dart';
 import '../configs.dart';
 
 class LoginScreen extends StatefulWidget {
-  final Function(Locale) changeLanguage; // Função para alterar idioma
+  final Function(Locale) changeLanguage;
 
   const LoginScreen({super.key, required this.changeLanguage});
 
@@ -21,6 +21,7 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.primary, //
       body: Stack(
         children: [
           /// Conteúdo principal
@@ -29,7 +30,7 @@ class LoginScreenState extends State<LoginScreen> {
               padding: const EdgeInsets.all(20),
               width: 350,
               decoration: BoxDecoration(
-                color: AppColors.background,
+                color: Colors.white, // 
                 borderRadius: BorderRadius.circular(radiusBorder),
                 boxShadow: const [
                   BoxShadow(
@@ -48,20 +49,26 @@ class LoginScreenState extends State<LoginScreen> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       AppLocalizations.of(context)!.loginMessage,
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
+                      style: const TextStyle(
+                        color: Colors.black87, 
                       ),
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: _emailController,
-                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.email),
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.email,
+                      labelStyle: const TextStyle(color: Colors.black87), 
+                    ),
                   ),
                   const SizedBox(height: 10),
                   TextField(
                     controller: _passwordController,
-                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.password),
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.password,
+                      labelStyle: const TextStyle(color: Colors.black87), 
+                    ),
                     obscureText: true,
                   ),
                   const SizedBox(height: 10),
@@ -87,7 +94,12 @@ class LoginScreenState extends State<LoginScreen> {
                         },
                         activeColor: AppColors.primary,
                       ),
-                      Text(AppLocalizations.of(context)!.stayConnected),
+                      Text(
+                        AppLocalizations.of(context)!.stayConnected,
+                        style: const TextStyle(
+                          color: Colors.black87, // 🔹 Texto sempre escuro
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 10),
@@ -107,9 +119,9 @@ class LoginScreenState extends State<LoginScreen> {
                         ),
                       );
                     },
-                    child: Text(
-                      AppLocalizations.of(context)!.login,
-                      style: const TextStyle(
+                    child: const Text(
+                      "Entrar",
+                      style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
@@ -119,10 +131,11 @@ class LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
-          
+
+          /// Ícone de mudança de idioma
           Positioned(
-            top: 40, // Define a altura do ícone
-            right: 20, // Define a posição à direita
+            top: 40,
+            right: 20,
             child: IconButton(
               icon: const Icon(Icons.language, color: Colors.white, size: 30),
               onPressed: () {
@@ -158,4 +171,6 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
+
 

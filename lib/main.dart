@@ -1,15 +1,21 @@
 import 'package:almeidatec/providers/product_provider.dart';
+import 'package:almeidatec/providers/theme_provider.dart';
 import 'package:almeidatec/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'configs.dart';
-import 'core/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ProductProvider()),
+        ChangeNotifierProvider(create: (context) => ThemeProvider()), // Adicionando ThemeProvider
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -41,22 +47,14 @@ class MyAppState extends State<MyApp> {
           Locale('pt', ''), // Português
         ],
         localizationsDelegates: [
-          AppLocalizations.delegate, // Traduções personalizadas
+          AppLocalizations.delegate, 
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
 
-        theme: ThemeData(
-          primarySwatch: Colors.deepPurple,
-          scaffoldBackgroundColor: AppColors.primary,
-          inputDecorationTheme: InputDecorationTheme(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(radiusBorder),
-            ),
-          ),
-        ),
-        home: LoginScreen(changeLanguage: changeLanguage), // Passa a função de trocar idioma
+        theme: Provider.of<ThemeProvider>(context).themeData,
+        home: LoginScreen(changeLanguage: changeLanguage), 
       ),
     );
   }

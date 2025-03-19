@@ -5,8 +5,8 @@ import 'package:almeidatec/screens/product_form_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-import '../configs.dart';
 import '../providers/product_provider.dart';
+import '../providers/theme_provider.dart';
 
 class ProductListScreen extends StatelessWidget {
   const ProductListScreen({super.key});
@@ -14,34 +14,45 @@ class ProductListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Respeita o tema
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
-          AppLocalizations.of(context)!.productList, // 🔹 Traduzido
+          AppLocalizations.of(context)!.productList,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: AppColors.background,
         elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.primary),
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
+          IconButton(
+            icon: Icon(
+              Provider.of<ThemeProvider>(context).isDark
+                  ? Icons.dark_mode
+                  : Icons.light_mode,
+              size: 30,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+            },
+          ),
           IconButton(
             icon: const Icon(
               Icons.account_circle,
               size: 30,
-              color: AppColors.primary,
+              color: Colors.white,
             ),
             onPressed: () {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder:
-                      (context) => LoginScreen(
-                        changeLanguage: (Locale locale) {
-                          final myAppState =
-                              context.findAncestorStateOfType<MyAppState>();
-                          myAppState?.changeLanguage(locale);
-                        },
-                      ),
+                  builder: (context) => LoginScreen(
+                    changeLanguage: (Locale locale) {
+                      final myAppState =
+                          context.findAncestorStateOfType<MyAppState>();
+                      myAppState?.changeLanguage(locale);
+                    },
+                  ),
                 ),
               );
             },
@@ -50,7 +61,6 @@ class ProductListScreen extends StatelessWidget {
       ),
       body: Container(
         width: double.infinity,
-        color: AppColors.background,
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +69,7 @@ class ProductListScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(radiusBorder),
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
@@ -75,7 +85,7 @@ class ProductListScreen extends StatelessWidget {
                 );
               },
               child: Text(
-                AppLocalizations.of(context)!.newProduct, // 🔹 Traduzido
+                AppLocalizations.of(context)!.newProduct,
                 style: const TextStyle(color: Colors.white),
               ),
             ),
@@ -92,25 +102,24 @@ class ProductListScreen extends StatelessWidget {
                         child: DataTable(
                           columnSpacing: 20,
                           headingRowColor: WidgetStateProperty.all(
-                            AppColors.primary,
+                            AppColors.primary, // Cabeçalho roxo
                           ),
                           dataRowColor: WidgetStateProperty.all(
-                            AppColors.background,
+                            Theme.of(context).scaffoldBackgroundColor,
                           ),
                           dividerThickness: 1,
-                          columns: _buildColumns(context), // 🔹 Traduzido
-                          rows:
-                              provider.products.isNotEmpty
-                                  ? provider.products
-                                      .map(
-                                        (product) => _buildRow(
-                                          context,
-                                          product,
-                                          provider,
-                                        ),
-                                      )
-                                      .toList()
-                                  : [],
+                          columns: _buildColumns(context),
+                          rows: provider.products.isNotEmpty
+                              ? provider.products
+                                  .map(
+                                    (product) => _buildRow(
+                                      context,
+                                      product,
+                                      provider,
+                                    ),
+                                  )
+                                  .toList()
+                              : [],
                         ),
                       ),
                     ),
@@ -124,22 +133,22 @@ class ProductListScreen extends StatelessWidget {
     );
   }
 
-  // Método para criar as colunas da tabela
+  // Criando as colunas da tabela
   List<DataColumn> _buildColumns(BuildContext context) {
     return [
       DataColumn(
         label: Text(
           AppLocalizations.of(context)!.code,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.white, // Agora sempre branco no cabeçalho roxo
           ),
         ),
       ),
       DataColumn(
         label: Text(
           AppLocalizations.of(context)!.name,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -148,7 +157,7 @@ class ProductListScreen extends StatelessWidget {
       DataColumn(
         label: Text(
           AppLocalizations.of(context)!.category,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -157,7 +166,7 @@ class ProductListScreen extends StatelessWidget {
       DataColumn(
         label: Text(
           AppLocalizations.of(context)!.quantity,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -166,7 +175,7 @@ class ProductListScreen extends StatelessWidget {
       DataColumn(
         label: Text(
           AppLocalizations.of(context)!.actions,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -175,7 +184,7 @@ class ProductListScreen extends StatelessWidget {
     ];
   }
 
-  // Método para criar cada linha da tabela
+  // Criando cada linha da tabela
   DataRow _buildRow(
     BuildContext context,
     Map<String, dynamic> product,
@@ -184,7 +193,7 @@ class ProductListScreen extends StatelessWidget {
     return DataRow(
       color: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
         if (states.contains(WidgetState.selected)) {
-          return AppColors.primary.withValues(alpha: 0.2);
+          AppColors.primary.withValues(alpha: 0.2);
         }
         return null;
       }),
@@ -192,7 +201,10 @@ class ProductListScreen extends StatelessWidget {
         DataCell(
           Text(
             product['id'].toString(),
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).textTheme.bodyLarge?.color, 
+            ),
           ),
         ),
         DataCell(
@@ -204,7 +216,14 @@ class ProductListScreen extends StatelessWidget {
             ),
           ),
         ),
-        DataCell(Text(product['category'].toUpperCase())),
+        DataCell(
+          Text(
+            product['category'].toUpperCase(),
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+            ),
+          ),
+        ),
         DataCell(
           Text(
             product['quantity'].toString(),
@@ -224,7 +243,7 @@ class ProductListScreen extends StatelessWidget {
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
+                icon: const Icon(Icons.delete, color: AppColors.accent),
                 onPressed: () {
                   provider.deleteProduct(product['id']);
                 },
