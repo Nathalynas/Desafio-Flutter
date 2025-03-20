@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/product_provider.dart';
+import '../utils/validators.dart'; // Importando os validadores
 
 class ProductDialog extends StatefulWidget {
   const ProductDialog({super.key});
@@ -14,12 +15,8 @@ class ProductDialog extends StatefulWidget {
 class _ProductDialogState extends State<ProductDialog> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _quantityController = TextEditingController(
-    text: '0',
-  );
-  final TextEditingController _priceController = TextEditingController(
-    text: '0.00',
-  );
+  final TextEditingController _quantityController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
 
   late String _selectedCategory;
   int productCode = DateTime.now().millisecondsSinceEpoch % 10000;
@@ -47,8 +44,16 @@ class _ProductDialogState extends State<ProductDialog> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 15),
-              _buildTextField("Nome", _nameController),
+              
+              /// Nome do Produto
+              _buildTextField(
+                "Nome do Produto",
+                _nameController,
+                validator: Validators.validateRequired,
+              ),
               const SizedBox(height: 15),
+
+              /// Categoria
               _buildDropdown(
                 "Categoria",
                 _selectedCategory,
@@ -60,6 +65,8 @@ class _ProductDialogState extends State<ProductDialog> {
                 (value) => setState(() => _selectedCategory = value!),
               ),
               const SizedBox(height: 15),
+
+              /// Quantidade e Preço
               Row(
                 children: [
                   Expanded(
@@ -67,6 +74,7 @@ class _ProductDialogState extends State<ProductDialog> {
                       "Quantidade",
                       _quantityController,
                       keyboardType: TextInputType.number,
+                      validator: Validators.validateInteger, 
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     ),
                   ),
@@ -76,6 +84,7 @@ class _ProductDialogState extends State<ProductDialog> {
                       "Preço",
                       _priceController,
                       keyboardType: TextInputType.number,
+                      validator: Validators.validatePrice, 
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
                           RegExp(r'^\d+\.?\d{0,2}'),
@@ -86,6 +95,8 @@ class _ProductDialogState extends State<ProductDialog> {
                 ],
               ),
               const SizedBox(height: 20),
+
+              /// Botões
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -116,6 +127,7 @@ class _ProductDialogState extends State<ProductDialog> {
     );
   }
 
+  /// Valida o formulário e salva o produto
   void _saveProduct() {
     if (!_formKey.currentState!.validate()) return;
 
@@ -129,32 +141,35 @@ class _ProductDialogState extends State<ProductDialog> {
 
     Navigator.pop(context);
 
-    //SnackBar
+    /// SnackBar de confirmação
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text(
           "Produto cadastrado com sucesso!",
-          style: TextStyle(color: AppColors.background),),
-        backgroundColor: AppColors.accent, 
-        duration: const Duration(seconds: 2), 
-        behavior: SnackBarBehavior.floating, 
+          style: TextStyle(color: AppColors.background),
+        ),
+        backgroundColor: AppColors.accent,
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
         action: SnackBarAction(
           label: "Desfazer",
-          textColor: AppColors.background, 
+          textColor: AppColors.background,
           onPressed: () {
-        final provider = Provider.of<ProductProvider>(context, listen: false);
-        provider.deleteProduct(productCode);
-      },
+            final provider = Provider.of<ProductProvider>(context, listen: false);
+            provider.deleteProduct(productCode);
+          },
         ),
       ),
     );
   }
 
+  /// Campo de texto com validação
   Widget _buildTextField(
     String label,
     TextEditingController controller, {
     TextInputType? keyboardType,
     List<TextInputFormatter>? inputFormatters,
+    String? Function(String?)? validator,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,9 +185,7 @@ class _ProductDialogState extends State<ProductDialog> {
           controller: controller,
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
-          validator:
-              (value) =>
-                  (value == null || value.isEmpty) ? 'Campo obrigatório' : null,
+          validator: validator,
           style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -183,6 +196,7 @@ class _ProductDialogState extends State<ProductDialog> {
     );
   }
 
+  /// Dropdown para selecionar categoria
   Widget _buildDropdown(
     String label,
     String value,
@@ -201,17 +215,13 @@ class _ProductDialogState extends State<ProductDialog> {
         ),
         DropdownButtonFormField<String>(
           value: value,
-          items:
-              options.entries
-                  .map(
-                    (entry) => DropdownMenuItem(
-                      value: entry.key,
-                      child: Text(entry.value),
-                    ),
-                  )
-                  .toList(),
+          items: options.entries.map((entry) {
+            return DropdownMenuItem(
+              value: entry.key,
+              child: Text(entry.value),
+            );
+          }).toList(),
           onChanged: onChanged,
-          style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -221,3 +231,4 @@ class _ProductDialogState extends State<ProductDialog> {
     );
   }
 }
+

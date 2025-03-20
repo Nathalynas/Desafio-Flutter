@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../screens/product_list_screen.dart';
 import '../configs.dart';
+import '../utils/validators.dart'; 
 
 class LoginScreen extends StatefulWidget {
   final Function(Locale) changeLanguage;
@@ -14,23 +15,35 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>(); // Chave do formulário
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _stayConnected = false;
 
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ProductListScreen(),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary, //
+      backgroundColor: AppColors.primary,
       body: Stack(
         children: [
-          /// Conteúdo principal
           Center(
             child: Container(
               padding: const EdgeInsets.all(20),
               width: 350,
               decoration: BoxDecoration(
-                color: Colors.white, // 
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(radiusBorder),
                 boxShadow: const [
                   BoxShadow(
@@ -40,94 +53,96 @@ class LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset('assets/logo.png', height: 150),
-                  const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      AppLocalizations.of(context)!.loginMessage,
-                      style: const TextStyle(
-                        color: Colors.black87, 
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.email,
-                      labelStyle: const TextStyle(color: Colors.black87), 
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.password,
-                      labelStyle: const TextStyle(color: Colors.black87), 
-                    ),
-                    obscureText: true,
-                  ),
-                  const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      AppLocalizations.of(context)!.forgotPassword,
-                      style: TextStyle(
-                        color: AppColors.accent,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: _stayConnected,
-                        onChanged: (value) {
-                          setState(() {
-                            _stayConnected = value ?? false;
-                          });
-                        },
-                        activeColor: AppColors.primary,
-                      ),
-                      Text(
-                        AppLocalizations.of(context)!.stayConnected,
+              child: Form(
+                key: _formKey, 
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset('assets/logo.png', height: 150),
+                    const SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        AppLocalizations.of(context)!.loginMessage,
                         style: const TextStyle(
-                          color: Colors.black87, // 🔹 Texto sempre escuro
+                          color: Colors.black87,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(radiusBorder),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProductListScreen(),
+                    const SizedBox(height: 20),
+                    
+                    /// Campo de e-mail
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.email,
+                        labelStyle: const TextStyle(color: Colors.black87),
+                      ),
+                      validator: Validators.validateEmail, 
+                    ),
+                    const SizedBox(height: 10),
+
+                    /// Campo de senha
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.password,
+                        labelStyle: const TextStyle(color: Colors.black87),
+                      ),
+                      obscureText: true,
+                      validator: (value) => Validators.validatePassword(value, minLength: 6), 
+                    ),
+                    const SizedBox(height: 10),
+
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        AppLocalizations.of(context)!.forgotPassword,
+                        style: TextStyle(
+                          color: AppColors.accent,
+                          decoration: TextDecoration.none,
                         ),
-                      );
-                    },
-                    child: const Text(
-                      "Entrar",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 5),
+
+                    /// Checkbox "Manter Conectado"
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _stayConnected,
+                          onChanged: (value) {
+                            setState(() {
+                              _stayConnected = value ?? false;
+                            });
+                          },
+                          activeColor: AppColors.primary,
+                        ),
+                        Text(
+                          AppLocalizations.of(context)!.stayConnected,
+                          style: const TextStyle(color: Colors.black87),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+
+                    /// Botão de Login
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(radiusBorder),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      ),
+                      onPressed: _submitForm, 
+                      child: const Text(
+                        "Entrar",
+                        style: TextStyle(color: AppColors.background,fontWeight: FontWeight.bold,),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -137,7 +152,7 @@ class LoginScreenState extends State<LoginScreen> {
             top: 40,
             right: 20,
             child: IconButton(
-              icon: const Icon(Icons.language, color: Colors.white, size: 30),
+              icon: const Icon(Icons.language, color: AppColors.background, size: 30),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -171,6 +186,7 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
 
 
 
