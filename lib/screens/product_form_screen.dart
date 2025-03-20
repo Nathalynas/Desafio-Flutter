@@ -119,7 +119,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(radiusBorder),
+                              borderRadius: radiusBorder,
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                           ),

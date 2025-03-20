@@ -3,7 +3,7 @@ import 'package:almeidatec/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../screens/product_list_screen.dart';
 import '../configs.dart';
-import '../utils/validators.dart'; 
+import '../utils/validators.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function(Locale) changeLanguage;
@@ -22,7 +22,6 @@ class LoginScreenState extends State<LoginScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -44,7 +43,7 @@ class LoginScreenState extends State<LoginScreen> {
               width: 350,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(radiusBorder),
+                borderRadius: radiusBorder,
                 boxShadow: const [
                   BoxShadow(
                     color: Colors.black26,
@@ -54,7 +53,7 @@ class LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               child: Form(
-                key: _formKey, 
+                key: _formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -70,7 +69,7 @@ class LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    
+
                     /// Campo de e-mail
                     TextFormField(
                       controller: _emailController,
@@ -78,7 +77,9 @@ class LoginScreenState extends State<LoginScreen> {
                         labelText: AppLocalizations.of(context).email,
                         labelStyle: const TextStyle(color: Colors.black87),
                       ),
-                      validator: Validators.validateEmail, 
+                      keyboardType: TextInputType.emailAddress,
+                      autofillHints: const <String>[AutofillHints.email],
+                      validator: Validators.validateEmail,
                     ),
                     const SizedBox(height: 10),
 
@@ -90,7 +91,8 @@ class LoginScreenState extends State<LoginScreen> {
                         labelStyle: const TextStyle(color: Colors.black87),
                       ),
                       obscureText: true,
-                      validator: (value) => Validators.validatePassword(value, minLength: 6), 
+                      validator: (value) =>
+                          Validators.validatePassword(value, minLength: 6),
                     ),
                     const SizedBox(height: 10),
 
@@ -131,14 +133,18 @@ class LoginScreenState extends State<LoginScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(radiusBorder),
+                          borderRadius: radiusBorder,
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 15),
                       ),
-                      onPressed: _submitForm, 
+                      onPressed: _submitForm,
                       child: const Text(
                         "Entrar",
-                        style: TextStyle(color: AppColors.background,fontWeight: FontWeight.bold,),
+                        style: TextStyle(
+                          color: AppColors.background,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -152,7 +158,8 @@ class LoginScreenState extends State<LoginScreen> {
             top: 40,
             right: 20,
             child: IconButton(
-              icon: const Icon(Icons.language, color: AppColors.background, size: 30),
+              icon: const Icon(Icons.language,
+                  color: AppColors.background, size: 30),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -186,7 +193,3 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-
-
-

@@ -1,3 +1,4 @@
+import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/l10n/app_localizations.dart';
 import 'package:almeidatec/main.dart';
@@ -15,7 +16,7 @@ class ProductListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor, 
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
@@ -72,7 +73,7 @@ class ProductListScreen extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: radiusBorder,
                     ),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
@@ -97,7 +98,7 @@ class ProductListScreen extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.accent,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: radiusBorder,
                     ),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
@@ -105,11 +106,13 @@ class ProductListScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () => _showProductDialog(context),
-                  child: const Row(
+                  child: Row(
                     children: [
                       Icon(Icons.add, color: AppColors.background),
                       SizedBox(width: 5),
-                      Text("Novo Produto (Dialog)", style: TextStyle(color: AppColors.background)),
+                      Text(
+                          "${AppLocalizations.of(context).newProduct} (Dialog)",
+                          style: TextStyle(color: AppColors.background)),
                     ],
                   ),
                 ),
@@ -135,18 +138,17 @@ class ProductListScreen extends StatelessWidget {
                           ),
                           dividerThickness: 1,
                           columns: _buildColumns(context),
-                          rows:
-                              provider.products.isNotEmpty
-                                  ? provider.products
-                                      .map(
-                                        (product) => _buildRow(
-                                          context,
-                                          product,
-                                          provider,
-                                        ),
-                                      )
-                                      .toList()
-                                  : [],
+                          rows: provider.products.isNotEmpty
+                              ? provider.products
+                                  .map(
+                                    (product) => _buildRow(
+                                      context,
+                                      product,
+                                      provider,
+                                    ),
+                                  )
+                                  .toList()
+                              : [],
                         ),
                       ),
                     ),
@@ -173,32 +175,36 @@ class ProductListScreen extends StatelessWidget {
           AppLocalizations.of(context).code,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: AppColors.background, 
+            color: AppColors.background,
           ),
         ),
       ),
       DataColumn(
         label: Text(
           AppLocalizations.of(context).name,
-          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.background),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: AppColors.background),
         ),
       ),
       DataColumn(
         label: Text(
           AppLocalizations.of(context).category,
-          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.background),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: AppColors.background),
         ),
       ),
       DataColumn(
         label: Text(
           AppLocalizations.of(context).quantity,
-          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.background),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: AppColors.background),
         ),
       ),
       DataColumn(
         label: Text(
           AppLocalizations.of(context).actions,
-          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.background),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: AppColors.background),
         ),
       ),
     ];

@@ -149,7 +149,7 @@ class _ProductDialogState extends State<ProductDialog> {
           style: TextStyle(color: AppColors.background),
         ),
         backgroundColor: AppColors.accent,
-        duration: const Duration(seconds: 2),
+        duration: const Duration(seconds: 5),
         behavior: SnackBarBehavior.floating,
         action: SnackBarAction(
           label: "Desfazer",

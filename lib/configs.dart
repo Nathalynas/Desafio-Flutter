@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // Definição da variável para bordas arredondadas
-double radiusBorder = 10.0;
+ BorderRadius radiusBorder = BorderRadius.circular(8);
 
 // Máscara para formatação de preço (exemplo: R\$ 1.234,56)
 class CurrencyInputFormatter extends TextInputFormatter {
