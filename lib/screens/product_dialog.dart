@@ -1,4 +1,6 @@
+import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
+import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +18,7 @@ class _ProductDialogState extends State<ProductDialog> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
+  final MoneyMaskedTextController _priceController = productPriceFormatter;
 
   late String _selectedCategory;
   int productCode = DateTime.now().millisecondsSinceEpoch % 10000;
@@ -44,7 +46,6 @@ class _ProductDialogState extends State<ProductDialog> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 15),
-              
               /// Nome do Produto
               _buildTextField(
                 "Nome do Produto",
@@ -74,7 +75,7 @@ class _ProductDialogState extends State<ProductDialog> {
                       "Quantidade",
                       _quantityController,
                       keyboardType: TextInputType.number,
-                      validator: Validators.validateInteger, 
+                      validator: Validators.validateInteger,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     ),
                   ),
@@ -84,12 +85,7 @@ class _ProductDialogState extends State<ProductDialog> {
                       "Preço",
                       _priceController,
                       keyboardType: TextInputType.number,
-                      validator: Validators.validatePrice, 
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d+\.?\d{0,2}'),
-                        ),
-                      ],
+                      validator: Validators.validatePrice,
                     ),
                   ),
                 ],
@@ -155,7 +151,8 @@ class _ProductDialogState extends State<ProductDialog> {
           label: "Desfazer",
           textColor: AppColors.background,
           onPressed: () {
-            final provider = Provider.of<ProductProvider>(context, listen: false);
+            final provider =
+                Provider.of<ProductProvider>(context, listen: false);
             provider.deleteProduct(productCode);
           },
         ),
@@ -231,4 +228,3 @@ class _ProductDialogState extends State<ProductDialog> {
     );
   }
 }
-

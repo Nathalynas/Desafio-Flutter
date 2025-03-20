@@ -47,12 +47,9 @@ class Validators {
     if (value == null || value.isEmpty) {
       return 'O valor é obrigatório.';
     }
-    final double? price = double.tryParse(value.replaceAll(',', '.'));
-    if (price == null || price <= 0) {
-      return 'O valor deve ser maior que 0.';
+    if (value.replaceAll('R\$ ', '') == '0,00') {
+      return 'O valor deve ser maior que R\$ 0,00';
     }
     return null;
   }
-
-
 }

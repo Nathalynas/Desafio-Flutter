@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/l10n/app_localizations.dart';
+import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../configs.dart';
@@ -18,8 +19,8 @@ class ProductFormScreenState extends State<ProductFormScreen> {
   final _formKey = GlobalKey<FormState>(); 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
-
+  final MoneyMaskedTextController _priceController = productPriceFormatter;
+ 
   late String _selectedCategory;
   int productCode = DateTime.now().millisecondsSinceEpoch % 10000;
 
@@ -105,8 +106,8 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                             child: _buildTextFormField(
                               label: "Preço",
                               controller: _priceController,
-                              validator: Validators.validatePrice,
                               keyboardType: TextInputType.number,
+                              validator: Validators.validatePrice,
                             ),
                           ),
                         ],
