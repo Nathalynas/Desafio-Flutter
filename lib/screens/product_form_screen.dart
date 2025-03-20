@@ -190,8 +190,20 @@ class ProductFormScreenState extends State<ProductFormScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("Produto salvo com sucesso!"),
+        content: const Text(
+          "Produto salvo com sucesso!",
+          style: TextStyle(color: AppColors.background),),
+        backgroundColor: AppColors.primary,
         duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        action: SnackBarAction(
+          label: "Desfazer",
+          textColor: AppColors.background,
+          onPressed: () {
+            final provider = Provider.of<ProductProvider>(context,listen: false,);
+            provider.deleteProduct(productCode);
+          },
+        ),
       ),
     );
 

@@ -1,6 +1,7 @@
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/main.dart';
 import 'package:almeidatec/screens/login_screen.dart';
+import 'package:almeidatec/screens/product_dialog.dart';
 import 'package:almeidatec/screens/product_form_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -14,7 +15,7 @@ class ProductListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Respeita o tema
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor, 
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
@@ -22,7 +23,7 @@ class ProductListScreen extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: AppColors.background),
         actions: [
           IconButton(
             icon: Icon(
@@ -30,7 +31,7 @@ class ProductListScreen extends StatelessWidget {
                   ? Icons.dark_mode
                   : Icons.light_mode,
               size: 30,
-              color: Colors.white,
+              color: AppColors.background,
             ),
             onPressed: () {
               Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
@@ -40,7 +41,7 @@ class ProductListScreen extends StatelessWidget {
             icon: const Icon(
               Icons.account_circle,
               size: 30,
-              color: Colors.white,
+              color: AppColors.background,
             ),
             onPressed: () {
               Navigator.pushReplacement(
@@ -65,29 +66,54 @@ class ProductListScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ProductFormScreen(),
+            Row(
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
                   ),
-                );
-              },
-              child: Text(
-                AppLocalizations.of(context)!.newProduct,
-                style: const TextStyle(color: Colors.white),
-              ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProductFormScreen(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    AppLocalizations.of(context)!.newProduct,
+                    style: const TextStyle(color: AppColors.background),
+                  ),
+                ),
+                const SizedBox(width: 10), // Espaço entre os botões
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.accent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                  ),
+                  onPressed: () => _showProductDialog(context),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.add, color: AppColors.background),
+                      SizedBox(width: 5),
+                      Text("Novo Produto (Dialog)", style: TextStyle(color: AppColors.background)),
+                    ],
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             Expanded(
@@ -109,17 +135,18 @@ class ProductListScreen extends StatelessWidget {
                           ),
                           dividerThickness: 1,
                           columns: _buildColumns(context),
-                          rows: provider.products.isNotEmpty
-                              ? provider.products
-                                  .map(
-                                    (product) => _buildRow(
-                                      context,
-                                      product,
-                                      provider,
-                                    ),
-                                  )
-                                  .toList()
-                              : [],
+                          rows:
+                              provider.products.isNotEmpty
+                                  ? provider.products
+                                      .map(
+                                        (product) => _buildRow(
+                                          context,
+                                          product,
+                                          provider,
+                                        ),
+                                      )
+                                      .toList()
+                                  : [],
                         ),
                       ),
                     ),
@@ -133,6 +160,11 @@ class ProductListScreen extends StatelessWidget {
     );
   }
 
+  // Função para abrir o diálogo de cadastro de produto
+  void _showProductDialog(BuildContext context) {
+    showDialog(context: context, builder: (context) => const ProductDialog());
+  }
+
   // Criando as colunas da tabela
   List<DataColumn> _buildColumns(BuildContext context) {
     return [
@@ -141,44 +173,32 @@ class ProductListScreen extends StatelessWidget {
           AppLocalizations.of(context)!.code,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white, // Agora sempre branco no cabeçalho roxo
+            color: AppColors.background, 
           ),
         ),
       ),
       DataColumn(
         label: Text(
           AppLocalizations.of(context)!.name,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.background),
         ),
       ),
       DataColumn(
         label: Text(
           AppLocalizations.of(context)!.category,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.background),
         ),
       ),
       DataColumn(
         label: Text(
           AppLocalizations.of(context)!.quantity,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.background),
         ),
       ),
       DataColumn(
         label: Text(
           AppLocalizations.of(context)!.actions,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.background),
         ),
       ),
     ];
@@ -203,7 +223,7 @@ class ProductListScreen extends StatelessWidget {
             product['id'].toString(),
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).textTheme.bodyLarge?.color, 
+              color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
         ),
