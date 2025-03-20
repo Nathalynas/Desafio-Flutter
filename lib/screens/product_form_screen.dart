@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:almeidatec/core/colors.dart';
+import 'package:almeidatec/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../configs.dart';
 import '../providers/product_provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../utils/validators.dart'; 
 
 class ProductFormScreen extends StatefulWidget {
@@ -40,7 +40,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)!.productForm,
+          AppLocalizations.of(context).productForm,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: AppColors.background,

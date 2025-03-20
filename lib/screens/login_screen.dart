@@ -1,6 +1,6 @@
 import 'package:almeidatec/core/colors.dart';
+import 'package:almeidatec/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../screens/product_list_screen.dart';
 import '../configs.dart';
 import '../utils/validators.dart'; 
@@ -63,7 +63,7 @@ class LoginScreenState extends State<LoginScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        AppLocalizations.of(context)!.loginMessage,
+                        AppLocalizations.of(context).loginMessage,
                         style: const TextStyle(
                           color: Colors.black87,
                         ),
@@ -75,7 +75,7 @@ class LoginScreenState extends State<LoginScreen> {
                     TextFormField(
                       controller: _emailController,
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.email,
+                        labelText: AppLocalizations.of(context).email,
                         labelStyle: const TextStyle(color: Colors.black87),
                       ),
                       validator: Validators.validateEmail, 
@@ -86,7 +86,7 @@ class LoginScreenState extends State<LoginScreen> {
                     TextFormField(
                       controller: _passwordController,
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.password,
+                        labelText: AppLocalizations.of(context).password,
                         labelStyle: const TextStyle(color: Colors.black87),
                       ),
                       obscureText: true,
@@ -97,7 +97,7 @@ class LoginScreenState extends State<LoginScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        AppLocalizations.of(context)!.forgotPassword,
+                        AppLocalizations.of(context).forgotPassword,
                         style: TextStyle(
                           color: AppColors.accent,
                           decoration: TextDecoration.none,
@@ -119,7 +119,7 @@ class LoginScreenState extends State<LoginScreen> {
                           activeColor: AppColors.primary,
                         ),
                         Text(
-                          AppLocalizations.of(context)!.stayConnected,
+                          AppLocalizations.of(context).stayConnected,
                           style: const TextStyle(color: Colors.black87),
                         ),
                       ],
@@ -158,7 +158,7 @@ class LoginScreenState extends State<LoginScreen> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text(AppLocalizations.of(context)!.chooseLanguage),
+                      title: Text(AppLocalizations.of(context).chooseLanguage),
                       actions: [
                         TextButton(
                           onPressed: () {

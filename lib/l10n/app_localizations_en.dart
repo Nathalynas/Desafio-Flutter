@@ -28,4 +28,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get login => 'Login';
+  
+  @override
+  String get actions => 'Actions';
+  
+  @override
+  String get category => 'Category';
+  
+  @override
+  String get code => 'Code';
+  
+  @override
+  String get name => 'Name';
+  
+  @override
+  String get newProduct => 'New Product'; 
+
+  @override
+  String get productForm => 'Product Form';
+  
+  @override
+  String get productList => 'Product List';
+  
+  @override
+  String get quantity => 'Quantity';
 }

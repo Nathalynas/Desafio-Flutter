@@ -12,7 +12,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get chooseLanguage => 'Escolha um idioma';
 
   @override
-  String get loginMessage => 'Bem-vindo, por favor informe seus dados de acesso.';
+  String get loginMessage =>
+      'Bem-vindo, por favor informe seus dados de acesso.';
 
   @override
   String get email => 'E-mail';
@@ -28,4 +29,28 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get login => 'Entrar';
+
+  @override
+  String get actions => 'Ações';
+
+  @override
+  String get category => 'Categoria';
+
+  @override
+  String get code => 'Código';
+
+  @override
+  String get name => 'Nome';
+
+  @override
+  String get newProduct => 'Novo Produto';
+
+  @override
+  String get productForm => 'Formulário de Produto';
+
+  @override
+  String get productList => 'Lista de Produtos';
+
+  @override
+  String get quantity => 'Quantidade';
 }
