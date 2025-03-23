@@ -49,5 +49,39 @@
   "lunaDress": "Luna Dress",
   "@lunaDress": {},
   "zigPants": "Zig Pants",
-  "@zigPants": {}
+  "@zigPants": {},
+  "emailRequired": "The email is required.",
+  "@emailRequired": {},
+  "invalidEmail": "Enter a valid email.",
+  "@invalidEmail": {},
+  "passwordRequired": "The password is required.",
+  "@passwordRequired": {},
+  "passwordMinLength": "The password must be at least {min} characters long.",
+  "@passwordMinLength": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "fieldRequired": "This field is required.",
+  "@fieldRequired": {},
+  "invalidInteger": "Enter a number greater than 0.",
+  "@invalidInteger": {},
+  "priceRequired": "The price is required.",
+  "@priceRequired": {},
+  "priceGreaterThanZero": "The price must be greater than R\\$ 0,00.",
+  "@priceGreaterThanZero": {},
+  "dialogTitle": "Confirmation",
+  "@dialogTitle": {},
+  "dialogMessage": "Are you sure you want to save this product?",
+  "@dialogMessage": {},
+  "dialogCancel": "Cancel",
+  "@dialogCancel": {},
+  "dialogSave": "Save",
+  "@dialogSave": {},
+  "snackbarProductSuccess": "Product successfully registered!",
+  "@snackbarProductSuccess": {},
+  "snackbarUndo": "Undo",
+  "@snackbarUndo": {}
 }

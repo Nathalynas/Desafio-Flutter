@@ -49,5 +49,39 @@
   "lunaDress": "Vestido Luna",
   "@lunaDress": {},
   "zigPants": "Calça Zig",
-  "@zigPants": {}
+  "@zigPants": {},
+  "emailRequired": "O e-mail é obrigatório.",
+  "@emailRequired": {},
+  "invalidEmail": "Insira um e-mail válido.",
+  "@invalidEmail": {},
+  "passwordRequired": "A senha é obrigatória.",
+  "@passwordRequired": {},
+  "passwordMinLength": "A senha deve ter pelo menos {min} caracteres.",
+  "@passwordMinLength": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "fieldRequired": "Este campo é obrigatório.",
+  "@fieldRequired": {},
+  "invalidInteger": "Insira um número maior que 0.",
+  "@invalidInteger": {},
+  "priceRequired": "O valor é obrigatório.",
+  "@priceRequired": {},
+  "priceGreaterThanZero": "O valor deve ser maior que R\\$ 0,00",
+  "@priceGreaterThanZero": {},
+  "dialogTitle": "Confirmação",
+  "@dialogTitle": {},
+  "dialogMessage": "Tem certeza que deseja salvar este produto?",
+  "@dialogMessage": {},
+  "dialogCancel": "Cancelar",
+  "@dialogCancel": {},
+  "dialogSave": "Salvar",
+  "@dialogSave": {},
+  "snackbarProductSuccess": "Produto cadastrado com sucesso!",
+  "@snackbarProductSuccess": {},
+  "snackbarUndo": "Desfazer",
+  "@snackbarUndo": {}
 }

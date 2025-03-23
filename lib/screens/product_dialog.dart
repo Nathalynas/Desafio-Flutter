@@ -1,11 +1,12 @@
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/product_provider.dart';
-import '../utils/validators.dart'; // Importando os validadores
+import '../utils/validators.dart';
 
 class ProductDialog extends StatefulWidget {
   const ProductDialog({super.key});
@@ -26,7 +27,7 @@ class _ProductDialogState extends State<ProductDialog> {
   @override
   void initState() {
     super.initState();
-    _selectedCategory = "Vestido";
+    _selectedCategory = "dress";
   }
 
   @override
@@ -46,49 +47,47 @@ class _ProductDialogState extends State<ProductDialog> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 15),
+
               /// Nome do Produto
               _buildTextField(
-                "Nome do Produto",
+                AppLocalizations.of(context)!.name,
                 _nameController,
-                validator: Validators.validateRequired,
+                validator: (value) =>
+                    Validators.validateRequired(value, context),
               ),
               const SizedBox(height: 15),
 
               /// Categoria
               _buildDropdown(
-                "Categoria",
+                AppLocalizations.of(context)!.category, 
                 _selectedCategory,
                 {
-                  "Vestido": "Vestido",
-                  "Calça": "Calça",
-                  "Camiseta": "Camiseta",
+                  "dress": AppLocalizations.of(context)!.dress,
+                  "pants": AppLocalizations.of(context)!.pants,
+                  "shirt": AppLocalizations.of(context)!.shirt,
                 },
                 (value) => setState(() => _selectedCategory = value!),
               ),
               const SizedBox(height: 15),
 
-              /// Quantidade e Preço
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildTextField(
-                      "Quantidade",
-                      _quantityController,
-                      keyboardType: TextInputType.number,
-                      validator: Validators.validateInteger,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _buildTextField(
-                      "Preço",
-                      _priceController,
-                      keyboardType: TextInputType.number,
-                      validator: Validators.validatePrice,
-                    ),
-                  ),
-                ],
+              /// Quantidade
+              _buildTextField(
+                AppLocalizations.of(context)!.quantity,
+                _quantityController,
+                keyboardType: TextInputType.number,
+                validator: (value) =>
+                    Validators.validateInteger(value, context),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              ),
+
+              const SizedBox(width: 10),
+
+              /// Preço
+              _buildTextField(
+                AppLocalizations.of(context)!.price,
+                _priceController,
+                keyboardType: TextInputType.number,
+                validator: (value) => Validators.validatePrice(value, context),
               ),
               const SizedBox(height: 20),
 
@@ -127,7 +126,8 @@ class _ProductDialogState extends State<ProductDialog> {
   void _saveProduct() {
     if (!_formKey.currentState!.validate()) return;
 
-    Provider.of<ProductProvider>(context, listen: false).addProduct({
+    final provider = Provider.of<ProductProvider>(context, listen: false);
+    provider.addProduct({
       'id': productCode,
       'name': _nameController.text,
       'category': _selectedCategory,
@@ -135,29 +135,40 @@ class _ProductDialogState extends State<ProductDialog> {
       'price': _priceController.text,
     });
 
+    /// Limpa os campos após salvar
+    setState(() {
+      _nameController.clear();
+      _quantityController.clear();
+      _priceController.updateValue(0);
+      _selectedCategory = "dress";
+    });
+
+    /// Obtendo o contexto do ScaffoldMessenger antes de fechar o diálogo
+    final messengerContext = ScaffoldMessenger.of(context);
+
     Navigator.pop(context);
 
-    /// SnackBar de confirmação
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text(
-          "Produto cadastrado com sucesso!",
-          style: TextStyle(color: AppColors.background),
+    /// Aguarde um curto período antes de exibir o SnackBar
+    Future.delayed(Duration(milliseconds: 300), () {
+      messengerContext.showSnackBar(
+        SnackBar(
+          content: const Text(
+            "Produto cadastrado com sucesso!",
+            style: TextStyle(color: AppColors.background),
+          ),
+          backgroundColor: AppColors.green,
+          duration: const Duration(seconds: 5),
+          behavior: SnackBarBehavior.floating,
+          action: SnackBarAction(
+            label: "Desfazer",
+            textColor: AppColors.background,
+            onPressed: () {
+              provider.deleteProduct(productCode);
+            },
+          ),
         ),
-        backgroundColor: AppColors.accent,
-        duration: const Duration(seconds: 5),
-        behavior: SnackBarBehavior.floating,
-        action: SnackBarAction(
-          label: "Desfazer",
-          textColor: AppColors.background,
-          onPressed: () {
-            final provider =
-                Provider.of<ProductProvider>(context, listen: false);
-            provider.deleteProduct(productCode);
-          },
-        ),
-      ),
-    );
+      );
+    });
   }
 
   /// Campo de texto com validação

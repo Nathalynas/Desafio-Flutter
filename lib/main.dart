@@ -1,17 +1,20 @@
-import 'package:almeidatec/l10n/app_localizations.dart';
 import 'package:almeidatec/providers/product_provider.dart';
 import 'package:almeidatec/providers/theme_provider.dart';
 import 'package:almeidatec/screens/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ProductProvider()),
-        ChangeNotifierProvider(create: (context) => ThemeProvider()), // Adicionando ThemeProvider
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
       ],
       child: const MyApp(),
     ),
@@ -26,36 +29,33 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  Locale _locale = Locale('pt'); // Define o idioma inicial
+  Locale _locale = const Locale('pt'); 
 
   void changeLanguage(Locale locale) {
     setState(() {
-      _locale = locale; // Atualiza o idioma
+      _locale = locale; 
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => ProductProvider(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      scaffoldMessengerKey: scaffoldMessengerKey, 
 
-        locale: _locale, // Define o idioma atual do app
-        supportedLocales: [
-          Locale('en', ''), // Inglês
-          Locale('pt', ''), // Português
-        ],
-        localizationsDelegates: [
-          AppLocalizations.delegate, 
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-
-        theme: Provider.of<ThemeProvider>(context).themeData,
-        home: LoginScreen(changeLanguage: changeLanguage), 
-      ),
+      locale: _locale, 
+      supportedLocales: const [
+        Locale('en', ''),
+        Locale('pt', ''),
+      ],
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      theme: Provider.of<ThemeProvider>(context).themeData,
+      home: LoginScreen(changeLanguage: changeLanguage),
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:almeidatec/core/colors.dart';
-import 'package:almeidatec/l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../screens/product_list_screen.dart';
 import '../configs.dart';
@@ -62,7 +62,7 @@ class LoginScreenState extends State<LoginScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        AppLocalizations.of(context).loginMessage,
+                        AppLocalizations.of(context)!.loginMessage,
                         style: const TextStyle(
                           color: Colors.black87,
                         ),
@@ -74,32 +74,35 @@ class LoginScreenState extends State<LoginScreen> {
                     TextFormField(
                       controller: _emailController,
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context).email,
+                        labelText: AppLocalizations.of(context)!.email,
                         labelStyle: const TextStyle(color: Colors.black87),
                       ),
                       keyboardType: TextInputType.emailAddress,
                       autofillHints: const <String>[AutofillHints.email],
-                      validator: Validators.validateEmail,
+                      validator: (value) => Validators.validateEmail(
+                          value, context),
                     ),
+
                     const SizedBox(height: 10),
 
                     /// Campo de senha
                     TextFormField(
                       controller: _passwordController,
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context).password,
+                        labelText: AppLocalizations.of(context)!.password,
                         labelStyle: const TextStyle(color: Colors.black87),
                       ),
                       obscureText: true,
-                      validator: (value) =>
-                          Validators.validatePassword(value, minLength: 6),
+                      validator: (value) => Validators.validatePassword(
+                          value, context,
+                          minLength: 6), 
                     ),
                     const SizedBox(height: 10),
 
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        AppLocalizations.of(context).forgotPassword,
+                        AppLocalizations.of(context)!.forgotPassword,
                         style: TextStyle(
                           color: AppColors.accent,
                           decoration: TextDecoration.none,
@@ -121,7 +124,7 @@ class LoginScreenState extends State<LoginScreen> {
                           activeColor: AppColors.primary,
                         ),
                         Text(
-                          AppLocalizations.of(context).stayConnected,
+                          AppLocalizations.of(context)!.stayConnected,
                           style: const TextStyle(color: Colors.black87),
                         ),
                       ],
@@ -165,7 +168,7 @@ class LoginScreenState extends State<LoginScreen> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text(AppLocalizations.of(context).chooseLanguage),
+                      title: Text(AppLocalizations.of(context)!.chooseLanguage),
                       actions: [
                         TextButton(
                           onPressed: () {

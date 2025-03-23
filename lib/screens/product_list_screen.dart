@@ -1,6 +1,6 @@
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
-import 'package:almeidatec/l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:almeidatec/main.dart';
 import 'package:almeidatec/screens/login_screen.dart';
 import 'package:almeidatec/screens/product_dialog.dart';
@@ -20,7 +20,7 @@ class ProductListScreen extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
-          AppLocalizations.of(context).productList,
+          AppLocalizations.of(context)!.productList,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         elevation: 0,
@@ -89,7 +89,7 @@ class ProductListScreen extends StatelessWidget {
                     );
                   },
                   child: Text(
-                    AppLocalizations.of(context).newProduct,
+                    AppLocalizations.of(context)!.newProduct,
                     style: const TextStyle(color: AppColors.background),
                   ),
                 ),
@@ -110,8 +110,7 @@ class ProductListScreen extends StatelessWidget {
                     children: [
                       Icon(Icons.add, color: AppColors.background),
                       SizedBox(width: 5),
-                      Text(
-                          "${AppLocalizations.of(context).newProduct} (Dialog)",
+                      Text(AppLocalizations.of(context)!.newProduct,
                           style: TextStyle(color: AppColors.background)),
                     ],
                   ),
@@ -172,7 +171,7 @@ class ProductListScreen extends StatelessWidget {
     return [
       DataColumn(
         label: Text(
-          AppLocalizations.of(context).code,
+          AppLocalizations.of(context)!.code,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: AppColors.background,
@@ -181,28 +180,35 @@ class ProductListScreen extends StatelessWidget {
       ),
       DataColumn(
         label: Text(
-          AppLocalizations.of(context).name,
+          AppLocalizations.of(context)!.name,
           style: TextStyle(
               fontWeight: FontWeight.bold, color: AppColors.background),
         ),
       ),
       DataColumn(
         label: Text(
-          AppLocalizations.of(context).category,
+          AppLocalizations.of(context)!.category,
           style: TextStyle(
               fontWeight: FontWeight.bold, color: AppColors.background),
         ),
       ),
       DataColumn(
         label: Text(
-          AppLocalizations.of(context).quantity,
+          AppLocalizations.of(context)!.quantity,
           style: TextStyle(
               fontWeight: FontWeight.bold, color: AppColors.background),
         ),
       ),
       DataColumn(
         label: Text(
-          AppLocalizations.of(context).actions,
+          AppLocalizations.of(context)!.price,
+          style: TextStyle(
+            fontWeight: FontWeight.bold, color: AppColors.background,),
+        ),
+      ),
+      DataColumn(
+        label: Text(
+          AppLocalizations.of(context)!.actions,
           style: TextStyle(
               fontWeight: FontWeight.bold, color: AppColors.background),
         ),
@@ -259,17 +265,23 @@ class ProductListScreen extends StatelessWidget {
             ),
           ),
         ),
+        DataCell(Text(
+          product['price'] ?? "R\$ 0,00",
+          style: TextStyle(
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          ),
+        )),
         DataCell(
           Row(
             children: [
               IconButton(
                 icon: Icon(Icons.edit, color: Colors.grey[700]),
                 onPressed: () {
-                  // Função para editar
+                  // Implementar a edição do produto
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.delete, color: AppColors.accent),
+                icon: Icon(Icons.delete, color: AppColors.accent),
                 onPressed: () {
                   provider.deleteProduct(product['id']);
                 },

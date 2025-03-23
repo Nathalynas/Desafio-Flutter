@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:almeidatec/core/colors.dart';
-import 'package:almeidatec/l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../configs.dart';
 import '../providers/product_provider.dart';
-import '../utils/validators.dart'; 
+import '../utils/validators.dart';
 
 class ProductFormScreen extends StatefulWidget {
   const ProductFormScreen({super.key});
@@ -16,18 +16,18 @@ class ProductFormScreen extends StatefulWidget {
 }
 
 class ProductFormScreenState extends State<ProductFormScreen> {
-  final _formKey = GlobalKey<FormState>(); 
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final MoneyMaskedTextController _priceController = productPriceFormatter;
- 
+
   late String _selectedCategory;
   int productCode = DateTime.now().millisecondsSinceEpoch % 10000;
 
   @override
   void initState() {
     super.initState();
-    _selectedCategory = "Vestido";
+    _selectedCategory = "dress";
   }
 
   void _submitForm() {
@@ -41,7 +41,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context).productForm,
+          AppLocalizations.of(context)!.productForm,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: AppColors.background,
@@ -71,48 +71,46 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                     children: [
                       /// Nome do Produto
                       _buildTextFormField(
-                        label: "Nome do Produto",
+                        label: AppLocalizations.of(context)!.name,
                         controller: _nameController,
-                        validator: Validators.validateRequired,
+                        validator: (value) =>
+                            Validators.validateRequired(value, context),
                       ),
                       const SizedBox(height: 20),
 
                       /// Categoria
                       _buildDropdown(
-                        "Categoria",
+                        AppLocalizations.of(context)!
+                            .category, // Título traduzido
                         _selectedCategory,
                         {
-                          "Vestido": "Vestido",
-                          "Calça": "Calça",
-                          "Camiseta": "Camiseta",
+                          "dress": AppLocalizations.of(context)!.dress,
+                          "pants": AppLocalizations.of(context)!.pants,
+                          "shirt": AppLocalizations.of(context)!.shirt,
                         },
                         (value) => setState(() => _selectedCategory = value!),
                       ),
                       const SizedBox(height: 20),
 
-                      /// Quantidade e Preço
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildTextFormField(
-                              label: "Quantidade",
-                              controller: _quantityController,
-                              validator: Validators.validateInteger,
-                              keyboardType: TextInputType.number,
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: _buildTextFormField(
-                              label: "Preço",
-                              controller: _priceController,
-                              keyboardType: TextInputType.number,
-                              validator: Validators.validatePrice,
-                            ),
-                          ),
-                        ],
+                      /// Quantidade
+                      _buildTextFormField(
+                        label: AppLocalizations.of(context)!.quantity,
+                        controller: _quantityController,
+                        validator: (value) =>
+                            Validators.validateInteger(value, context),
+                        keyboardType: TextInputType.number,
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(width: 20),
+
+                      /// Preço
+                      _buildTextFormField(
+                        label: AppLocalizations.of(context)!.price,
+                        controller: _priceController,
+                        keyboardType: TextInputType.number,
+                        validator: (value) =>
+                            Validators.validatePrice(value, context),
+                      ),
+                      const SizedBox(height: 20),
 
                       /// Botão de Salvar
                       Center(
@@ -122,9 +120,11 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: radiusBorder,
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 15),
                           ),
-                          onPressed: _submitForm, // Valida antes de exibir o diálogo
+                          onPressed:
+                              _submitForm, // Valida antes de exibir o diálogo
                           child: const Text(
                             "Salvar",
                             style: TextStyle(
@@ -150,18 +150,20 @@ class ProductFormScreenState extends State<ProductFormScreen> {
       context: context,
       builder: (context) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  "Confirmação",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  AppLocalizations.of(context)!.dialogTitle,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 15),
-                const Text("Tem certeza que deseja salvar este produto?"),
+                Text(AppLocalizations.of(context)!.dialogMessage),
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -169,7 +171,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                     TextButton(
                       onPressed: () => Navigator.pop(context),
                       child: Text(
-                        "Cancelar",
+                        AppLocalizations.of(context)!.dialogCancel,
                         style: TextStyle(color: AppColors.accent),
                       ),
                     ),
@@ -181,9 +183,9 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                       ),
-                      child: const Text(
-                        "Salvar",
-                        style: TextStyle(color: AppColors.background),
+                      child: Text(
+                        AppLocalizations.of(context)!.dialogSave,
+                        style: const TextStyle(color: AppColors.background),
                       ),
                     ),
                   ],
@@ -196,8 +198,12 @@ class ProductFormScreenState extends State<ProductFormScreen> {
     );
   }
 
+  /// Valida o formulário e salva o produto
   void _saveProduct() {
-    Provider.of<ProductProvider>(context, listen: false).addProduct({
+    if (!_formKey.currentState!.validate()) return;
+
+    final provider = Provider.of<ProductProvider>(context, listen: false);
+    provider.addProduct({
       'id': productCode,
       'name': _nameController.text,
       'category': _selectedCategory,
@@ -205,29 +211,39 @@ class ProductFormScreenState extends State<ProductFormScreen> {
       'price': _priceController.text,
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text(
-          "Produto salvo com sucesso!",
-          style: TextStyle(color: AppColors.background),
-        ),
-        backgroundColor: AppColors.primary,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-        action: SnackBarAction(
-          label: "Desfazer",
-          textColor: AppColors.background,
-          onPressed: () {
-            final provider = Provider.of<ProductProvider>(context, listen: false);
-            provider.deleteProduct(productCode);
-          },
-        ),
-      ),
-    );
+    /// Limpa os campos após salvar
+    setState(() {
+      _nameController.clear();
+      _quantityController.clear();
+      _priceController.updateValue(0);
+      _selectedCategory = "dress";
+    });
 
-    Timer(const Duration(milliseconds: 500), () {
-      if (!mounted) return;
-      Navigator.pop(context);
+    /// Obtendo o contexto do ScaffoldMessenger antes de fechar o diálogo
+    final messengerContext = ScaffoldMessenger.of(context);
+
+    Navigator.pop(context);
+
+    /// Aguarde um curto período antes de exibir o SnackBar
+    Future.delayed(Duration(milliseconds: 300), () {
+      messengerContext.showSnackBar(
+        SnackBar(
+          content: const Text(
+            "Produto cadastrado com sucesso!",
+            style: TextStyle(color: AppColors.background),
+          ),
+          backgroundColor: AppColors.green,
+          duration: const Duration(seconds: 5),
+          behavior: SnackBarBehavior.floating,
+          action: SnackBarAction(
+            label: "Desfazer",
+            textColor: AppColors.background,
+            onPressed: () {
+              provider.deleteProduct(productCode);
+            },
+          ),
+        ),
+      );
     });
   }
 
@@ -288,4 +304,3 @@ class ProductFormScreenState extends State<ProductFormScreen> {
     );
   }
 }
-
