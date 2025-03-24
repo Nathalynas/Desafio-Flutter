@@ -32,11 +32,8 @@ class _ProductDialogState extends State<ProductDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Form(
+    return buildStandardDialog(
+        content: Form(
           key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -118,8 +115,7 @@ class _ProductDialogState extends State<ProductDialog> {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 
   /// Valida o formulário e salva o produto

@@ -45,3 +45,28 @@ class NumericInputFormatter extends TextInputFormatter {
     );
   }
 }
+
+// Definição de dimensões globais para diálogos
+const double kDialogMinWidth = 300.0;
+const double kDialogMaxWidth = 600.0;
+const double kDialogMinHeight = 200.0;
+const double kDialogMaxHeight = 600.0;
+
+/// Função para criar um diálogo padronizado
+Widget buildStandardDialog({required Widget content}) {
+  return Dialog(
+    shape: RoundedRectangleBorder(borderRadius: radiusBorder),
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(
+        minWidth: kDialogMinWidth,
+        maxWidth: kDialogMaxWidth,
+        minHeight: kDialogMinHeight,
+        maxHeight: kDialogMaxHeight,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: content,
+      ),
+    ),
+  );
+}

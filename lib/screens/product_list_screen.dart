@@ -50,28 +50,43 @@ class ProductListScreen extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (context) {
-                  return AlertDialog(
-                    title: Text(AppLocalizations.of(context)!.chooseLanguage),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          final myAppState =
-                              context.findAncestorStateOfType<MyAppState>();
-                          myAppState?.changeLanguage(Locale('en'));
-                          Navigator.pop(context);
-                        },
-                        child: const Text("English"),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          final myAppState =
-                              context.findAncestorStateOfType<MyAppState>();
-                          myAppState?.changeLanguage(Locale('pt'));
-                          Navigator.pop(context);
-                        },
-                        child: const Text("Português"),
-                      ),
-                    ],
+                  return buildStandardDialog(
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!.chooseLanguage,
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                final myAppState = context
+                                    .findAncestorStateOfType<MyAppState>();
+                                myAppState?.changeLanguage(Locale('en'));
+                                Navigator.pop(context);
+                              },
+                              child: const Text("English"),
+                            ),
+                            const SizedBox(width: 60), 
+                            TextButton(
+                              onPressed: () {
+                                final myAppState = context
+                                    .findAncestorStateOfType<MyAppState>();
+                                myAppState?.changeLanguage(Locale('pt'));
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Português"),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   );
                 },
               );
@@ -330,7 +345,8 @@ class ProductListScreen extends StatelessWidget {
                 child: IconButton(
                   icon: Icon(Icons.delete, color: AppColors.accent),
                   onPressed: () {
-                    _showDeleteConfirmationDialog(context, provider, product['id']);
+                    _showDeleteConfirmationDialog(
+                        context, provider, product['id']);
                   },
                 ),
               ),
@@ -347,27 +363,41 @@ void _showDeleteConfirmationDialog(
   showDialog(
     context: context,
     builder: (context) {
-      return AlertDialog(
-        title: Text(AppLocalizations.of(context)!.confirmDelete),
-        content: Text(AppLocalizations.of(context)!.deleteMessage),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Fecha o diálogo
-            },
-            child: Text(AppLocalizations.of(context)!.dialogCancel),
-          ),
-          TextButton(
-            onPressed: () {
-              provider.deleteProduct(productId);
-              Navigator.pop(context); // Fecha o diálogo após excluir
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(AppLocalizations.of(context)!.delete),
-          ),
-        ],
+      return buildStandardDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.confirmDelete,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text(AppLocalizations.of(context)!.deleteMessage),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(AppLocalizations.of(context)!.dialogCancel),
+                ),
+                const SizedBox(width: 10),
+                TextButton(
+                  onPressed: () {
+                    provider.deleteProduct(productId);
+                    Navigator.pop(context);
+                  },
+                  style: TextButton.styleFrom(foregroundColor: Colors.red),
+                  child: Text(AppLocalizations.of(context)!.delete),
+                ),
+              ],
+            ),
+          ],
+        ),
       );
     },
   );
 }
-

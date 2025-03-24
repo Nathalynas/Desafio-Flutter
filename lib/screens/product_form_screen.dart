@@ -149,12 +149,8 @@ class ProductFormScreenState extends State<ProductFormScreen> {
     return showDialog(
       context: context,
       builder: (context) {
-        return Dialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
+        return buildStandardDialog(
+          content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
@@ -192,7 +188,6 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                 ),
               ],
             ),
-          ),
         );
       },
     );

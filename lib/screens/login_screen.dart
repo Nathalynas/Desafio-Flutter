@@ -79,8 +79,8 @@ class LoginScreenState extends State<LoginScreen> {
                       ),
                       keyboardType: TextInputType.emailAddress,
                       autofillHints: const <String>[AutofillHints.email],
-                      validator: (value) => Validators.validateEmail(
-                          value, context),
+                      validator: (value) =>
+                          Validators.validateEmail(value, context),
                     ),
 
                     const SizedBox(height: 10),
@@ -95,7 +95,7 @@ class LoginScreenState extends State<LoginScreen> {
                       obscureText: true,
                       validator: (value) => Validators.validatePassword(
                           value, context,
-                          minLength: 6), 
+                          minLength: 6),
                     ),
                     const SizedBox(height: 10),
 
@@ -167,24 +167,37 @@ class LoginScreenState extends State<LoginScreen> {
                 showDialog(
                   context: context,
                   builder: (context) {
-                    return AlertDialog(
-                      title: Text(AppLocalizations.of(context)!.chooseLanguage),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            widget.changeLanguage(Locale('en'));
-                            Navigator.pop(context);
-                          },
-                          child: const Text("English"),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            widget.changeLanguage(Locale('pt'));
-                            Navigator.pop(context);
-                          },
-                          child: const Text("Português"),
-                        ),
-                      ],
+                    return buildStandardDialog(
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.chooseLanguage,
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  widget.changeLanguage(const Locale('en'));
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("English"),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  widget.changeLanguage(const Locale('pt'));
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("Português"),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     );
                   },
                 );
