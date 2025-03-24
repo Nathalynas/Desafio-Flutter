@@ -65,7 +65,14 @@ Widget buildStandardDialog({required Widget content}) {
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
-        child: content,
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Garante que a altura se ajuste ao conteúdo
+          mainAxisAlignment: MainAxisAlignment.center, // Centraliza verticalmente
+          crossAxisAlignment: CrossAxisAlignment.center, // Centraliza horizontalmente
+          children: [
+            content,
+          ],
+        ),
       ),
     ),
   );
