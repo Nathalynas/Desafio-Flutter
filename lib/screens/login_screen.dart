@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../configs.dart';
 import '../utils/validators.dart';
+import 'package:almeidatec/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function(Locale) changeLanguage;
@@ -19,12 +20,38 @@ class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _stayConnected = false;
+  bool _isLoading = false;
 
-  void _submitForm() {
-  if (_formKey.currentState!.validate()) {
-    Navigator.pushNamed(context, Routes.productList);
+  Future<void> _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true); // Inicia o loading
+
+      // Simula uma autenticação simples
+      String email = _emailController.text.trim();
+      String password = _passwordController.text.trim();
+
+      if (email == "teste@email.com" && password == "123456") {
+        await AuthService.saveLoginToken(email);
+
+        if (!mounted) return;
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.productList,
+          (route) => false,
+        );
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.invalidCredentials),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+
+      setState(() => _isLoading = false); // Para o loading
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -70,14 +97,15 @@ class LoginScreenState extends State<LoginScreen> {
                       controller: _emailController,
                       decoration: InputDecoration(
                         labelText: AppLocalizations.of(context)!.email,
-                        labelStyle: const TextStyle(color: AppColors.textPrimary),
+                        labelStyle:
+                            const TextStyle(color: AppColors.textPrimary),
                         errorStyle: TextStyle(color: AppColors.accent),
                       ),
                       keyboardType: TextInputType.emailAddress,
                       autofillHints: const <String>[AutofillHints.email],
                       validator: (value) =>
                           Validators.validateEmail(value, context),
-                      style: const TextStyle(color: AppColors.textPrimary), 
+                      style: const TextStyle(color: AppColors.textPrimary),
                     ),
 
                     const SizedBox(height: 10),
@@ -87,12 +115,14 @@ class LoginScreenState extends State<LoginScreen> {
                       controller: _passwordController,
                       decoration: InputDecoration(
                         labelText: AppLocalizations.of(context)!.password,
-                        labelStyle: const TextStyle(color: AppColors.textPrimary),
-                         errorStyle: TextStyle(color: AppColors.accent),
+                        labelStyle:
+                            const TextStyle(color: AppColors.textPrimary),
+                        errorStyle: TextStyle(color: AppColors.accent),
                       ),
                       obscureText: true,
-                      validator: (value) => 
-                          Validators.validatePassword(value, context,minLength: 6),
+                      validator: (value) => Validators.validatePassword(
+                          value, context,
+                          minLength: 6),
                       style: const TextStyle(color: AppColors.textPrimary),
                     ),
                     const SizedBox(height: 10),
@@ -137,16 +167,19 @@ class LoginScreenState extends State<LoginScreen> {
                           borderRadius: radiusBorder,
                         ),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 15),
-                      ),
-                      onPressed: _submitForm,
-                      child: const Text(
-                        "Entrar",
-                        style: TextStyle(
-                          color: AppColors.background,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                            horizontal: 50, vertical: 15)),
+                      onPressed: _isLoading ? null : _submitForm,
+                      child: _isLoading
+                          ? const CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white))
+                          : Text(
+                              AppLocalizations.of(context)!.login,
+                              style: const TextStyle(
+                                color: AppColors.background,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ],
                 ),

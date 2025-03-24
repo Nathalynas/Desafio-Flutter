@@ -87,5 +87,19 @@
   "confirmDelete": "Confirmar Exclusão",
   "@confirmDelete": {},
   "deleteMessage": "Tem certeza de que deseja excluir este item?",
-  "@deleteMessage": {}
+  "@deleteMessage": {},
+  "editProduct": "Editar Produto",
+  "@editProduct": {},
+  "snackbarProductUpdated": "Produto atualizado com sucesso!",
+  "@snackbarProductUpdated": {},
+  "add": "Adicionar",
+  "@add": {},
+  "confirmLogoutTitle": "Confirmar Logout",
+  "@confirmLogoutTitle": {},
+  "confirmLogoutMessage": "Tem certeza que deseja sair?",
+  "@confirmLogoutMessage": {},
+  "logout": "Sair",
+  "@logout": {},
+  "invalidCredentials": "Credenciais inválidas. Tente novamente.",
+  "@invalidCredentials": {}
 }

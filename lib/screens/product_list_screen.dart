@@ -1,6 +1,7 @@
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/routes.dart';
+import 'package:almeidatec/services/auth_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:almeidatec/main.dart';
 import 'package:almeidatec/screens/product_dialog.dart';
@@ -56,7 +57,8 @@ class ProductListScreen extends StatelessWidget {
                       children: [
                         Text(
                           AppLocalizations.of(context)!.chooseLanguage,
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20),
@@ -68,17 +70,19 @@ class ProductListScreen extends StatelessWidget {
                                 final myAppState = context
                                     .findAncestorStateOfType<MyAppState>();
                                 myAppState?.changeLanguage(Locale('en'));
-                                Navigator.pushNamed(context, Routes.productList);
+                                Navigator.pushNamed(
+                                    context, Routes.productList);
                               },
                               child: const Text("English"),
                             ),
-                            const SizedBox(width: 60), 
+                            const SizedBox(width: 60),
                             TextButton(
                               onPressed: () {
                                 final myAppState = context
                                     .findAncestorStateOfType<MyAppState>();
                                 myAppState?.changeLanguage(Locale('pt'));
-                                Navigator.pushNamed(context, Routes.productList);
+                                Navigator.pushNamed(
+                                    context, Routes.productList);
                               },
                               child: const Text("Português"),
                             ),
@@ -98,8 +102,13 @@ class ProductListScreen extends StatelessWidget {
               size: 30,
               color: AppColors.background,
             ),
-            onPressed: () {
-              Navigator.pushNamed(context, Routes.login);
+            onPressed: () async {
+              bool confirmLogout = await _showLogoutConfirmationDialog(context);
+              if (confirmLogout) {
+                await AuthService.logout();
+                if (!context.mounted) return; 
+                Navigator.pushNamedAndRemoveUntil(context,Routes.login,(route) => false);
+              }
             },
           ),
         ],
@@ -373,7 +382,7 @@ void _showDeleteConfirmationDialog(
                     provider.deleteProduct(productId);
                     Navigator.pushNamed(context, Routes.productList);
                   },
-                  style: TextButton.styleFrom(foregroundColor: Colors.red),
+                  style: TextButton.styleFrom(foregroundColor: AppColors.accent),
                   child: Text(AppLocalizations.of(context)!.delete),
                 ),
               ],
@@ -383,4 +392,43 @@ void _showDeleteConfirmationDialog(
       );
     },
   );
+}
+
+Future<bool> _showLogoutConfirmationDialog(BuildContext context) async {
+  final localizations = AppLocalizations.of(context)!; 
+
+  return await showDialog(
+        context: context,
+        builder: (context) {
+          return buildStandardDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(localizations.confirmLogoutTitle,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                Text(localizations.confirmLogoutMessage),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false), 
+                      child: Text(localizations.dialogCancel),
+                    ),
+                    const SizedBox(width: 10),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true), 
+                      style: TextButton.styleFrom(foregroundColor: AppColors.accent),
+                      child: Text(localizations.logout),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ) ??
+      false;
 }
