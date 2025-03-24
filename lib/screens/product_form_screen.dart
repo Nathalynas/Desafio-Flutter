@@ -211,13 +211,8 @@ class ProductFormScreenState extends State<ProductFormScreen> {
       'price': _priceController.text,
     });
 
-    /// Limpa os campos após salvar
-    setState(() {
-      _nameController.clear();
-      _quantityController.clear();
-      _priceController.updateValue(0);
-      _selectedCategory = "dress";
-    });
+     /// Reseta o formulário
+    _formKey.currentState!.reset();
 
     /// Obtendo o contexto do ScaffoldMessenger antes de fechar o diálogo
     final messengerContext = ScaffoldMessenger.of(context);
