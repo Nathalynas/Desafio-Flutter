@@ -208,6 +208,9 @@ class ProductFormScreenState extends State<ProductFormScreen> {
 
      /// Reseta o formulário
     _formKey.currentState!.reset();
+    setState(() {
+    _priceController.updateValue(0.0); 
+    });
 
     /// Obtendo o contexto do ScaffoldMessenger antes de fechar o diálogo
     final messengerContext = ScaffoldMessenger.of(context);
