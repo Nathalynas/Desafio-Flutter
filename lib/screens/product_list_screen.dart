@@ -274,17 +274,23 @@ class ProductListScreen extends StatelessWidget {
         DataCell(
           Row(
             children: [
-              IconButton(
+              Tooltip(
+              message: AppLocalizations.of(context)!.edit,
+              child: IconButton(
                 icon: Icon(Icons.edit, color: Colors.grey[700]),
                 onPressed: () {
                   // Implementar a edição do produto
                 },
               ),
-              IconButton(
+              ),
+              Tooltip(
+              message: AppLocalizations.of(context)!.delete,
+              child: IconButton(
                 icon: Icon(Icons.delete, color: AppColors.accent),
                 onPressed: () {
                   provider.deleteProduct(product['id']);
                 },
+              ),
               ),
             ],
           ),
