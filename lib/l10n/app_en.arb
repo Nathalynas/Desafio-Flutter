@@ -101,5 +101,7 @@
   "logout": "Logout",
   "@logout": {},
   "invalidCredentials": "Invalid credentials. Please try again.",
-  "@invalidCredentials": {}
+  "@invalidCredentials": {},
+  "update": "Update",
+  "@update": {}
 }

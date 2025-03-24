@@ -106,8 +106,9 @@ class ProductListScreen extends StatelessWidget {
               bool confirmLogout = await _showLogoutConfirmationDialog(context);
               if (confirmLogout) {
                 await AuthService.logout();
-                if (!context.mounted) return; 
-                Navigator.pushNamedAndRemoveUntil(context,Routes.login,(route) => false);
+                if (!context.mounted) return;
+                Navigator.pushNamedAndRemoveUntil(
+                    context, Routes.login, (route) => false);
               }
             },
           ),
@@ -187,11 +188,7 @@ class ProductListScreen extends StatelessWidget {
                           rows: provider.products.isNotEmpty
                               ? provider.products
                                   .map(
-                                    (product) => _buildRow(
-                                      context,
-                                      product,
-                                      provider,
-                                    ),
+                                    (product) => _buildRow(context,product,provider),
                                   )
                                   .toList()
                               : [],
@@ -328,7 +325,10 @@ class ProductListScreen extends StatelessWidget {
                 child: IconButton(
                   icon: Icon(Icons.edit, color: Colors.grey[700]),
                   onPressed: () {
-                    // Implementar a edição do produto
+                    showDialog(
+                      context: context,
+                      builder: (context) => ProductDialog(product: product),
+                    );
                   },
                 ),
               ),
@@ -337,8 +337,7 @@ class ProductListScreen extends StatelessWidget {
                 child: IconButton(
                   icon: Icon(Icons.delete, color: AppColors.accent),
                   onPressed: () {
-                    _showDeleteConfirmationDialog(
-                        context, provider, product['id']);
+                    _showDeleteConfirmationDialog(context, provider, product['id']);
                   },
                 ),
               ),
@@ -380,9 +379,10 @@ void _showDeleteConfirmationDialog(
                 TextButton(
                   onPressed: () {
                     provider.deleteProduct(productId);
-                    Navigator.pushNamed(context, Routes.productList);
+                    Navigator.pop(context);
                   },
-                  style: TextButton.styleFrom(foregroundColor: AppColors.accent),
+                  style:
+                      TextButton.styleFrom(foregroundColor: AppColors.accent),
                   child: Text(AppLocalizations.of(context)!.delete),
                 ),
               ],
@@ -395,7 +395,7 @@ void _showDeleteConfirmationDialog(
 }
 
 Future<bool> _showLogoutConfirmationDialog(BuildContext context) async {
-  final localizations = AppLocalizations.of(context)!; 
+  final localizations = AppLocalizations.of(context)!;
 
   return await showDialog(
         context: context,
@@ -404,8 +404,10 @@ Future<bool> _showLogoutConfirmationDialog(BuildContext context) async {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(localizations.confirmLogoutTitle,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  localizations.confirmLogoutTitle,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
                 Text(localizations.confirmLogoutMessage),
@@ -414,13 +416,14 @@ Future<bool> _showLogoutConfirmationDialog(BuildContext context) async {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
-                      onPressed: () => Navigator.of(context).pop(false), 
+                      onPressed: () => Navigator.of(context).pop(false),
                       child: Text(localizations.dialogCancel),
                     ),
                     const SizedBox(width: 10),
                     TextButton(
-                      onPressed: () => Navigator.of(context).pop(true), 
-                      style: TextButton.styleFrom(foregroundColor: AppColors.accent),
+                      onPressed: () => Navigator.of(context).pop(true),
+                      style: TextButton.styleFrom(
+                          foregroundColor: AppColors.accent),
                       child: Text(localizations.logout),
                     ),
                   ],

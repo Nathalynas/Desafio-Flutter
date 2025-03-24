@@ -52,9 +52,8 @@ class ProductFormScreenState extends State<ProductFormScreen> {
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.background),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pushNamed(context, Routes.productList)
-        ),
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pushNamed(context, Routes.productList)),
       ),
       body: Container(
         width: double.infinity,
@@ -124,9 +123,9 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 50, vertical: 15),
                           ),
-                          onPressed:
-                              _submitForm, 
-                          child: Text(AppLocalizations.of(context)!.dialogSave,
+                          onPressed: _submitForm,
+                          child: Text(
+                            AppLocalizations.of(context)!.dialogSave,
                             style: TextStyle(
                               color: AppColors.background,
                               fontWeight: FontWeight.bold,
@@ -151,43 +150,44 @@ class ProductFormScreenState extends State<ProductFormScreen> {
       builder: (context) {
         return buildStandardDialog(
           content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.dialogTitle,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 15),
-                Text(AppLocalizations.of(context)!.dialogMessage),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pushNamed(context, Routes.productForm),
-                      child: Text(
-                        AppLocalizations.of(context)!.dialogCancel,
-                        style: TextStyle(color: AppColors.accent),
-                      ),
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.dialogTitle,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 15),
+              Text(AppLocalizations.of(context)!.dialogMessage),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () =>
+                        Navigator.pushNamed(context, Routes.productForm),
+                    child: Text(
+                      AppLocalizations.of(context)!.dialogCancel,
+                      style: TextStyle(color: AppColors.accent),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        _saveProduct();
-                        Navigator.pushNamed(context, Routes.productList);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                      ),
-                      child: Text(
-                        AppLocalizations.of(context)!.dialogSave,
-                        style: const TextStyle(color: AppColors.background),
-                      ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      _saveProduct();
+                      Navigator.pushNamed(context, Routes.productList);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
                     ),
-                  ],
-                ),
-              ],
-            ),
+                    child: Text(
+                      AppLocalizations.of(context)!.dialogSave,
+                      style: const TextStyle(color: AppColors.background),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         );
       },
     );
@@ -198,26 +198,28 @@ class ProductFormScreenState extends State<ProductFormScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final provider = Provider.of<ProductProvider>(context, listen: false);
-    provider.addProduct({
-      'id': productCode,
+
+    final newProduct = {
       'name': _nameController.text,
       'category': _selectedCategory,
       'quantity': int.tryParse(_quantityController.text) ?? 0,
       'price': _priceController.text,
-    });
+    };
+    provider.addProduct(newProduct);
+    final addedProductId = provider.products.last['id'];
 
-     /// Reseta o formulário
+    /// Reseta o formulário
     _formKey.currentState!.reset();
     setState(() {
-    _priceController.updateValue(0.0); 
+      _priceController.updateValue(0.0);
     });
 
     /// Obtendo o contexto do ScaffoldMessenger antes de fechar o diálogo
     final messengerContext = ScaffoldMessenger.of(context);
-    final snackbarProductSuccess = AppLocalizations.of(context)!.snackbarProductSuccess;
+    final snackbarProductSuccess =AppLocalizations.of(context)!.snackbarProductSuccess;
     final snackbarUndo = AppLocalizations.of(context)!.snackbarUndo;
 
-     Navigator.pushNamed(context, Routes.productList);
+    Navigator.pushNamed(context, Routes.productList);
 
     /// Aguarde um curto período antes de exibir o SnackBar
     Future.delayed(Duration(milliseconds: 300), () {
@@ -234,7 +236,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
             label: snackbarUndo,
             textColor: AppColors.background,
             onPressed: () {
-              provider.deleteProduct(productCode);
+              provider.deleteProduct(addedProductId); 
             },
           ),
         ),

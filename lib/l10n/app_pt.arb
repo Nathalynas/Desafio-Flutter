@@ -101,5 +101,7 @@
   "logout": "Sair",
   "@logout": {},
   "invalidCredentials": "Credenciais inválidas. Tente novamente.",
-  "@invalidCredentials": {}
+  "@invalidCredentials": {},
+  "update": "Atualizar",
+  "@update": {}
 }

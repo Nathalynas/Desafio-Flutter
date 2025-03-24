@@ -1,5 +1,6 @@
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
+import 'package:almeidatec/main.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
@@ -10,7 +11,9 @@ import '../providers/product_provider.dart';
 import '../utils/validators.dart';
 
 class ProductDialog extends StatefulWidget {
-  const ProductDialog({super.key});
+  final Map<String, dynamic>? product;
+
+  const ProductDialog({super.key, this.product});
 
   @override
   State<ProductDialog> createState() => _ProductDialogState();
@@ -23,98 +26,114 @@ class _ProductDialogState extends State<ProductDialog> {
   final MoneyMaskedTextController _priceController = productPriceFormatter;
 
   late String _selectedCategory;
-  int productCode = DateTime.now().millisecondsSinceEpoch % 10000;
+  late int productCode;
 
   @override
   void initState() {
     super.initState();
-    _selectedCategory = "dress";
+
+    if (widget.product != null) {
+      productCode = widget.product!['id'];
+      _nameController.text = widget.product!['name'];
+      _selectedCategory = widget.product!['category'];
+      _quantityController.text = widget.product!['quantity'].toString();
+      _priceController.text = widget.product!['price'];
+    } else {
+      productCode = DateTime.now().millisecondsSinceEpoch % 10000;
+      _selectedCategory = "dress";
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return buildStandardDialog(
-        content: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Cadastrar Produto",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 15),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.product == null
+                  ? AppLocalizations.of(context)!.newProduct // "Novo Produto"
+                  : AppLocalizations.of(context)!
+                      .editProduct, // "Editar Produto"
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 15),
 
-              /// Nome do Produto
-              _buildTextField(
-                AppLocalizations.of(context)!.name,
-                _nameController,
-                validator: (value) =>
-                    Validators.validateRequired(value, context),
-              ),
-              const SizedBox(height: 15),
+            /// Nome do Produto
+            _buildTextField(
+              AppLocalizations.of(context)!.name,
+              _nameController,
+              validator: (value) => Validators.validateRequired(value, context),
+            ),
+            const SizedBox(height: 15),
 
-              /// Categoria
-              _buildDropdown(
-                AppLocalizations.of(context)!.category, 
-                _selectedCategory,
-                {
-                  "dress": AppLocalizations.of(context)!.dress,
-                  "pants": AppLocalizations.of(context)!.pants,
-                  "shirt": AppLocalizations.of(context)!.shirt,
-                },
-                (value) => setState(() => _selectedCategory = value!),
-              ),
-              const SizedBox(height: 15),
+            /// Categoria
+            _buildDropdown(
+              AppLocalizations.of(context)!.category,
+              _selectedCategory,
+              {
+                "dress": AppLocalizations.of(context)!.dress,
+                "pants": AppLocalizations.of(context)!.pants,
+                "shirt": AppLocalizations.of(context)!.shirt,
+              },
+              (value) => setState(() => _selectedCategory = value!),
+            ),
+            const SizedBox(height: 15),
 
-              /// Quantidade
-              _buildTextField(
-                AppLocalizations.of(context)!.quantity,
-                _quantityController,
-                keyboardType: TextInputType.number,
-                validator: (value) =>
-                    Validators.validateInteger(value, context),
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              ),
+            /// Quantidade
+            _buildTextField(
+              AppLocalizations.of(context)!.quantity,
+              _quantityController,
+              keyboardType: TextInputType.number,
+              validator: (value) => Validators.validateInteger(value, context),
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            ),
 
-              const SizedBox(width: 10),
+            const SizedBox(width: 15),
 
-              /// Preço
-              _buildTextField(
-                AppLocalizations.of(context)!.price,
-                _priceController,
-                keyboardType: TextInputType.number,
-                validator: (value) => Validators.validatePrice(value, context),
-              ),
-              const SizedBox(height: 20),
+            /// Preço
+            _buildTextField(
+              AppLocalizations.of(context)!.price,
+              _priceController,
+              keyboardType: TextInputType.number,
+              validator: (value) => Validators.validatePrice(value, context),
+            ),
+            const SizedBox(height: 20),
 
-              /// Botões
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pushNamed(context, Routes.productList),
-                    child: Text(AppLocalizations.of(context)!.dialogCancel,
-                      style: const TextStyle(color: AppColors.accent),
-                    ),
+            /// Botões
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () =>
+                      Navigator.pushNamed(context, Routes.productList),
+                  child: Text(
+                    AppLocalizations.of(context)!.dialogCancel,
+                    style: const TextStyle(color: AppColors.accent),
                   ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: _saveProduct,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                    ),
-                    child: Text(AppLocalizations.of(context)!.dialogSave,
-                      style: TextStyle(color: AppColors.background),
-                    ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _saveProduct,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
                   ),
-                ],
-              ),
-            ],
-          ),
+                  child: Text(
+                    widget.product == null
+                        ? AppLocalizations.of(context)!.dialogSave
+                        : AppLocalizations.of(context)!.update,
+                    style: const TextStyle(color: AppColors.background),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-      );
+      ),
+    );
   }
 
   /// Valida o formulário e salva o produto
@@ -122,47 +141,69 @@ class _ProductDialogState extends State<ProductDialog> {
     if (!_formKey.currentState!.validate()) return;
 
     final provider = Provider.of<ProductProvider>(context, listen: false);
-    provider.addProduct({
-      'id': productCode,
+
+    bool isNewProduct = widget.product == null;
+    int? addedProductId;
+
+    if (isNewProduct) {
+    // Novo produto
+    final newProduct = {
       'name': _nameController.text,
       'category': _selectedCategory,
       'quantity': int.tryParse(_quantityController.text) ?? 0,
       'price': _priceController.text,
-    });
+    };
+
+    provider.addProduct(newProduct);
+    addedProductId = provider.products.last['id'];
+  } else {
+    // Atualizar produto existente
+    final updatedProduct = {
+      'id': widget.product!['id'],
+      'name': _nameController.text,
+      'category': _selectedCategory,
+      'quantity': int.tryParse(_quantityController.text) ?? 0,
+      'price': _priceController.text,
+    };
+
+    provider.updateProduct(updatedProduct);
+  }
 
     /// Reseta o formulário
     _formKey.currentState!.reset();
     setState(() {
-    _priceController.updateValue(0.0); 
+      _priceController.updateValue(0.0);
     });
 
-    /// Obtendo o contexto do ScaffoldMessenger antes de fechar o diálogo
-    final messengerContext = ScaffoldMessenger.of(context);
-    final snackbarProductSuccess = AppLocalizations.of(context)!.snackbarProductSuccess;
+    final snackbarMessage = isNewProduct
+        ? AppLocalizations.of(context)!.snackbarProductSuccess
+        : AppLocalizations.of(context)!.snackbarProductUpdated;
     final snackbarUndo = AppLocalizations.of(context)!.snackbarUndo;
 
-    Navigator.pushNamed(context, Routes.productList);
+    Navigator.pop(context);
 
     /// Aguarde um curto período antes de exibir o SnackBar
     Future.delayed(Duration(milliseconds: 300), () {
-      messengerContext.showSnackBar(
-        SnackBar(
-          content: Text(
-            snackbarProductSuccess,
-            style: TextStyle(color: AppColors.background),
+        scaffoldMessengerKey.currentState?.showSnackBar(
+          SnackBar(
+            content: Text(
+              snackbarMessage,
+              style: TextStyle(color: AppColors.background),
+            ),
+            backgroundColor: AppColors.green,
+            duration: const Duration(seconds: 5),
+            behavior: SnackBarBehavior.floating,
+            action: isNewProduct
+                ? SnackBarAction(
+                    label: snackbarUndo,
+                    textColor: AppColors.background,
+                    onPressed: () {
+                      provider.deleteProduct(addedProductId!);
+                    },
+                  )
+                : null, // Se for edição, não exibe botão "Desfazer"
           ),
-          backgroundColor: AppColors.green,
-          duration: const Duration(seconds: 5),
-          behavior: SnackBarBehavior.floating,
-          action: SnackBarAction(
-            label: snackbarUndo,
-            textColor: AppColors.background,
-            onPressed: () {
-              provider.deleteProduct(productCode);
-            },
-          ),
-        ),
-      );
+        );
     });
   }
 
