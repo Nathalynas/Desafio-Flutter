@@ -145,6 +145,8 @@ class _ProductDialogState extends State<ProductDialog> {
 
     /// Obtendo o contexto do ScaffoldMessenger antes de fechar o diálogo
     final messengerContext = ScaffoldMessenger.of(context);
+    final snackbarProductSuccess = AppLocalizations.of(context)!.snackbarProductSuccess;
+    final snackbarUndo = AppLocalizations.of(context)!.snackbarUndo;
 
     Navigator.pop(context);
 
@@ -152,15 +154,15 @@ class _ProductDialogState extends State<ProductDialog> {
     Future.delayed(Duration(milliseconds: 300), () {
       messengerContext.showSnackBar(
         SnackBar(
-          content: const Text(
-            "Produto cadastrado com sucesso!",
+          content: Text(
+            snackbarProductSuccess,
             style: TextStyle(color: AppColors.background),
           ),
           backgroundColor: AppColors.green,
           duration: const Duration(seconds: 5),
           behavior: SnackBarBehavior.floating,
           action: SnackBarAction(
-            label: "Desfazer",
+            label: snackbarUndo,
             textColor: AppColors.background,
             onPressed: () {
               provider.deleteProduct(productCode);
