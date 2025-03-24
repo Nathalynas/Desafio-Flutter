@@ -83,5 +83,9 @@
   "snackbarProductSuccess": "Produto cadastrado com sucesso!",
   "@snackbarProductSuccess": {},
   "snackbarUndo": "Desfazer",
-  "@snackbarUndo": {}
+  "@snackbarUndo": {},
+  "confirmDelete": "Confirmar Exclusão",
+  "@confirmDelete": {},
+  "deleteMessage": "Tem certeza de que deseja excluir este item?",
+  "@deleteMessage": {}
 }

@@ -38,6 +38,46 @@ class ProductListScreen extends StatelessWidget {
               Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
             },
           ),
+
+          /// Botão para mudar idioma
+          IconButton(
+            icon: const Icon(
+              Icons.language,
+              size: 30,
+              color: AppColors.background,
+            ),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text(AppLocalizations.of(context)!.chooseLanguage),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          final myAppState =
+                              context.findAncestorStateOfType<MyAppState>();
+                          myAppState?.changeLanguage(Locale('en'));
+                          Navigator.pop(context);
+                        },
+                        child: const Text("English"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          final myAppState =
+                              context.findAncestorStateOfType<MyAppState>();
+                          myAppState?.changeLanguage(Locale('pt'));
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Português"),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+
           IconButton(
             icon: const Icon(
               Icons.account_circle,
@@ -203,7 +243,9 @@ class ProductListScreen extends StatelessWidget {
         label: Text(
           AppLocalizations.of(context)!.price,
           style: TextStyle(
-            fontWeight: FontWeight.bold, color: AppColors.background,),
+            fontWeight: FontWeight.bold,
+            color: AppColors.background,
+          ),
         ),
       ),
       DataColumn(
@@ -275,22 +317,22 @@ class ProductListScreen extends StatelessWidget {
           Row(
             children: [
               Tooltip(
-              message: AppLocalizations.of(context)!.edit,
-              child: IconButton(
-                icon: Icon(Icons.edit, color: Colors.grey[700]),
-                onPressed: () {
-                  // Implementar a edição do produto
-                },
-              ),
+                message: AppLocalizations.of(context)!.edit,
+                child: IconButton(
+                  icon: Icon(Icons.edit, color: Colors.grey[700]),
+                  onPressed: () {
+                    // Implementar a edição do produto
+                  },
+                ),
               ),
               Tooltip(
-              message: AppLocalizations.of(context)!.delete,
-              child: IconButton(
-                icon: Icon(Icons.delete, color: AppColors.accent),
-                onPressed: () {
-                  provider.deleteProduct(product['id']);
-                },
-              ),
+                message: AppLocalizations.of(context)!.delete,
+                child: IconButton(
+                  icon: Icon(Icons.delete, color: AppColors.accent),
+                  onPressed: () {
+                    _showDeleteConfirmationDialog(context, provider, product['id']);
+                  },
+                ),
               ),
             ],
           ),
@@ -299,3 +341,33 @@ class ProductListScreen extends StatelessWidget {
     );
   }
 }
+
+void _showDeleteConfirmationDialog(
+    BuildContext context, ProductProvider provider, int productId) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text(AppLocalizations.of(context)!.confirmDelete),
+        content: Text(AppLocalizations.of(context)!.deleteMessage),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Fecha o diálogo
+            },
+            child: Text(AppLocalizations.of(context)!.dialogCancel),
+          ),
+          TextButton(
+            onPressed: () {
+              provider.deleteProduct(productId);
+              Navigator.pop(context); // Fecha o diálogo após excluir
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(AppLocalizations.of(context)!.delete),
+          ),
+        ],
+      );
+    },
+  );
+}
+

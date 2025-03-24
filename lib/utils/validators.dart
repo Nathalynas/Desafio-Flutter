@@ -21,7 +21,7 @@ class Validators {
       return AppLocalizations.of(context)!.passwordRequired;
     }
     if (value.length < minLength) {
-      return AppLocalizations.of(context)!.passwordMinLength(minLength);
+      return AppLocalizations.of(context)!.passwordMinLength(minLength.toString());
     }
     return null;
   }
