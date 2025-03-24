@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:almeidatec/core/colors.dart';
+import 'package:almeidatec/routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +53,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
         iconTheme: const IconThemeData(color: AppColors.background),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pushNamed(context, Routes.productList)
         ),
       ),
       body: Container(
@@ -124,9 +125,8 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                                 horizontal: 50, vertical: 15),
                           ),
                           onPressed:
-                              _submitForm, // Valida antes de exibir o diálogo
-                          child: const Text(
-                            "Salvar",
+                              _submitForm, 
+                          child: Text(AppLocalizations.of(context)!.dialogSave,
                             style: TextStyle(
                               color: AppColors.background,
                               fontWeight: FontWeight.bold,
@@ -165,7 +165,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     TextButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Navigator.pushNamed(context, Routes.productForm),
                       child: Text(
                         AppLocalizations.of(context)!.dialogCancel,
                         style: TextStyle(color: AppColors.accent),
@@ -174,7 +174,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                     ElevatedButton(
                       onPressed: () {
                         _saveProduct();
-                        Navigator.pop(context);
+                        Navigator.pushNamed(context, Routes.productList);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
@@ -214,7 +214,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
     final snackbarProductSuccess = AppLocalizations.of(context)!.snackbarProductSuccess;
     final snackbarUndo = AppLocalizations.of(context)!.snackbarUndo;
 
-    Navigator.pop(context);
+     Navigator.pushNamed(context, Routes.productList);
 
     /// Aguarde um curto período antes de exibir o SnackBar
     Future.delayed(Duration(milliseconds: 300), () {

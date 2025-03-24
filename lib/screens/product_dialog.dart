@@ -1,5 +1,6 @@
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
+import 'package:almeidatec/routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
@@ -93,10 +94,9 @@ class _ProductDialogState extends State<ProductDialog> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text(
-                      "Cancelar",
-                      style: TextStyle(color: AppColors.accent),
+                    onPressed: () => Navigator.pushNamed(context, Routes.productList),
+                    child: Text(AppLocalizations.of(context)!.dialogCancel,
+                      style: const TextStyle(color: AppColors.accent),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -105,8 +105,7 @@ class _ProductDialogState extends State<ProductDialog> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                     ),
-                    child: const Text(
-                      "Salvar",
+                    child: Text(AppLocalizations.of(context)!.dialogSave,
                       style: TextStyle(color: AppColors.background),
                     ),
                   ),
@@ -139,7 +138,7 @@ class _ProductDialogState extends State<ProductDialog> {
     final snackbarProductSuccess = AppLocalizations.of(context)!.snackbarProductSuccess;
     final snackbarUndo = AppLocalizations.of(context)!.snackbarUndo;
 
-    Navigator.pop(context);
+    Navigator.pushNamed(context, Routes.productList);
 
     /// Aguarde um curto período antes de exibir o SnackBar
     Future.delayed(Duration(milliseconds: 300), () {

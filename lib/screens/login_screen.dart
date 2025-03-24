@@ -1,7 +1,7 @@
 import 'package:almeidatec/core/colors.dart';
+import 'package:almeidatec/routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import '../screens/product_list_screen.dart';
 import '../configs.dart';
 import '../utils/validators.dart';
 
@@ -21,15 +21,10 @@ class LoginScreenState extends State<LoginScreen> {
   bool _stayConnected = false;
 
   void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ProductListScreen(),
-        ),
-      );
-    }
+  if (_formKey.currentState!.validate()) {
+    Navigator.pushNamed(context, Routes.productList);
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -75,12 +70,14 @@ class LoginScreenState extends State<LoginScreen> {
                       controller: _emailController,
                       decoration: InputDecoration(
                         labelText: AppLocalizations.of(context)!.email,
-                        labelStyle: const TextStyle(color: Colors.black87),
+                        labelStyle: const TextStyle(color: AppColors.textPrimary),
+                        errorStyle: TextStyle(color: AppColors.accent),
                       ),
                       keyboardType: TextInputType.emailAddress,
                       autofillHints: const <String>[AutofillHints.email],
                       validator: (value) =>
                           Validators.validateEmail(value, context),
+                      style: const TextStyle(color: AppColors.textPrimary), 
                     ),
 
                     const SizedBox(height: 10),
@@ -90,12 +87,13 @@ class LoginScreenState extends State<LoginScreen> {
                       controller: _passwordController,
                       decoration: InputDecoration(
                         labelText: AppLocalizations.of(context)!.password,
-                        labelStyle: const TextStyle(color: Colors.black87),
+                        labelStyle: const TextStyle(color: AppColors.textPrimary),
+                         errorStyle: TextStyle(color: AppColors.accent),
                       ),
                       obscureText: true,
-                      validator: (value) => Validators.validatePassword(
-                          value, context,
-                          minLength: 6),
+                      validator: (value) => 
+                          Validators.validatePassword(value, context,minLength: 6),
+                      style: const TextStyle(color: AppColors.textPrimary),
                     ),
                     const SizedBox(height: 10),
 
@@ -183,14 +181,14 @@ class LoginScreenState extends State<LoginScreen> {
                               TextButton(
                                 onPressed: () {
                                   widget.changeLanguage(const Locale('en'));
-                                  Navigator.pop(context);
+                                  Navigator.pushNamed(context, Routes.login);
                                 },
                                 child: const Text("English"),
                               ),
                               TextButton(
                                 onPressed: () {
                                   widget.changeLanguage(const Locale('pt'));
-                                  Navigator.pop(context);
+                                  Navigator.pushNamed(context, Routes.login);
                                 },
                                 child: const Text("Português"),
                               ),

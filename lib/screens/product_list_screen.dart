@@ -1,10 +1,9 @@
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
+import 'package:almeidatec/routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:almeidatec/main.dart';
-import 'package:almeidatec/screens/login_screen.dart';
 import 'package:almeidatec/screens/product_dialog.dart';
-import 'package:almeidatec/screens/product_form_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/product_provider.dart';
@@ -69,7 +68,7 @@ class ProductListScreen extends StatelessWidget {
                                 final myAppState = context
                                     .findAncestorStateOfType<MyAppState>();
                                 myAppState?.changeLanguage(Locale('en'));
-                                Navigator.pop(context);
+                                Navigator.pushNamed(context, Routes.productList);
                               },
                               child: const Text("English"),
                             ),
@@ -79,7 +78,7 @@ class ProductListScreen extends StatelessWidget {
                                 final myAppState = context
                                     .findAncestorStateOfType<MyAppState>();
                                 myAppState?.changeLanguage(Locale('pt'));
-                                Navigator.pop(context);
+                                Navigator.pushNamed(context, Routes.productList);
                               },
                               child: const Text("Português"),
                             ),
@@ -100,18 +99,7 @@ class ProductListScreen extends StatelessWidget {
               color: AppColors.background,
             ),
             onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LoginScreen(
-                    changeLanguage: (Locale locale) {
-                      final myAppState =
-                          context.findAncestorStateOfType<MyAppState>();
-                      myAppState?.changeLanguage(locale);
-                    },
-                  ),
-                ),
-              );
+              Navigator.pushNamed(context, Routes.login);
             },
           ),
         ],
@@ -136,12 +124,7 @@ class ProductListScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ProductFormScreen(),
-                      ),
-                    );
+                    Navigator.pushNamed(context, Routes.productForm);
                   },
                   child: Text(
                     AppLocalizations.of(context)!.newProduct,
@@ -380,7 +363,7 @@ void _showDeleteConfirmationDialog(
               children: [
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pushNamed(context, Routes.productList);
                   },
                   child: Text(AppLocalizations.of(context)!.dialogCancel),
                 ),
@@ -388,7 +371,7 @@ void _showDeleteConfirmationDialog(
                 TextButton(
                   onPressed: () {
                     provider.deleteProduct(productId);
-                    Navigator.pop(context);
+                    Navigator.pushNamed(context, Routes.productList);
                   },
                   style: TextButton.styleFrom(foregroundColor: Colors.red),
                   child: Text(AppLocalizations.of(context)!.delete),
