@@ -139,11 +139,11 @@ class LoginScreenState extends State<LoginScreen> {
               padding: const EdgeInsets.all(20),
               width: 350,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.background,
                 borderRadius: radiusBorder,
                 boxShadow: const [
                   BoxShadow(
-                    color: Colors.black26,
+                    color: AppColors.textPrimary,
                     blurRadius: 10,
                     offset: Offset(0, 5),
                   ),
@@ -161,7 +161,7 @@ class LoginScreenState extends State<LoginScreen> {
                       child: Text(
                         AppLocalizations.of(context)!.loginMessage,
                         style: const TextStyle(
-                          color: Colors.black87,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                     ),

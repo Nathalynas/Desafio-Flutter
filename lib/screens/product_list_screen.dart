@@ -1,7 +1,6 @@
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/routes.dart';
-import 'package:almeidatec/services/auth_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:almeidatec/main.dart';
 import 'package:almeidatec/screens/product_dialog.dart';
@@ -102,14 +101,8 @@ class ProductListScreen extends StatelessWidget {
               size: 30,
               color: AppColors.background,
             ),
-            onPressed: () async {
-              bool confirmLogout = await _showLogoutConfirmationDialog(context);
-              if (confirmLogout) {
-                await AuthService.logout();
-                if (!context.mounted) return;
-                Navigator.pushNamedAndRemoveUntil(
-                    context, Routes.login, (route) => false);
-              }
+            onPressed: () {
+              Navigator.pushNamed(context, Routes.profile);
             },
           ),
         ],
@@ -188,7 +181,8 @@ class ProductListScreen extends StatelessWidget {
                           rows: provider.products.isNotEmpty
                               ? provider.products
                                   .map(
-                                    (product) => _buildRow(context,product,provider),
+                                    (product) =>
+                                        _buildRow(context, product, provider),
                                   )
                                   .toList()
                               : [],
@@ -337,7 +331,8 @@ class ProductListScreen extends StatelessWidget {
                 child: IconButton(
                   icon: Icon(Icons.delete, color: AppColors.accent),
                   onPressed: () {
-                    _showDeleteConfirmationDialog(context, provider, product['id']);
+                    _showDeleteConfirmationDialog(
+                        context, provider, product['id']);
                   },
                 ),
               ),
@@ -394,44 +389,4 @@ void _showDeleteConfirmationDialog(
   );
 }
 
-Future<bool> _showLogoutConfirmationDialog(BuildContext context) async {
-  final localizations = AppLocalizations.of(context)!;
 
-  return await showDialog(
-        context: context,
-        builder: (context) {
-          return buildStandardDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  localizations.confirmLogoutTitle,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                Text(localizations.confirmLogoutMessage),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      child: Text(localizations.dialogCancel),
-                    ),
-                    const SizedBox(width: 10),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(true),
-                      style: TextButton.styleFrom(
-                          foregroundColor: AppColors.accent),
-                      child: Text(localizations.logout),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
-      ) ??
-      false;
-}

@@ -111,5 +111,7 @@
   "passwordResetSent": "A password reset link has been sent to your email.",
   "@passwordResetSent": {},
   "enterValidEmail": "Please enter a valid email address.",
-  "@enterValidEmail": {}
+  "@enterValidEmail": {},
+  "profile": "Profile",
+  "@profile": {}
 }

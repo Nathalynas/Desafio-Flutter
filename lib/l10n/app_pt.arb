@@ -111,5 +111,7 @@
   "passwordResetSent": "Um link para redefinir a senha foi enviado para seu e-mail.",
   "@passwordResetSent": {},
   "enterValidEmail": "Por favor, insira um e-mail válido.",
-  "@enterValidEmail": {}
+  "@enterValidEmail": {},
+  "profile": "Perfil",
+  "@profile": {}
 }
