@@ -25,13 +25,13 @@ class _ProductDialogState extends State<ProductDialog> {
   final TextEditingController _quantityController = TextEditingController();
   final MoneyMaskedTextController _priceController = productPriceFormatter;
 
+  late ProductProvider provider;
+
   late String _selectedCategory;
   late int productCode;
 
   @override
   void initState() {
-    super.initState();
-
     if (widget.product != null) {
       productCode = widget.product!['id'];
       _nameController.text = widget.product!['name'];
@@ -42,6 +42,7 @@ class _ProductDialogState extends State<ProductDialog> {
       productCode = DateTime.now().millisecondsSinceEpoch % 10000;
       _selectedCategory = "dress";
     }
+    super.initState();
   }
 
   @override
@@ -79,7 +80,7 @@ class _ProductDialogState extends State<ProductDialog> {
                 "pants": AppLocalizations.of(context)!.pants,
                 "shirt": AppLocalizations.of(context)!.shirt,
               },
-              (value) => setState(() => _selectedCategory = value!),
+              (value) => _selectedCategory = value!,
             ),
             const SizedBox(height: 15),
 
@@ -92,7 +93,7 @@ class _ProductDialogState extends State<ProductDialog> {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
 
-            const SizedBox(width: 15),
+            const SizedBox(height: 15),
 
             /// Preço
             _buildTextField(
@@ -101,6 +102,7 @@ class _ProductDialogState extends State<ProductDialog> {
               keyboardType: TextInputType.number,
               validator: (value) => Validators.validatePrice(value, context),
             ),
+
             const SizedBox(height: 20),
 
             /// Botões
@@ -108,8 +110,10 @@ class _ProductDialogState extends State<ProductDialog> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, Routes.productList),
+                  onPressed: () {
+                    _priceController.updateValue(0);
+                    Navigator.pushNamed(context, Routes.productList);
+                  },
                   child: Text(
                     AppLocalizations.of(context)!.dialogCancel,
                     style: const TextStyle(color: AppColors.accent),
@@ -140,40 +144,38 @@ class _ProductDialogState extends State<ProductDialog> {
   void _saveProduct() {
     if (!_formKey.currentState!.validate()) return;
 
-    final provider = Provider.of<ProductProvider>(context, listen: false);
+    provider = Provider.of<ProductProvider>(context, listen: false);
 
     bool isNewProduct = widget.product == null;
     int? addedProductId;
 
     if (isNewProduct) {
-    // Novo produto
-    final newProduct = {
-      'name': _nameController.text,
-      'category': _selectedCategory,
-      'quantity': int.tryParse(_quantityController.text) ?? 0,
-      'price': _priceController.text,
-    };
+      // Novo produto
+      final newProduct = {
+        'name': _nameController.text,
+        'category': _selectedCategory,
+        'quantity': int.tryParse(_quantityController.text) ?? 0,
+        'price': _priceController.text,
+      };
 
-    provider.addProduct(newProduct);
-    addedProductId = provider.products.last['id'];
-  } else {
-    // Atualizar produto existente
-    final updatedProduct = {
-      'id': widget.product!['id'],
-      'name': _nameController.text,
-      'category': _selectedCategory,
-      'quantity': int.tryParse(_quantityController.text) ?? 0,
-      'price': _priceController.text,
-    };
+      provider.addProduct(newProduct);
+      addedProductId = provider.products.last['id'];
+    } else {
+      // Atualizar produto existente
+      final updatedProduct = {
+        'id': widget.product!['id'],
+        'name': _nameController.text,
+        'category': _selectedCategory,
+        'quantity': int.tryParse(_quantityController.text) ?? 0,
+        'price': _priceController.text,
+      };
 
-    provider.updateProduct(updatedProduct);
-  }
+      provider.updateProduct(updatedProduct);
+    }
 
     /// Reseta o formulário
     _formKey.currentState!.reset();
-    setState(() {
-      _priceController.updateValue(0.0);
-    });
+    _priceController.updateValue(0);
 
     final snackbarMessage = isNewProduct
         ? AppLocalizations.of(context)!.snackbarProductSuccess
@@ -184,26 +186,26 @@ class _ProductDialogState extends State<ProductDialog> {
 
     /// Aguarde um curto período antes de exibir o SnackBar
     Future.delayed(Duration(milliseconds: 300), () {
-        scaffoldMessengerKey.currentState?.showSnackBar(
-          SnackBar(
-            content: Text(
-              snackbarMessage,
-              style: TextStyle(color: AppColors.background),
-            ),
-            backgroundColor: AppColors.green,
-            duration: const Duration(seconds: 5),
-            behavior: SnackBarBehavior.floating,
-            action: isNewProduct
-                ? SnackBarAction(
-                    label: snackbarUndo,
-                    textColor: AppColors.background,
-                    onPressed: () {
-                      provider.deleteProduct(addedProductId!);
-                    },
-                  )
-                : null, // Se for edição, não exibe botão "Desfazer"
+      scaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(
+          content: Text(
+            snackbarMessage,
+            style: TextStyle(color: AppColors.background),
           ),
-        );
+          backgroundColor: AppColors.green,
+          duration: const Duration(seconds: 5),
+          behavior: SnackBarBehavior.floating,
+          action: isNewProduct
+              ? SnackBarAction(
+                  label: snackbarUndo,
+                  textColor: AppColors.background,
+                  onPressed: () {
+                    provider.deleteProduct(addedProductId!);
+                  },
+                )
+              : null, // Se for edição, não exibe botão "Desfazer"
+        ),
+      );
     });
   }
 
