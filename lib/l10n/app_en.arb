@@ -113,5 +113,9 @@
   "enterValidEmail": "Please enter a valid email address.",
   "@enterValidEmail": {},
   "profile": "Profile",
-  "@profile": {}
+  "@profile": {},
+  "category_dress": "Dress",
+  "@category_dress": {},
+  "category_pants": "Pants",
+  "@category_pants": {}
 }

@@ -274,23 +274,22 @@ class ProductListScreen extends StatelessWidget {
           Text(
             product['id'].toString(),
             style: TextStyle(
-              fontWeight: FontWeight.bold,
               color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
         ),
         DataCell(
           Text(
-            product['name'].toUpperCase(),
+            AppLocalizations.of(context)!.getProductTranslation(product['name']),
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: AppColors.primary,
+              color: AppColors.textPrimary,
             ),
           ),
         ),
         DataCell(
           Text(
-            product['category'].toUpperCase(),
+            AppLocalizations.of(context)!.getCategoryTranslation(product['category']),
             style: TextStyle(
               color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
@@ -301,7 +300,7 @@ class ProductListScreen extends StatelessWidget {
             product['quantity'].toString(),
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: AppColors.primary,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
         ),
