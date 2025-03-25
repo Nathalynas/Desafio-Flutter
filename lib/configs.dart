@@ -53,7 +53,8 @@ const double kDialogMinHeight = 200.0;
 const double kDialogMaxHeight = 600.0;
 
 /// Função para criar um diálogo padronizado
-Widget buildStandardDialog({required Widget content}) {
+/// Função para criar um diálogo padronizado
+Widget buildStandardDialog({required Widget content, List<Widget>? footer}) {
   return Dialog(
     shape: RoundedRectangleBorder(borderRadius: radiusBorder),
     child: ConstrainedBox(
@@ -66,14 +67,22 @@ Widget buildStandardDialog({required Widget content}) {
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Garante que a altura se ajuste ao conteúdo
-          mainAxisAlignment: MainAxisAlignment.center, // Centraliza verticalmente
-          crossAxisAlignment: CrossAxisAlignment.center, // Centraliza horizontalmente
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             content,
+            if (footer != null) ...[
+              const SizedBox(height: 20), 
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: footer, 
+              ),
+            ],
           ],
         ),
       ),
     ),
   );
 }
+

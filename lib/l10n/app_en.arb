@@ -103,5 +103,13 @@
   "invalidCredentials": "Invalid credentials. Please try again.",
   "@invalidCredentials": {},
   "update": "Update",
-  "@update": {}
+  "@update": {},
+  "enterYourEmail": "Please enter your email address to reset your password.",
+  "@enterYourEmail": {},
+  "send": "Send",
+  "@send": {},
+  "passwordResetSent": "A password reset link has been sent to your email.",
+  "@passwordResetSent": {},
+  "enterValidEmail": "Please enter a valid email address.",
+  "@enterValidEmail": {}
 }

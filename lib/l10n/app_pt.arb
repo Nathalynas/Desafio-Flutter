@@ -103,5 +103,13 @@
   "invalidCredentials": "Credenciais inválidas. Tente novamente.",
   "@invalidCredentials": {},
   "update": "Atualizar",
-  "@update": {}
+  "@update": {},
+  "enterYourEmail": "Por favor, insira seu e-mail para redefinir sua senha.",
+  "@enterYourEmail": {},
+  "send": "Enviar",
+  "@send": {},
+  "passwordResetSent": "Um link para redefinir a senha foi enviado para seu e-mail.",
+  "@passwordResetSent": {},
+  "enterValidEmail": "Por favor, insira um e-mail válido.",
+  "@enterValidEmail": {}
 }

@@ -16,7 +16,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>(); // Chave do formulário
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _stayConnected = false;
@@ -24,7 +24,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true); // Inicia o loading
+      setState(() => _isLoading = true);
 
       // Simula uma autenticação simples
       String email = _emailController.text.trim();
@@ -49,9 +49,84 @@ class LoginScreenState extends State<LoginScreen> {
         );
       }
 
-      setState(() => _isLoading = false); // Para o loading
+      setState(() => _isLoading = false);
     }
   }
+
+  void _showForgotPasswordDialog() {
+    TextEditingController emailResetController = TextEditingController();
+    bool isValidEmail = false;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+        builder: (context, setState) {
+        return buildStandardDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.enterYourEmail,
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: emailResetController,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.email,
+                  border: OutlineInputBorder(),
+                  errorText: Validators.validateEmail(
+                              emailResetController.text, context) == null
+                      ? null
+                      : AppLocalizations.of(context)!.enterValidEmail,
+                ),
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) {
+                  setState(() {
+                    isValidEmail =
+                        Validators.validateEmail(value, context) == null;
+                  });
+                },
+              ),
+            ],
+          ),
+          footer: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppLocalizations.of(context)!.dialogCancel),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary, 
+                foregroundColor: Colors.white, 
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8), 
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+              onPressed: isValidEmail
+                    ? () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              AppLocalizations.of(context)!.passwordResetSent,
+                            ),
+                            backgroundColor: AppColors.green,
+                          ),
+                        );
+                        Navigator.pop(context);
+                      }
+                    : null,
+                child: Text(AppLocalizations.of(context)!.send),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -129,15 +204,18 @@ class LoginScreenState extends State<LoginScreen> {
 
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(
-                        AppLocalizations.of(context)!.forgotPassword,
-                        style: TextStyle(
-                          color: AppColors.accent,
-                          decoration: TextDecoration.none,
+                      child: InkWell(
+                        onTap: _showForgotPasswordDialog,
+                        child: Text(
+                          AppLocalizations.of(context)!.forgotPassword,
+                          style: TextStyle(
+                            color: AppColors.accent,
+                          ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 5),
+
+                    const SizedBox(height: 10),
 
                     /// Checkbox "Manter Conectado"
                     Row(
@@ -162,12 +240,12 @@ class LoginScreenState extends State<LoginScreen> {
                     /// Botão de Login
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: radiusBorder,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 15)),
+                          backgroundColor: AppColors.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: radiusBorder,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 15)),
                       onPressed: _isLoading ? null : _submitForm,
                       child: _isLoading
                           ? const CircularProgressIndicator(
