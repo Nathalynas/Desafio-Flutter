@@ -1,5 +1,6 @@
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/routes.dart';
+import 'package:almeidatec/screens/signup_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../configs.dart';
@@ -61,72 +62,74 @@ class LoginScreenState extends State<LoginScreen> {
       context: context,
       builder: (context) {
         return StatefulBuilder(
-        builder: (context, setState) {
-        return buildStandardDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.enterYourEmail,
-                style: const TextStyle(fontSize: 16),
+          builder: (context, setState) {
+            return buildStandardDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.enterYourEmail,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: emailResetController,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.email,
+                      border: OutlineInputBorder(),
+                      errorText: Validators.validateEmail(
+                                  emailResetController.text, context) ==
+                              null
+                          ? null
+                          : AppLocalizations.of(context)!.enterValidEmail,
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    onChanged: (value) {
+                      setState(() {
+                        isValidEmail =
+                            Validators.validateEmail(value, context) == null;
+                      });
+                    },
+                  ),
+                ],
               ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: emailResetController,
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.email,
-                  border: OutlineInputBorder(),
-                  errorText: Validators.validateEmail(
-                              emailResetController.text, context) == null
-                      ? null
-                      : AppLocalizations.of(context)!.enterValidEmail,
+              footer: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(AppLocalizations.of(context)!.dialogCancel),
                 ),
-                keyboardType: TextInputType.emailAddress,
-                onChanged: (value) {
-                  setState(() {
-                    isValidEmail =
-                        Validators.validateEmail(value, context) == null;
-                  });
-                },
-              ),
-            ],
-          ),
-          footer: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(AppLocalizations.of(context)!.dialogCancel),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary, 
-                foregroundColor: Colors.white, 
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8), 
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              ),
-              onPressed: isValidEmail
-                    ? () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              AppLocalizations.of(context)!.passwordResetSent,
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                  ),
+                  onPressed: isValidEmail
+                      ? () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                AppLocalizations.of(context)!.passwordResetSent,
+                              ),
+                              backgroundColor: AppColors.green,
                             ),
-                            backgroundColor: AppColors.green,
-                          ),
-                        );
-                        Navigator.pop(context);
-                      }
-                    : null,
-                child: Text(AppLocalizations.of(context)!.send),
-              ),
-            ],
-          );
-        },
-      );
-    },
-  );
-}
+                          );
+                          Navigator.pop(context);
+                        }
+                      : null,
+                  child: Text(AppLocalizations.of(context)!.send),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -236,6 +239,17 @@ class LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                     const SizedBox(height: 10),
+
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(context,MaterialPageRoute(builder: (context) => SignupScreen()),
+                        );
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)!.dontHaveAccount,
+                        style: TextStyle(color: AppColors.primary),
+                      ),
+                    ),
 
                     /// Botão de Login
                     ElevatedButton(

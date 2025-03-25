@@ -117,5 +117,13 @@
   "category_dress": "Dress",
   "@category_dress": {},
   "category_pants": "Pants",
-  "@category_pants": {}
+  "@category_pants": {},
+  "signup": "Sign Up",
+  "@signup": {},
+  "nameRequired": "Name is required",
+  "@nameRequired": {},
+  "alreadyHaveAccount": "Already have an account? Log in",
+  "@alreadyHaveAccount": {},
+  "dontHaveAccount": "Don't have an account? Sign up",
+  "@dontHaveAccount": {}
 }

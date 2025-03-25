@@ -113,5 +113,13 @@
   "enterValidEmail": "Por favor, insira um e-mail válido.",
   "@enterValidEmail": {},
   "profile": "Perfil",
-  "@profile": {}
+  "@profile": {},
+  "signup": "Cadastrar",
+  "@signup": {},
+  "nameRequired": "Nome é obrigatório",
+  "@nameRequired": {},
+  "alreadyHaveAccount": "Já tem uma conta? Faça login",
+  "@alreadyHaveAccount": {},
+  "dontHaveAccount": "Não tem uma conta? Cadastre-se",
+  "@dontHaveAccount": {}
 }
