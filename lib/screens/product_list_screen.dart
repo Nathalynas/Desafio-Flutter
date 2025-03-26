@@ -41,6 +41,7 @@ class ProductListScreen extends StatelessWidget {
 
           /// Botão para mudar idioma
           IconButton(
+            tooltip: AppLocalizations.of(context)!.chooseLanguage,
             icon: const Icon(
               Icons.language,
               size: 30,

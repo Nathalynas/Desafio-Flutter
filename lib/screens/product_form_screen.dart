@@ -53,6 +53,9 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                   onSubmit: (data) async {
                     final provider =
                         Provider.of<ProductProvider>(context, listen: false);
+                    final navigator = Navigator.of(context);
+                    final messenger = ScaffoldMessenger.of(context);
+
                     final newProduct = {
                       'id': DateTime.now().millisecondsSinceEpoch % 10000,
                       'name': data['product_name'],
@@ -64,16 +67,15 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                     provider.addProduct(newProduct);
                     final addedProductId = provider.products.last['id'];
 
-                    final snackbarProductSuccess =
-                        AppLocalizations.of(context)!.snackbarProductSuccess;
-                    final snackbarUndo =
-                        AppLocalizations.of(context)!.snackbarUndo;
+                    final snackbarProductSuccess =AppLocalizations.of(context)!.snackbarProductSuccess;
+                    final snackbarUndo =AppLocalizations.of(context)!.snackbarUndo;
 
-                    Navigator.pushNamed(context, Routes.productList);
+                    navigator.pushNamed(Routes.productList);
 
                     Future.delayed(const Duration(milliseconds: 300), () {
                       if (!mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
+
+                      messenger.showSnackBar(
                         SnackBar(
                           content: Text(
                             snackbarProductSuccess,
@@ -140,7 +142,8 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                       customRules: [
                         (value) {
                           final parsed = double.tryParse(
-                            value?.replaceAll('.', '').replaceAll(',', '.') ?? '',
+                            value?.replaceAll('.', '').replaceAll(',', '.') ??
+                                '',
                           );
                           if (parsed == null || parsed <= 0.0) {
                             return 'O preço deve ser maior que zero';

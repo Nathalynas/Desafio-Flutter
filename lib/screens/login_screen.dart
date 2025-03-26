@@ -140,45 +140,52 @@ class LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 20),
 
                   AForm(
-                    key: _formKey,
-                    fromJson: (_) => {},
-                    fields: [
-                      AFieldEmail(
-                        identifier: 'email',
-                        label: AppLocalizations.of(context)!.email,
-                        required: true,
-                      ),
-                      AFieldPassword(
-                        identifier: 'password',
-                        label: AppLocalizations.of(context)!.password,
-                        minLength: 6,
-                      ),
-                    ],
-                    onSubmit: (data) async {
-                      setState(() => _isLoading = true);
+                      showDefaultAction: false,
+                      key: _formKey,
+                      fromJson: (_) => {},
+                      fields: [
+                        AFieldEmail(
+                          identifier: 'email',
+                          label: AppLocalizations.of(context)!.email,
+                          required: true,
+                        ),
+                        AFieldPassword(
+                          identifier: 'password',
+                          label: AppLocalizations.of(context)!.password,
+                          minLength: 6,
+                        ),
+                      ],
+                      onSubmit: (data) async {
+                        setState(() => _isLoading = true);
 
-                      final email = data['email']?.trim() ?? '';
-                      final password = data['password']?.trim() ?? '';
+                        final navigator = Navigator.of(context);
+                        final messenger = ScaffoldMessenger.of(context);
+                        final localizations = AppLocalizations.of(context)!;
 
-                      if (email == "teste@email.com" && password == "123456") {
-                        await AuthService.saveLoginToken(email);
+                        try {
+                          final email = data['email']?.trim() ?? '';
+                          final password = data['password']?.trim() ?? '';
 
-                        if (!mounted) return;
-                        Navigator.pushNamedAndRemoveUntil(context,Routes.productList,(route) => false,);
-                      } else {
-                        if (!mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(AppLocalizations.of(context)!
-                                .invalidCredentials),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
+                          if (email == "teste@email.com" &&
+                              password == "123456") {
+                            await AuthService.saveLoginToken(email);
 
-                      setState(() => _isLoading = false);
-                    },
-                  ),
+                            navigator.pushNamedAndRemoveUntil(
+                                Routes.productList, (route) => false);
+                          } else {
+                            messenger.showSnackBar(
+                              SnackBar(
+                                content: Text(localizations.invalidCredentials),
+                                backgroundColor: AppColors.accent,
+                              ),
+                            );
+                          }
+                        } finally {
+                          setState(() => _isLoading = false);
+                        }
+
+                        return null;
+                      }),
 
                   const SizedBox(height: 10),
 
@@ -234,8 +241,8 @@ class LoginScreenState extends State<LoginScreen> {
                     onPressed: _isLoading
                         ? null
                         : () {
-                            if (_formKey.currentState != null) {
-                              _formKey.currentState!.save();
+                            if (_formKey.currentState?.validate() ?? false) {
+                              _formKey.currentState?.save();
                             }
                           },
                     style: ElevatedButton.styleFrom(
@@ -269,6 +276,7 @@ class LoginScreenState extends State<LoginScreen> {
             top: 40,
             right: 20,
             child: IconButton(
+              tooltip: AppLocalizations.of(context)!.chooseLanguage,
               icon: const Icon(Icons.language,
                   color: AppColors.background, size: 30),
               onPressed: () {
