@@ -1,8 +1,10 @@
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/routes.dart';
+import 'package:awidgets/fields/a_field_email.dart';
+import 'package:awidgets/fields/a_field_password.dart';
+import 'package:awidgets/fields/a_field_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import '../utils/validators.dart';
 import 'package:almeidatec/services/auth_service.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -22,14 +24,14 @@ class SignupScreenState extends State<SignupScreen> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
-      
+
       String name = _nameController.text.trim();
       String email = _emailController.text.trim();
       String password = _passwordController.text.trim();
-      
+
       // Simula o cadastro do usuário
       await AuthService.registerUser(name, email, password);
-      
+
       if (!mounted) return;
       Navigator.pushNamedAndRemoveUntil(
         context,
@@ -67,41 +69,34 @@ class SignupScreenState extends State<SignupScreen> {
               children: [
                 Image.asset('assets/logo.png', height: 100),
                 const SizedBox(height: 10),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.name,
-                    labelStyle: const TextStyle(color: AppColors.textPrimary),
-                  ),
-                  validator: (value) =>
-                      value!.isEmpty ? AppLocalizations.of(context)!.nameRequired : null,
-                  style: const TextStyle(color: AppColors.textPrimary),
+
+                // Campo de nome
+                AFieldText(
+                  identifier: 'name',
+                  label: AppLocalizations.of(context)!.name,
+                  onChanged: (value) {
+                    _nameController.text != value;
+                  },
                 ),
                 const SizedBox(height: 10),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.email,
-                    labelStyle: const TextStyle(color: AppColors.textPrimary),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) =>
-                      Validators.validateEmail(value, context),
-                  style: const TextStyle(color: AppColors.textPrimary),
+
+                AFieldEmail(
+                  identifier: 'email',
+                  required: true,
+                  label: AppLocalizations.of(context)!.email,
+                  onChanged: (value) => _emailController.text = value!,
                 ),
                 const SizedBox(height: 10),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.password,
-                    labelStyle: const TextStyle(color: AppColors.textPrimary),
-                  ),
-                  obscureText: true,
-                  validator: (value) =>
-                      Validators.validatePassword(value, context, minLength: 6),
-                  style: const TextStyle(color: AppColors.textPrimary),
+
+                AFieldPassword(
+                  identifier: 'password',
+                  onChanged: (value) => _passwordController.text = value!,
+                  label: AppLocalizations.of(context)!.password,
+                  minLength: 6,
                 ),
                 const SizedBox(height: 20),
+
+                // Botão de cadastro
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
@@ -114,7 +109,8 @@ class SignupScreenState extends State<SignupScreen> {
                   onPressed: _isLoading ? null : _submitForm,
                   child: _isLoading
                       ? const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white))
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white))
                       : Text(
                           AppLocalizations.of(context)!.signup,
                           style: const TextStyle(
@@ -124,6 +120,8 @@ class SignupScreenState extends State<SignupScreen> {
                         ),
                 ),
                 const SizedBox(height: 10),
+
+                // Já tem uma conta?
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(

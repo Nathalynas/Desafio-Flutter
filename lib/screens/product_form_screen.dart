@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/routes.dart';
+import 'package:awidgets/fields/a_drop_option.dart';
+import 'package:awidgets/fields/a_field_drop_down.dart';
+import 'package:awidgets/fields/a_field_money.dart';
+import 'package:awidgets/fields/a_field_text.dart';
+import 'package:awidgets/general/a_form.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../configs.dart';
 import '../providers/product_provider.dart';
-import '../utils/validators.dart';
 
 class ProductFormScreen extends StatefulWidget {
   const ProductFormScreen({super.key});
@@ -17,26 +19,6 @@ class ProductFormScreen extends StatefulWidget {
 }
 
 class ProductFormScreenState extends State<ProductFormScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _quantityController = TextEditingController();
-  final MoneyMaskedTextController _priceController = productPriceFormatter;
-
-  late String _selectedCategory;
-  int productCode = DateTime.now().millisecondsSinceEpoch % 10000;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedCategory = "dress";
-  }
-
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      _showCustomDialog(context);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,8 +34,9 @@ class ProductFormScreenState extends State<ProductFormScreen> {
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.background),
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pushNamed(context, Routes.productList)),
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pushNamed(context, Routes.productList),
+        ),
       ),
       body: Container(
         width: double.infinity,
@@ -64,240 +47,104 @@ class ProductFormScreenState extends State<ProductFormScreen> {
               padding: const EdgeInsets.all(20.0),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 600),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// Nome do Produto
-                      _buildTextFormField(
-                        label: AppLocalizations.of(context)!.name,
-                        controller: _nameController,
-                        validator: (value) =>
-                            Validators.validateRequired(value, context),
-                      ),
-                      const SizedBox(height: 20),
+                child: AForm<Map<String, dynamic>>(
+                  fromJson: (json) => json as Map<String, dynamic>,
+                  submitText: AppLocalizations.of(context)!.dialogSave,
+                  onSubmit: (data) async {
+                    final provider =
+                        Provider.of<ProductProvider>(context, listen: false);
+                    final newProduct = {
+                      'id': DateTime.now().millisecondsSinceEpoch % 10000,
+                      'name': data['product_name'],
+                      'category': data['category'],
+                      'quantity': int.tryParse(data['product_quantity']) ?? 0,
+                      'price': data['product_price'],
+                    };
 
-                      /// Categoria
-                      _buildDropdown(
-                        AppLocalizations.of(context)!
-                            .category, // Título traduzido
-                        _selectedCategory,
-                        {
-                          "dress": AppLocalizations.of(context)!.dress,
-                          "pants": AppLocalizations.of(context)!.pants,
-                          "shirt": AppLocalizations.of(context)!.shirt,
-                        },
-                        (value) => setState(() => _selectedCategory = value!),
-                      ),
-                      const SizedBox(height: 20),
+                    provider.addProduct(newProduct);
+                    final addedProductId = provider.products.last['id'];
 
-                      /// Quantidade
-                      _buildTextFormField(
-                        label: AppLocalizations.of(context)!.quantity,
-                        controller: _quantityController,
-                        validator: (value) =>
-                            Validators.validateInteger(value, context),
-                        keyboardType: TextInputType.number,
-                      ),
-                      const SizedBox(width: 20),
+                    final snackbarProductSuccess =
+                        AppLocalizations.of(context)!.snackbarProductSuccess;
+                    final snackbarUndo =
+                        AppLocalizations.of(context)!.snackbarUndo;
 
-                      /// Preço
-                      _buildTextFormField(
-                        label: AppLocalizations.of(context)!.price,
-                        controller: _priceController,
-                        keyboardType: TextInputType.number,
-                        validator: (value) =>
-                            Validators.validatePrice(value, context),
-                      ),
-                      const SizedBox(height: 20),
+                    Navigator.pushNamed(context, Routes.productList);
 
-                      /// Botão de Salvar
-                      Center(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: radiusBorder,
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 15),
+                    Future.delayed(const Duration(milliseconds: 300), () {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            snackbarProductSuccess,
+                            style: const TextStyle(color: AppColors.background),
                           ),
-                          onPressed: _submitForm,
-                          child: Text(
-                            AppLocalizations.of(context)!.dialogSave,
-                            style: TextStyle(
-                              color: AppColors.background,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          backgroundColor: AppColors.green,
+                          duration: const Duration(seconds: 5),
+                          behavior: SnackBarBehavior.floating,
+                          action: SnackBarAction(
+                            label: snackbarUndo,
+                            textColor: AppColors.background,
+                            onPressed: () {
+                              provider.deleteProduct(addedProductId);
+                            },
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      );
+                    });
+
+                    return null;
+                  },
+                  onCancelled: () async {
+                    Navigator.pushNamed(context, Routes.productList);
+                  },
+                  fields: [
+                    AFieldText(
+                      identifier: 'product_name',
+                      label: AppLocalizations.of(context)!.name,
+                      required: true,
+                    ),
+                    const SizedBox(height: 20),
+                    AFieldDropDown<String>(
+                      identifier: 'category',
+                      label: AppLocalizations.of(context)!.category,
+                      required: true,
+                      initialValue: "dress",
+                      options: [
+                        AOption<String>(
+                          label: AppLocalizations.of(context)!.dress,
+                          value: "dress",
+                        ),
+                        AOption<String>(
+                          label: AppLocalizations.of(context)!.pants,
+                          value: "pants",
+                        ),
+                        AOption<String>(
+                          label: AppLocalizations.of(context)!.shirt,
+                          value: "shirt",
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    AFieldText(
+                      identifier: 'product_quantity',
+                      label: AppLocalizations.of(context)!.quantity,
+                      required: true,
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 20),
+                    AFieldMoney(
+                      identifier: 'product_price',
+                      label: AppLocalizations.of(context)!.price,
+                      required: true,
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
         ),
       ),
-    );
-  }
-
-  Future<void> _showCustomDialog(BuildContext context) async {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return buildStandardDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.dialogTitle,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 15),
-              Text(AppLocalizations.of(context)!.dialogMessage),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TextButton(
-                    onPressed: () =>
-                        Navigator.pushNamed(context, Routes.productForm),
-                    child: Text(
-                      AppLocalizations.of(context)!.dialogCancel,
-                      style: TextStyle(color: AppColors.accent),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      _saveProduct();
-                      Navigator.pushNamed(context, Routes.productList);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context)!.dialogSave,
-                      style: const TextStyle(color: AppColors.background),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  /// Valida o formulário e salva o produto
-  void _saveProduct() {
-    if (!_formKey.currentState!.validate()) return;
-
-    final provider = Provider.of<ProductProvider>(context, listen: false);
-
-    final newProduct = {
-      'name': _nameController.text,
-      'category': _selectedCategory,
-      'quantity': int.tryParse(_quantityController.text) ?? 0,
-      'price': _priceController.text,
-    };
-    provider.addProduct(newProduct);
-    final addedProductId = provider.products.last['id'];
-
-    /// Reseta o formulário
-    _formKey.currentState!.reset();
-    setState(() {
-      _priceController.updateValue(0.0);
-    });
-
-    /// Obtendo o contexto do ScaffoldMessenger antes de fechar o diálogo
-    final messengerContext = ScaffoldMessenger.of(context);
-    final snackbarProductSuccess =AppLocalizations.of(context)!.snackbarProductSuccess;
-    final snackbarUndo = AppLocalizations.of(context)!.snackbarUndo;
-
-    Navigator.pushNamed(context, Routes.productList);
-
-    /// Aguarde um curto período antes de exibir o SnackBar
-    Future.delayed(Duration(milliseconds: 300), () {
-      messengerContext.showSnackBar(
-        SnackBar(
-          content: Text(
-            snackbarProductSuccess,
-            style: TextStyle(color: AppColors.background),
-          ),
-          backgroundColor: AppColors.green,
-          duration: const Duration(seconds: 5),
-          behavior: SnackBarBehavior.floating,
-          action: SnackBarAction(
-            label: snackbarUndo,
-            textColor: AppColors.background,
-            onPressed: () {
-              provider.deleteProduct(addedProductId); 
-            },
-          ),
-        ),
-      );
-    });
-  }
-
-  Widget _buildTextFormField({
-    required String label,
-    required TextEditingController controller,
-    String? Function(String?)? validator,
-    TextInputType? keyboardType,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.bodyLarge?.color,
-          ),
-        ),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          validator: validator,
-          style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDropdown(
-    String label,
-    String value,
-    Map<String, String> options,
-    ValueChanged<String?> onChanged,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.bodyLarge?.color,
-          ),
-        ),
-        DropdownButtonFormField<String>(
-          value: value,
-          items: options.entries.map((entry) {
-            return DropdownMenuItem(
-              value: entry.key,
-              child: Text(entry.value),
-            );
-          }).toList(),
-          onChanged: onChanged,
-          dropdownColor: Theme.of(context).cardColor,
-        ),
-      ],
     );
   }
 }

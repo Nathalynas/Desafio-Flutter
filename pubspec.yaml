@@ -16,6 +16,10 @@ dependencies:
     sdk: flutter
   intl: any
   shared_preferences: ^2.2.2
+  awidgets:
+    git:
+      url: https://gitlab.com/almeidatech/awidgets.git
+      ref: main
 
   cupertino_icons: ^1.0.8
   provider: ^6.1.2
@@ -25,7 +29,7 @@ dependencies:
 
 dev_dependencies:
   flutter_lints: ^5.0.0
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.3
 
 flutter_icons:
   android: true

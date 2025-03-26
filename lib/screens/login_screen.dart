@@ -1,11 +1,15 @@
-import 'package:almeidatec/core/colors.dart';
-import 'package:almeidatec/routes.dart';
-import 'package:almeidatec/screens/signup_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:awidgets/general/a_form.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:awidgets/fields/a_field_email.dart';
+import 'package:awidgets/fields/a_field_password.dart';
+
 import '../configs.dart';
 import '../utils/validators.dart';
-import 'package:almeidatec/services/auth_service.dart';
+import '../services/auth_service.dart';
+import '../routes.dart';
+import '../core/colors.dart';
+import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function(Locale) changeLanguage;
@@ -17,42 +21,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _stayConnected = false;
   bool _isLoading = false;
-
-  Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-
-      // Simula uma autenticação simples
-      String email = _emailController.text.trim();
-      String password = _passwordController.text.trim();
-
-      if (email == "teste@email.com" && password == "123456") {
-        await AuthService.saveLoginToken(email);
-
-        if (!mounted) return;
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          Routes.productList,
-          (route) => false,
-        );
-      } else {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.invalidCredentials),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-
-      setState(() => _isLoading = false);
-    }
-  }
 
   void _showForgotPasswordDialog() {
     TextEditingController emailResetController = TextEditingController();
@@ -76,7 +47,7 @@ class LoginScreenState extends State<LoginScreen> {
                     controller: emailResetController,
                     decoration: InputDecoration(
                       labelText: AppLocalizations.of(context)!.email,
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
                       errorText: Validators.validateEmail(
                                   emailResetController.text, context) ==
                               null
@@ -152,134 +123,148 @@ class LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset('assets/logo.png', height: 150),
-                    const SizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        AppLocalizations.of(context)!.loginMessage,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                        ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset('assets/logo.png', height: 150),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      AppLocalizations.of(context)!.loginMessage,
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                  ),
+                  const SizedBox(height: 20),
 
-                    /// Campo de e-mail
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.email,
-                        labelStyle:
-                            const TextStyle(color: AppColors.textPrimary),
-                        errorStyle: TextStyle(color: AppColors.accent),
+                  AForm(
+                    key: _formKey,
+                    fromJson: (_) => {},
+                    fields: [
+                      AFieldEmail(
+                        identifier: 'email',
+                        label: AppLocalizations.of(context)!.email,
+                        required: true,
                       ),
-                      keyboardType: TextInputType.emailAddress,
-                      autofillHints: const <String>[AutofillHints.email],
-                      validator: (value) =>
-                          Validators.validateEmail(value, context),
-                      style: const TextStyle(color: AppColors.textPrimary),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    /// Campo de senha
-                    TextFormField(
-                      controller: _passwordController,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.password,
-                        labelStyle:
-                            const TextStyle(color: AppColors.textPrimary),
-                        errorStyle: TextStyle(color: AppColors.accent),
+                      AFieldPassword(
+                        identifier: 'password',
+                        label: AppLocalizations.of(context)!.password,
+                        minLength: 6,
                       ),
-                      obscureText: true,
-                      validator: (value) => Validators.validatePassword(
-                          value, context,
-                          minLength: 6),
-                      style: const TextStyle(color: AppColors.textPrimary),
-                    ),
-                    const SizedBox(height: 10),
+                    ],
+                    onSubmit: (data) async {
+                      setState(() => _isLoading = true);
 
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: InkWell(
-                        onTap: _showForgotPasswordDialog,
-                        child: Text(
-                          AppLocalizations.of(context)!.forgotPassword,
-                          style: TextStyle(
-                            color: AppColors.accent,
+                      final email = data['email']?.trim() ?? '';
+                      final password = data['password']?.trim() ?? '';
+
+                      if (email == "teste@email.com" && password == "123456") {
+                        await AuthService.saveLoginToken(email);
+
+                        if (!mounted) return;
+                        Navigator.pushNamedAndRemoveUntil(context,Routes.productList,(route) => false,);
+                      } else {
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(AppLocalizations.of(context)!
+                                .invalidCredentials),
+                            backgroundColor: Colors.red,
                           ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    /// Checkbox "Manter Conectado"
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _stayConnected,
-                          onChanged: (value) {
-                            setState(() {
-                              _stayConnected = value ?? false;
-                            });
-                          },
-                          activeColor: AppColors.primary,
-                        ),
-                        Text(
-                          AppLocalizations.of(context)!.stayConnected,
-                          style: const TextStyle(color: Colors.black87),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(context,MaterialPageRoute(builder: (context) => SignupScreen()),
                         );
-                      },
+                      }
+
+                      setState(() => _isLoading = false);
+                    },
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: InkWell(
+                      onTap: _showForgotPasswordDialog,
                       child: Text(
-                        AppLocalizations.of(context)!.dontHaveAccount,
-                        style: TextStyle(color: AppColors.primary),
+                        AppLocalizations.of(context)!.forgotPassword,
+                        style: TextStyle(color: AppColors.accent),
                       ),
                     ),
+                  ),
+                  const SizedBox(height: 10),
 
-                    /// Botão de Login
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: radiusBorder,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 15)),
-                      onPressed: _isLoading ? null : _submitForm,
-                      child: _isLoading
-                          ? const CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white))
-                          : Text(
-                              AppLocalizations.of(context)!.login,
-                              style: const TextStyle(
-                                color: AppColors.background,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _stayConnected,
+                        onChanged: (value) {
+                          setState(() {
+                            _stayConnected = value ?? false;
+                          });
+                        },
+                        activeColor: AppColors.primary,
+                      ),
+                      Text(
+                        AppLocalizations.of(context)!.stayConnected,
+                        style: const TextStyle(color: Colors.black87),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignupScreen()),
+                      );
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!.dontHaveAccount,
+                      style: TextStyle(color: AppColors.primary),
                     ),
-                  ],
-                ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  /// Botão de submit fora do AForm
+                  ElevatedButton(
+                    onPressed: _isLoading
+                        ? null
+                        : () {
+                            if (_formKey.currentState != null) {
+                              _formKey.currentState!.save();
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: radiusBorder,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 15),
+                    ),
+                    child: _isLoading
+                        ? const CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          )
+                        : Text(
+                            AppLocalizations.of(context)!.login,
+                            style: const TextStyle(
+                              color: AppColors.background,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                ],
               ),
             ),
           ),
 
-          /// Ícone de mudança de idioma
+          /// Botão de troca de idioma
           Positioned(
             top: 40,
             right: 20,
