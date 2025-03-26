@@ -137,6 +137,17 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                       identifier: 'product_price',
                       label: AppLocalizations.of(context)!.price,
                       required: true,
+                      customRules: [
+                        (value) {
+                          final parsed = double.tryParse(
+                            value?.replaceAll('.', '').replaceAll(',', '.') ?? '',
+                          );
+                          if (parsed == null || parsed <= 0.0) {
+                            return 'O preço deve ser maior que zero';
+                          }
+                          return null;
+                        }
+                      ],
                     ),
                   ],
                 ),

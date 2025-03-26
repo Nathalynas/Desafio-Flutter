@@ -152,6 +152,17 @@ class _ProductDialogState extends State<ProductDialog> {
             label: AppLocalizations.of(context)!.price,
             required: true,
             initialValue: widget.product?['price'],
+            customRules: [
+              (value) {
+                final parsed = double.tryParse(
+                  value?.replaceAll('.', '').replaceAll(',', '.') ?? '',
+                );
+                if (parsed == null || parsed <= 0.0) {
+                  return 'O preço deve ser maior que zero';
+                }
+                return null;
+              }
+            ],
           ),
         ],
       ),
