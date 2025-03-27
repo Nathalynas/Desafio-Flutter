@@ -84,8 +84,7 @@ class SignupScreenState extends State<SignupScreen> {
                 label: localizations.password,
                 minLength: 6,
               ),
-              const SizedBox(height: 20),
-
+              const SizedBox(height: 25),
               Builder(
                 builder: (context) {
                   return Center(
@@ -102,29 +101,20 @@ class SignupScreenState extends State<SignupScreen> {
                           ? null
                           : () {
                               final formState = AForm.maybeOf(context);
-                              if (formState == null) {
-                                debugPrint('AForm not found in context');
-                              } else {
-                                formState.onSubmit();
-                              }
+                              formState?.onSubmit();
                             },
-                      child: _isLoading
-                          ? const CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white))
-                          : Text(
-                              localizations.signup,
-                              style: const TextStyle(
-                                color: AppColors.background,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                      child: Text(
+                        localizations.signup,
+                        style: const TextStyle(
+                          color: AppColors.background,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   );
                 },
               ),
               const SizedBox(height: 10),
-              
               Center(
                 child: TextButton(
                   onPressed: () => navigator.pop(),

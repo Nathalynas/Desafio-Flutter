@@ -1,11 +1,8 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:awidgets/general/a_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:awidgets/fields/a_field_email.dart';
 import 'package:awidgets/fields/a_field_password.dart';
-
 import '../configs.dart';
 import '../utils/validators.dart';
 import '../services/auth_service.dart';
@@ -29,6 +26,7 @@ class LoginScreenState extends State<LoginScreen> {
   void _showForgotPasswordDialog() {
     TextEditingController emailResetController = TextEditingController();
     bool isValidEmail = false;
+    bool hasTyped = false;
 
     showDialog(
       context: context,
@@ -46,13 +44,18 @@ class LoginScreenState extends State<LoginScreen> {
                     decoration: InputDecoration(
                       labelText: AppLocalizations.of(context)!.email,
                       border: const OutlineInputBorder(),
-                      errorText: Validators.validateEmail(emailResetController.text, context) == null
-                          ? null
-                          : AppLocalizations.of(context)!.enterValidEmail,
+                      errorText: hasTyped &&
+                              Validators.validateEmail(
+                                      emailResetController.text, context) !=
+                                  null
+                          ? AppLocalizations.of(context)!.enterValidEmail
+                          : null,
                     ),
                     onChanged: (value) {
                       setState(() {
-                        isValidEmail = Validators.validateEmail(value, context) == null;
+                        hasTyped = true;
+                        isValidEmail =
+                            Validators.validateEmail(value, context) == null;
                       });
                     },
                   ),
@@ -95,7 +98,9 @@ class LoginScreenState extends State<LoginScreen> {
             child: Center(
               child: SingleChildScrollView(
                 child: Container(
-                  padding: const EdgeInsets.all(20),
+                  constraints: const BoxConstraints(maxWidth: 350),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                   width: 350,
                   decoration: BoxDecoration(
                     color: AppColors.background,
@@ -111,16 +116,20 @@ class LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Image.asset('assets/logo.png', height: 150),
-                      const SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          AppLocalizations.of(context)!.loginMessage,
-                          style: const TextStyle(color: AppColors.textPrimary),
+                      const SizedBox(height: 20),
+                      Image.asset('assets/logo.png', height: 130),
+                      const SizedBox(height: 15),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 9.0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            AppLocalizations.of(context)!.loginMessage,
+                            style:
+                                const TextStyle(color: AppColors.textPrimary),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 20),
                       AForm<Map<String, dynamic>>(
                         fromJson: (json) => json as Map<String, dynamic>,
                         showDefaultAction: false,
@@ -135,13 +144,16 @@ class LoginScreenState extends State<LoginScreen> {
                             final email = data['email']?.trim() ?? '';
                             final password = data['password']?.trim() ?? '';
 
-                            if (email == "teste@email.com" && password == "123456") {
+                            if (email == "teste@email.com" &&
+                                password == "123456") {
                               await AuthService.saveLoginToken(email);
-                              navigator.pushNamedAndRemoveUntil(Routes.productList, (route) => false);
+                              navigator.pushNamedAndRemoveUntil(
+                                  Routes.productList, (route) => false);
                             } else {
                               messenger.showSnackBar(
                                 SnackBar(
-                                  content: Text(localizations.invalidCredentials),
+                                  content:
+                                      Text(localizations.invalidCredentials),
                                   backgroundColor: AppColors.accent,
                                 ),
                               );
@@ -171,27 +183,30 @@ class LoginScreenState extends State<LoginScreen> {
                               onTap: _showForgotPasswordDialog,
                               child: Text(
                                 AppLocalizations.of(context)!.forgotPassword,
-                                style: TextStyle(color: AppColors.accent),
+                                style: TextStyle(color: AppColors.accent,
+                                decoration: TextDecoration.underline, decorationColor: AppColors.accent, decorationThickness: 1.5),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 5),
                           Row(
                             children: [
                               Checkbox(
                                 value: _stayConnected,
                                 onChanged: (value) {
-                                  setState(() => _stayConnected = value ?? false);
+                                  setState(
+                                      () => _stayConnected = value ?? false);
                                 },
                                 activeColor: AppColors.primary,
                               ),
                               Text(
                                 AppLocalizations.of(context)!.stayConnected,
-                                style: const TextStyle(color: AppColors.textPrimary),
+                                style: const TextStyle(
+                                    color: AppColors.textPrimary),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 15),
                           Builder(
                             builder: (context) {
                               return Center(
@@ -199,17 +214,22 @@ class LoginScreenState extends State<LoginScreen> {
                                   onPressed: _isLoading
                                       ? null
                                       : () {
-                                          final formState = AForm.maybeOf(context);
+                                          final formState =
+                                              AForm.maybeOf(context);
                                           formState?.onSubmit();
                                         },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.primary,
-                                    shape: RoundedRectangleBorder(borderRadius: radiusBorder),
-                                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: radiusBorder),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 50, vertical: 15),
                                   ),
                                   child: _isLoading
                                       ? const CircularProgressIndicator(
-                                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.background),
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  AppColors.background),
                                         )
                                       : Text(
                                           AppLocalizations.of(context)!.login,
@@ -222,17 +242,21 @@ class LoginScreenState extends State<LoginScreen> {
                               );
                             },
                           ),
-                          const SizedBox(height: 10),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const SignupScreen()),
-                              );
-                            },
-                            child: Text(
-                              AppLocalizations.of(context)!.dontHaveAccount,
-                              style: TextStyle(color: AppColors.primary),
+                          const SizedBox(height: 15),
+                          Center(
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SignupScreen()),
+                                );
+                              },
+                              child: Text(
+                                AppLocalizations.of(context)!.dontHaveAccount,
+                                style: TextStyle(color: AppColors.primary),
+                              ),
                             ),
                           ),
                         ],
@@ -248,7 +272,8 @@ class LoginScreenState extends State<LoginScreen> {
             right: 20,
             child: IconButton(
               tooltip: AppLocalizations.of(context)!.chooseLanguage,
-              icon: const Icon(Icons.language, color: AppColors.background, size: 30),
+              icon: const Icon(Icons.language,
+                  color: AppColors.background, size: 30),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -259,7 +284,8 @@ class LoginScreenState extends State<LoginScreen> {
                         children: [
                           Text(
                             AppLocalizations.of(context)!.chooseLanguage,
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 20),
                           Row(
