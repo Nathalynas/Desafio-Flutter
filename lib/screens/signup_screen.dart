@@ -3,6 +3,7 @@ import 'package:almeidatec/routes.dart';
 import 'package:awidgets/fields/a_field_email.dart';
 import 'package:awidgets/fields/a_field_password.dart';
 import 'package:awidgets/fields/a_field_text.dart';
+import 'package:awidgets/general/a_form.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:almeidatec/services/auth_service.dart';
@@ -15,36 +16,13 @@ class SignupScreen extends StatefulWidget {
 }
 
 class SignupScreenState extends State<SignupScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
-
-  Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-
-      String name = _nameController.text.trim();
-      String email = _emailController.text.trim();
-      String password = _passwordController.text.trim();
-
-      // Simula o cadastro do usuário
-      await AuthService.registerUser(name, email, password);
-
-      if (!mounted) return;
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        Routes.login,
-        (route) => false,
-      );
-
-      setState(() => _isLoading = false);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    final navigator = Navigator.of(context);
+
     return Scaffold(
       backgroundColor: AppColors.primary,
       body: Center(
@@ -62,75 +40,101 @@ class SignupScreenState extends State<SignupScreen> {
               ),
             ],
           ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset('assets/logo.png', height: 100),
-                const SizedBox(height: 10),
+          child: AForm<Map<String, dynamic>>(
+            fromJson: (json) => json as Map<String, dynamic>,
+            showDefaultAction: false,
+            submitText: localizations.signup,
+            onSubmit: (data) async {
+              setState(() => _isLoading = true);
 
-                // Campo de nome
-                AFieldText(
-                  identifier: 'name',
-                  label: AppLocalizations.of(context)!.name,
-                  onChanged: (value) {
-                    _nameController.text != value;
-                  },
-                ),
-                const SizedBox(height: 10),
+              final name = data['name']?.trim() ?? '';
+              final email = data['email']?.trim() ?? '';
+              final password = data['password']?.trim() ?? '';
 
-                AFieldEmail(
-                  identifier: 'email',
-                  required: true,
-                  label: AppLocalizations.of(context)!.email,
-                  onChanged: (value) => _emailController.text = value!,
-                ),
-                const SizedBox(height: 10),
+              await AuthService.registerUser(name, email, password);
 
-                AFieldPassword(
-                  identifier: 'password',
-                  onChanged: (value) => _passwordController.text = value!,
-                  label: AppLocalizations.of(context)!.password,
-                  minLength: 6,
-                ),
-                const SizedBox(height: 20),
+              navigator.pushNamedAndRemoveUntil(
+                Routes.login,
+                (route) => false,
+              );
 
-                // Botão de cadastro
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 50, vertical: 15),
-                  ),
-                  onPressed: _isLoading ? null : _submitForm,
-                  child: _isLoading
-                      ? const CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white))
-                      : Text(
-                          AppLocalizations.of(context)!.signup,
-                          style: const TextStyle(
-                            color: AppColors.background,
-                            fontWeight: FontWeight.bold,
-                          ),
+              setState(() => _isLoading = false);
+
+              return null;
+            },
+            fields: [
+              Center(
+                child: Image.asset('assets/logo.png', height: 100),
+              ),
+              const SizedBox(height: 10),
+              AFieldText(
+                identifier: 'name',
+                label: localizations.name,
+                required: true,
+              ),
+              const SizedBox(height: 10),
+              AFieldEmail(
+                identifier: 'email',
+                required: true,
+                label: localizations.email,
+              ),
+              const SizedBox(height: 10),
+              AFieldPassword(
+                identifier: 'password',
+                label: localizations.password,
+                minLength: 6,
+              ),
+              const SizedBox(height: 20),
+
+              Builder(
+                builder: (context) {
+                  return Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                ),
-                const SizedBox(height: 10),
-
-                // Já tem uma conta?
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 15),
+                      ),
+                      onPressed: _isLoading
+                          ? null
+                          : () {
+                              final formState = AForm.maybeOf(context);
+                              if (formState == null) {
+                                debugPrint('AForm not found in context');
+                              } else {
+                                formState.onSubmit();
+                              }
+                            },
+                      child: _isLoading
+                          ? const CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white))
+                          : Text(
+                              localizations.signup,
+                              style: const TextStyle(
+                                color: AppColors.background,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+              
+              Center(
+                child: TextButton(
+                  onPressed: () => navigator.pop(),
                   child: Text(
-                    AppLocalizations.of(context)!.alreadyHaveAccount,
+                    localizations.alreadyHaveAccount,
                     style: TextStyle(color: AppColors.primary),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
