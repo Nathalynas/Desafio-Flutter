@@ -285,7 +285,7 @@ class ProductListScreen extends StatelessWidget {
             AppLocalizations.of(context)!.getProductTranslation(product['name']),
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
         ),

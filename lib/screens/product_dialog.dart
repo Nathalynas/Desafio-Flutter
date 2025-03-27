@@ -151,7 +151,14 @@ class _ProductDialogState extends State<ProductDialog> {
             identifier: 'product_price',
             label: AppLocalizations.of(context)!.price,
             required: true,
-            initialValue: widget.product?['price'],
+            initialValue: widget.product?['price'] != null
+                ? double.tryParse(widget.product!['price']
+                        .toString()
+                        .replaceAll('R\$', '')
+                        .replaceAll('.', '')
+                        .replaceAll(',', '.'))
+                    ?.toStringAsFixed(2)
+                : null,
             customRules: [
               (value) {
                 final parsed = double.tryParse(
