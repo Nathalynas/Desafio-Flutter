@@ -203,8 +203,8 @@ class ProductListScreen extends StatelessWidget {
 
   // Função para abrir o diálogo de cadastro de produto
   void _showProductDialog(BuildContext context) {
-    showDialog(context: context, builder: (context) => const ProductDialog());
-  }
+  showProductDialog(context);
+}
 
   // Criando as colunas da tabela
   List<DataColumn> _buildColumns(BuildContext context) {
@@ -320,11 +320,8 @@ class ProductListScreen extends StatelessWidget {
                 child: IconButton(
                   icon: Icon(Icons.edit, color: Colors.grey[700]),
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => ProductDialog(product: product),
-                    );
-                  },
+                    showProductDialog(context, product: product);
+    },
                 ),
               ),
               Tooltip(

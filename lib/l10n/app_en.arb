@@ -125,5 +125,7 @@
   "alreadyHaveAccount": "Already have an account? Log in",
   "@alreadyHaveAccount": {},
   "dontHaveAccount": "Don't have an account? Sign up",
-  "@dontHaveAccount": {}
+  "@dontHaveAccount": {},
+  "pageNotFound": "Página não encontrada :(",
+  "@pageNotFound": {}
 }
