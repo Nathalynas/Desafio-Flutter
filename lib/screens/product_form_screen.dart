@@ -100,6 +100,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                   onCancelled: () async {
                     Navigator.pushNamed(context, Routes.productList);
                   },
+                  
                   fields: [
                     AFieldText(
                       identifier: 'product_name',
@@ -146,7 +147,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                                 '',
                           );
                           if (parsed == null || parsed <= 0.0) {
-                            return 'O preço deve ser maior que zero';
+                            return AppLocalizations.of(context)!.priceGreaterThanZero;
                           }
                           return null;
                         }

@@ -24,13 +24,13 @@ class SignupScreenState extends State<SignupScreen> {
     final navigator = Navigator.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: Theme.of(context).primaryColor,
       body: Center(
         child: Container(
           padding: const EdgeInsets.all(20),
           width: 350,
           decoration: BoxDecoration(
-            color: AppColors.background,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(10),
             boxShadow: const [
               BoxShadow(
@@ -64,7 +64,7 @@ class SignupScreenState extends State<SignupScreen> {
             },
             fields: [
               Center(
-                child: Image.asset('assets/logo.png', height: 100),
+                child: Image.asset('assets/logo.png', height: 130),
               ),
               const SizedBox(height: 10),
               AFieldText(

@@ -91,7 +91,7 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: Theme.of(context).primaryColor,
       body: Stack(
         children: [
           SafeArea(
@@ -103,7 +103,7 @@ class LoginScreenState extends State<LoginScreen> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                   width: 350,
                   decoration: BoxDecoration(
-                    color: AppColors.background,
+                    color: Theme.of(context).cardColor,
                     borderRadius: radiusBorder,
                     boxShadow: const [
                       BoxShadow(
@@ -126,7 +126,7 @@ class LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             AppLocalizations.of(context)!.loginMessage,
                             style:
-                                const TextStyle(color: AppColors.textPrimary),
+                                TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
                           ),
                         ),
                       ),
@@ -201,8 +201,8 @@ class LoginScreenState extends State<LoginScreen> {
                               ),
                               Text(
                                 AppLocalizations.of(context)!.stayConnected,
-                                style: const TextStyle(
-                                    color: AppColors.textPrimary),
+                                style: TextStyle(
+                                    color: Theme.of(context).textTheme.bodyLarge?.color),
                               ),
                             ],
                           ),
