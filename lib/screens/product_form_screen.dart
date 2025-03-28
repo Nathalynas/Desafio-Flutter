@@ -51,9 +51,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                   fromJson: (json) => json as Map<String, dynamic>,
                   submitText: AppLocalizations.of(context)!.dialogSave,
                   onSubmit: (data) async {
-                    final provider =
-                        Provider.of<ProductProvider>(context, listen: false);
-                    final navigator = Navigator.of(context);
+                    final provider = Provider.of<ProductProvider>(context, listen: false);
                     final messenger = ScaffoldMessenger.of(context);
 
                     final newProduct = {
@@ -70,7 +68,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                     final snackbarProductSuccess =AppLocalizations.of(context)!.snackbarProductSuccess;
                     final snackbarUndo =AppLocalizations.of(context)!.snackbarUndo;
 
-                    navigator.pushNamed(Routes.productList);
+                    Navigator.pop(context, true);
 
                     Future.delayed(const Duration(milliseconds: 300), () {
                       if (!mounted) return;
