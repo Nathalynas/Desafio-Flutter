@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:awidgets/fields/a_drop_option.dart';
@@ -35,7 +34,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
         iconTheme: const IconThemeData(color: AppColors.background),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pushNamed(context, Routes.productList),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Container(
@@ -51,11 +50,11 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                   fromJson: (json) => json as Map<String, dynamic>,
                   submitText: AppLocalizations.of(context)!.dialogSave,
                   onSubmit: (data) async {
-                    final provider = Provider.of<ProductProvider>(context, listen: false);
-                    final messenger = ScaffoldMessenger.of(context);
+                    final provider =  Provider.of<ProductProvider>(context, listen: false);
+                    final newProductId = DateTime.now().millisecondsSinceEpoch % 10000;
 
                     final newProduct = {
-                      'id': DateTime.now().millisecondsSinceEpoch % 10000,
+                      'id': newProductId,
                       'name': data['product_name'],
                       'category': data['category'],
                       'quantity': int.tryParse(data['product_quantity']) ?? 0,
@@ -63,42 +62,14 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                     };
 
                     provider.addProduct(newProduct);
-                    final addedProductId = provider.products.last['id'];
 
-                    final snackbarProductSuccess =AppLocalizations.of(context)!.snackbarProductSuccess;
-                    final snackbarUndo =AppLocalizations.of(context)!.snackbarUndo;
-
-                    Navigator.pop(context, true);
-
-                    Future.delayed(const Duration(milliseconds: 300), () {
-                      if (!mounted) return;
-
-                      messenger.showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            snackbarProductSuccess,
-                            style: const TextStyle(color: AppColors.background),
-                          ),
-                          backgroundColor: AppColors.green,
-                          duration: const Duration(seconds: 5),
-                          behavior: SnackBarBehavior.floating,
-                          action: SnackBarAction(
-                            label: snackbarUndo,
-                            textColor: AppColors.background,
-                            onPressed: () {
-                              provider.deleteProduct(addedProductId);
-                            },
-                          ),
-                        ),
-                      );
-                    });
+                    Navigator.pop(context, 'added:$newProductId');
 
                     return null;
                   },
                   onCancelled: () async {
-                    Navigator.pushNamed(context, Routes.productList);
+                    Navigator.pushNamed(context, Routes.productList); 
                   },
-                  
                   fields: [
                     AFieldText(
                       identifier: 'product_name',
@@ -145,7 +116,8 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                                 '',
                           );
                           if (parsed == null || parsed <= 0.0) {
-                            return AppLocalizations.of(context)!.priceGreaterThanZero;
+                            return AppLocalizations.of(context)!
+                                .priceGreaterThanZero;
                           }
                           return null;
                         }

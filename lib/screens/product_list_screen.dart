@@ -61,11 +61,18 @@ class _ProductListScreenState extends State<ProductListScreen> {
             Tooltip(
               message: AppLocalizations.of(context)!.edit,
               child: IconButton(
-                icon: const Icon(Icons.edit, color: Colors.grey),
-                onPressed: () {
-                  showProductDialog(context, product: item);
-                },
-              ),
+                  icon: const Icon(Icons.edit, color: AppColors.textSecondary),
+                  onPressed: () async {
+                    await showProductDialog(
+                      context,
+                      product: item,
+                      onCompleted: (result) {
+                        if (!mounted) return;
+                        _showProductSnackBar(result);
+                        tableKey.currentState?.reload();
+                      },
+                    );
+                  }),
             ),
             Tooltip(
               message: AppLocalizations.of(context)!.delete,
@@ -198,10 +205,15 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       vertical: 10,
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, Routes.productForm).then((_) {
+                  onPressed: () async {
+                    final result =
+                        await Navigator.pushNamed(context, Routes.productForm);
+
+                    if (!mounted) return;
+                    if (result is String && result.startsWith('added')) {
+                      _showProductSnackBar(result);
                       tableKey.currentState?.reload();
-                    });
+                    }
                   },
                   child: Text(
                     AppLocalizations.of(context)!.newProduct,
@@ -213,12 +225,18 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.accent,
                     shape: RoundedRectangleBorder(borderRadius: radiusBorder),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
                   ),
-                  onPressed: () {
-                    showProductDialog(context).then((_) {
-                      tableKey.currentState?.reload();
-                    });
+                  onPressed: () async {
+                    await showProductDialog(
+                      context,
+                      onCompleted: (result) {
+                        if (!mounted) return;
+                        _showProductSnackBar(result);
+                        tableKey.currentState?.reload();
+                      },
+                    );
                   },
                   child: Row(
                     children: [
@@ -237,8 +255,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 builder: (context, provider, child) {
                   return Theme(
                     data: Theme.of(context).copyWith(
-                      secondaryHeaderColor:
-                          AppColors.primary, 
+                      secondaryHeaderColor: AppColors.primary,
                     ),
                     child: ATable<Map<String, dynamic>>(
                       key: tableKey,
@@ -283,7 +300,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 children: [
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, Routes.productList);
+                      Navigator.pop(context);
                     },
                     child: Text(AppLocalizations.of(context)!.dialogCancel),
                   ),
@@ -292,6 +309,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     onPressed: () {
                       provider.deleteProduct(productId);
                       Navigator.pop(context);
+                      tableKey.currentState?.reload();
                     },
                     style:
                         TextButton.styleFrom(foregroundColor: AppColors.accent),
@@ -303,6 +321,40 @@ class _ProductListScreenState extends State<ProductListScreen> {
           ),
         );
       },
+    );
+  }
+
+  void _showProductSnackBar(String typeWithId) {
+    final provider = Provider.of<ProductProvider>(context, listen: false);
+
+    final split = typeWithId.split(':');
+    final type = split.first;
+    final productId = split.length > 1 ? int.tryParse(split[1]) : null;
+
+    final snackbarMessage = type == 'added'
+        ? AppLocalizations.of(context)!.snackbarProductSuccess
+        : AppLocalizations.of(context)!.snackbarProductUpdated;
+
+    ScaffoldMessenger.of(tableKey.currentContext!).showSnackBar(
+      SnackBar(
+        content: Text(
+          snackbarMessage,
+          style: const TextStyle(color: AppColors.background),
+        ),
+        backgroundColor: AppColors.green,
+        duration: const Duration(seconds: 5),
+        behavior: SnackBarBehavior.floating,
+        action: type == 'added' && productId != null
+            ? SnackBarAction(
+                label: AppLocalizations.of(context)!.snackbarUndo,
+                textColor: AppColors.background,
+                onPressed: () async {
+                  provider.deleteProduct(productId);
+                  tableKey.currentState?.reload();
+                },
+              )
+            : null,
+      ),
     );
   }
 }

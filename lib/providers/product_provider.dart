@@ -10,8 +10,6 @@ class ProductProvider with ChangeNotifier {
 
   // Método para adicionar um produto
   void addProduct(Map<String, dynamic> product) {
-  int newId = _products.isNotEmpty ? _products.last['id'] + 1 : 1; 
-  product['id'] = newId;
   _products.add(product);
   notifyListeners();
 }

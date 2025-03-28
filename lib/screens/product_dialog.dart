@@ -1,5 +1,3 @@
-import 'package:almeidatec/core/colors.dart';
-import 'package:almeidatec/main.dart';
 import 'package:awidgets/fields/a_drop_option.dart';
 import 'package:awidgets/fields/a_field_drop_down.dart';
 import 'package:awidgets/fields/a_field_money.dart';
@@ -10,8 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/product_provider.dart';
 
-Future<void> showProductDialog(BuildContext context, {Map<String, dynamic>? product}) async {
-  final int productCode = product?['id'] ?? DateTime.now().millisecondsSinceEpoch % 10000;
+Future<void> showProductDialog(
+  BuildContext context, {
+  Map<String, dynamic>? product,
+  void Function(String result)? onCompleted,
+}) async {
+  final int productCode =
+      product?['id'] ?? DateTime.now().millisecondsSinceEpoch % 10000;
 
   await AFormDialog.show<Map<String, dynamic>>(
     context,
@@ -26,7 +29,6 @@ Future<void> showProductDialog(BuildContext context, {Map<String, dynamic>? prod
       final provider = Provider.of<ProductProvider>(context, listen: false);
 
       bool isNewProduct = product == null;
-      int? addedProductId;
 
       final productData = {
         'id': isNewProduct ? productCode : product['id'],
@@ -38,37 +40,11 @@ Future<void> showProductDialog(BuildContext context, {Map<String, dynamic>? prod
 
       if (isNewProduct) {
         provider.addProduct(productData);
-        addedProductId = provider.products.last['id'];
+        onCompleted?.call('added:$productCode');
       } else {
         provider.updateProduct(productData);
+        onCompleted?.call('uptade:$productCode');
       }
-
-      final snackbarMessage = isNewProduct
-          ? AppLocalizations.of(context)!.snackbarProductSuccess
-          : AppLocalizations.of(context)!.snackbarProductUpdated;
-
-      final snackbarUndo = AppLocalizations.of(context)!.snackbarUndo;
-
-      Future.delayed(const Duration(milliseconds: 300), () {
-        scaffoldMessengerKey.currentState?.showSnackBar(
-          SnackBar(
-            content: Text(snackbarMessage,
-                style: const TextStyle(color: Colors.white)),
-            backgroundColor: AppColors.green,
-            duration: const Duration(seconds: 5),
-            behavior: SnackBarBehavior.floating,
-            action: isNewProduct
-                ? SnackBarAction(
-                    label: snackbarUndo,
-                    textColor: Colors.white,
-                    onPressed: () {
-                      provider.deleteProduct(addedProductId!);
-                    },
-                  )
-                : null,
-          ),
-        );
-      });
 
       return null; // sucesso
     },
