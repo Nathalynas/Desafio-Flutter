@@ -1,8 +1,10 @@
+import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:awidgets/fields/a_field_email.dart';
 import 'package:awidgets/fields/a_field_password.dart';
 import 'package:awidgets/fields/a_field_text.dart';
+import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_form.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -88,30 +90,20 @@ class SignupScreenState extends State<SignupScreen> {
               Builder(
                 builder: (context) {
                   return Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 15),
-                      ),
-                      onPressed: _isLoading
-                          ? null
-                          : () {
-                              final formState = AForm.maybeOf(context);
-                              formState?.onSubmit();
-                            },
-                      child: Text(
-                        localizations.signup,
-                        style: const TextStyle(
-                          color: AppColors.background,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  );
+                      child: AButton(
+                    text: localizations.signup,
+                    onPressed: () {
+                      final formState = AForm.maybeOf(context);
+                      formState?.onSubmit();
+                    },
+                    loading: _isLoading,
+                    color: AppColors.primary,
+                    textColor: AppColors.background,
+                    fontWeight: FontWeight.bold,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 50, vertical: 15),
+                    borderRadius: radiusBorder.topLeft.x,
+                  ));
                 },
               ),
               const SizedBox(height: 10),

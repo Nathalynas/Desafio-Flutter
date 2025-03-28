@@ -1,6 +1,7 @@
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/routes.dart';
+import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_table.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:almeidatec/main.dart';
@@ -194,40 +195,28 @@ class _ProductListScreenState extends State<ProductListScreen> {
           children: [
             Row(
               children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: radiusBorder,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10,
-                    ),
-                  ),
+                AButton(
+                  text: AppLocalizations.of(context)!.newProduct,
                   onPressed: () async {
                     final result =
                         await Navigator.pushNamed(context, Routes.productForm);
-
                     if (!mounted) return;
                     if (result is String && result.startsWith('added')) {
                       _showProductSnackBar(result);
                       tableKey.currentState?.reload();
                     }
                   },
-                  child: Text(
-                    AppLocalizations.of(context)!.newProduct,
-                    style: const TextStyle(color: AppColors.background),
-                  ),
+                  color: AppColors.primary,
+                  textColor: AppColors.background,
+                  fontWeight: FontWeight.bold,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  borderRadius: radiusBorder.topLeft.x,
                 ),
-                const SizedBox(width: 10), // Espaço entre os botões
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accent,
-                    shape: RoundedRectangleBorder(borderRadius: radiusBorder),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                  ),
+                const SizedBox(width: 10),
+                AButton(
+                  text: AppLocalizations.of(context)!.newProduct,
+                  landingIcon: Icons.add,
                   onPressed: () async {
                     await showProductDialog(
                       context,
@@ -238,15 +227,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       },
                     );
                   },
-                  child: Row(
-                    children: [
-                      const Icon(Icons.add, color: AppColors.background),
-                      const SizedBox(width: 5),
-                      Text(AppLocalizations.of(context)!.newProduct,
-                          style: TextStyle(color: AppColors.background))
-                    ],
-                  ),
-                ),
+                  color: AppColors.accent,
+                  textColor: AppColors.background,
+                  fontWeight: FontWeight.bold,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  borderRadius: radiusBorder.topLeft.x,
+                )
               ],
             ),
             const SizedBox(height: 20),

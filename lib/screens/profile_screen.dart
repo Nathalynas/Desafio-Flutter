@@ -2,6 +2,7 @@ import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:almeidatec/services/auth_service.dart';
+import 'package:awidgets/general/a_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -103,7 +104,7 @@ class ProfileScreenState extends State<ProfileScreen> {
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [ 
+              boxShadow: [
                 BoxShadow(
                   color: AppColors.textPrimary.withValues(alpha: 0.1),
                   blurRadius: 10,
@@ -145,25 +146,19 @@ class ProfileScreenState extends State<ProfileScreen> {
 
                 // Botão de Logout
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.25,
-                  child: ElevatedButton.icon(
-                    onPressed: () => _logout(context),
-                    icon: const Icon(Icons.logout),
-                    label: Text(
-                      localizations.logout,
-                      style: const TextStyle(
-                          fontSize: 16, color: AppColors.background),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      iconColor: AppColors.background,
-                      backgroundColor: AppColors.accent,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                  ),
-                ),
+                    width: MediaQuery.of(context).size.width * 0.25,
+                    child: AButton(
+                      text: localizations.logout,
+                      landingIcon: Icons.logout,
+                      onPressed: () => _logout(context),
+                      color: AppColors.accent,
+                      textColor: AppColors.background,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 20),
+                      borderRadius: radiusBorder.topLeft.x,
+                    )),
               ],
             ),
           ),

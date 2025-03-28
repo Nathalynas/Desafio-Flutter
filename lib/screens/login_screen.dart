@@ -1,3 +1,4 @@
+import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -66,20 +67,27 @@ class LoginScreenState extends State<LoginScreen> {
                   onPressed: () => Navigator.pop(context),
                   child: Text(AppLocalizations.of(context)!.dialogCancel),
                 ),
-                ElevatedButton(
+                AButton(
+                  text: AppLocalizations.of(context)!.send,
                   onPressed: isValidEmail
                       ? () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(AppLocalizations.of(context)!.passwordResetSent),
+                              content: Text(AppLocalizations.of(context)!
+                                  .passwordResetSent),
                               backgroundColor: AppColors.green,
                             ),
                           );
                           Navigator.pop(context);
                         }
                       : null,
-                  child: Text(AppLocalizations.of(context)!.send),
-                ),
+                  color: AppColors.primary,
+                  textColor: AppColors.background,
+                  fontWeight: FontWeight.bold,
+                  borderRadius: radiusBorder.topLeft.x,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                )
               ],
             );
           },
@@ -125,8 +133,11 @@ class LoginScreenState extends State<LoginScreen> {
                           alignment: Alignment.centerLeft,
                           child: Text(
                             AppLocalizations.of(context)!.loginMessage,
-                            style:
-                                TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color),
                           ),
                         ),
                       ),
@@ -183,8 +194,11 @@ class LoginScreenState extends State<LoginScreen> {
                               onTap: _showForgotPasswordDialog,
                               child: Text(
                                 AppLocalizations.of(context)!.forgotPassword,
-                                style: TextStyle(color: AppColors.accent,
-                                decoration: TextDecoration.underline, decorationColor: AppColors.accent, decorationThickness: 1.5),
+                                style: TextStyle(
+                                    color: AppColors.accent,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: AppColors.accent,
+                                    decorationThickness: 1.5),
                               ),
                             ),
                           ),
@@ -202,7 +216,10 @@ class LoginScreenState extends State<LoginScreen> {
                               Text(
                                 AppLocalizations.of(context)!.stayConnected,
                                 style: TextStyle(
-                                    color: Theme.of(context).textTheme.bodyLarge?.color),
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color),
                               ),
                             ],
                           ),
@@ -210,36 +227,20 @@ class LoginScreenState extends State<LoginScreen> {
                           Builder(
                             builder: (context) {
                               return Center(
-                                child: ElevatedButton(
-                                  onPressed: _isLoading
-                                      ? null
-                                      : () {
-                                          final formState =
-                                              AForm.maybeOf(context);
-                                          formState?.onSubmit();
-                                        },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.primary,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: radiusBorder),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 50, vertical: 15),
-                                  ),
-                                  child: _isLoading
-                                      ? const CircularProgressIndicator(
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                  AppColors.background),
-                                        )
-                                      : Text(
-                                          AppLocalizations.of(context)!.login,
-                                          style: const TextStyle(
-                                            color: AppColors.background,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                ),
-                              );
+                                  child: AButton(
+                                text: AppLocalizations.of(context)!.login,
+                                onPressed: () {
+                                  final formState = AForm.maybeOf(context);
+                                  formState?.onSubmit();
+                                },
+                                loading: _isLoading,
+                                color: AppColors.primary,
+                                textColor: AppColors.background,
+                                fontWeight: FontWeight.bold,
+                                borderRadius: radiusBorder.topLeft.x,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 50, vertical: 15),
+                              ));
                             },
                           ),
                           const SizedBox(height: 15),
