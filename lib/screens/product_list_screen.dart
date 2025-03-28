@@ -27,36 +27,36 @@ class _ProductListScreenState extends State<ProductListScreen> {
   Widget build(BuildContext context) {
     final columns = <ATableColumn<Map<String, dynamic>>>[
       ATableColumn(
-        title: AppLocalizations.of(context)!.code,
+        titleWidget: Text(AppLocalizations.of(context)!.code, style: const TextStyle(color: AppColors.background),),
         cellBuilder: (_, __, item) => Text(item['id'].toString()),
       ),
       ATableColumn(
-        title: AppLocalizations.of(context)!.name,
+        titleWidget: Text(AppLocalizations.of(context)!.name, style: const TextStyle(color: AppColors.background),),
         cellBuilder: (_, __, item) => Text(
           AppLocalizations.of(context)!.getProductTranslation(item['name']),
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       ATableColumn(
-        title: AppLocalizations.of(context)!.category,
+        titleWidget: Text(AppLocalizations.of(context)!.category, style: const TextStyle(color: AppColors.background),),
         cellBuilder: (_, __, item) => Text(
           AppLocalizations.of(context)!
               .getCategoryTranslation(item['category']),
         ),
       ),
       ATableColumn(
-        title: AppLocalizations.of(context)!.quantity,
+        titleWidget: Text(AppLocalizations.of(context)!.quantity, style: const TextStyle(color: AppColors.background),),
         cellBuilder: (_, __, item) => Text(
           item['quantity'].toString(),
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       ATableColumn(
-        title: AppLocalizations.of(context)!.price,
+        titleWidget: Text(AppLocalizations.of(context)!.price, style: const TextStyle(color: AppColors.background),),
         cellBuilder: (_, __, item) => Text(item['price'] ?? 'R\$ 0,00'),
       ),
       ATableColumn(
-        title: AppLocalizations.of(context)!.actions,
+        titleWidget: Text(AppLocalizations.of(context)!.actions, style: const TextStyle(color: AppColors.background),),
         cellBuilder: (_, __, item) => Row(
           children: [
             Tooltip(
@@ -104,17 +104,21 @@ class _ProductListScreenState extends State<ProductListScreen> {
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.background),
         actions: [
-          IconButton(
-            icon: Icon(
-              Provider.of<ThemeProvider>(context).isDark
-                  ? Icons.dark_mode
-                  : Icons.light_mode,
-              size: 30,
-              color: AppColors.background,
+          Tooltip(
+            message: AppLocalizations.of(context)!.toggleTheme,
+            child: IconButton(
+              icon: Icon(
+                Provider.of<ThemeProvider>(context).isDark
+                    ? Icons.dark_mode
+                    : Icons.light_mode,
+                size: 30,
+                color: AppColors.background,
+              ),
+              onPressed: () {
+                Provider.of<ThemeProvider>(context, listen: false)
+                    .toggleTheme();
+              },
             ),
-            onPressed: () {
-              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
-            },
           ),
 
           /// Botão para mudar idioma
@@ -175,15 +179,18 @@ class _ProductListScreenState extends State<ProductListScreen> {
             },
           ),
 
-          IconButton(
-            icon: const Icon(
-              Icons.account_circle,
-              size: 30,
-              color: AppColors.background,
+          Tooltip(
+            message: AppLocalizations.of(context)!.profile,
+            child: IconButton(
+              icon: const Icon(
+                Icons.account_circle,
+                size: 30,
+                color: AppColors.background,
+              ),
+              onPressed: () {
+                Navigator.pushNamed(context, Routes.profile);
+              },
             ),
-            onPressed: () {
-              Navigator.pushNamed(context, Routes.profile);
-            },
           ),
         ],
       ),

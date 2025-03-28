@@ -127,5 +127,7 @@
   "dontHaveAccount": "Don't have an account? Sign up",
   "@dontHaveAccount": {},
   "pageNotFound": "Página não encontrada :(",
-  "@pageNotFound": {}
+  "@pageNotFound": {},
+  "toggleTheme": "Toggle theme",
+  "@toggleTheme": {}
 }

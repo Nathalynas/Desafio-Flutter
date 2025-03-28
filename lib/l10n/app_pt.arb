@@ -123,5 +123,7 @@
   "dontHaveAccount": "Não tem uma conta? Cadastre-se",
   "@dontHaveAccount": {},
   "pageNotFound": "Página não encontrada :(",
-  "@pageNotFound": {}
+  "@pageNotFound": {},
+  "toggleTheme": "Alternar tema",
+  "@toggleTheme": {}
 }
