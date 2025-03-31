@@ -1,5 +1,6 @@
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
+import 'package:almeidatec/models/signup.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:awidgets/fields/a_field_email.dart';
 import 'package:awidgets/fields/a_field_password.dart';
@@ -18,7 +19,6 @@ class SignupScreen extends StatefulWidget {
 }
 
 class SignupScreenState extends State<SignupScreen> {
-  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -42,25 +42,23 @@ class SignupScreenState extends State<SignupScreen> {
               ),
             ],
           ),
-          child: AForm<Map<String, dynamic>>(
-            fromJson: (json) => json as Map<String, dynamic>,
+          child: AForm<SignupData>(
+            fromJson: (json) => SignupData.fromJson(json as Map<String, dynamic>),
             showDefaultAction: false,
             submitText: localizations.signup,
-            onSubmit: (data) async {
-              setState(() => _isLoading = true);
+            onSubmit: (SignupData data) async {
 
-              final name = data['name']?.trim() ?? '';
-              final email = data['email']?.trim() ?? '';
-              final password = data['password']?.trim() ?? '';
-
-              await AuthService.registerUser(name, email, password);
+              await AuthService.registerUser(
+                data.name.trim(),
+                data.email.trim(),
+                data.password.trim(),
+              );
 
               navigator.pushNamedAndRemoveUntil(
                 Routes.login,
                 (route) => false,
               );
 
-              setState(() => _isLoading = false);
 
               return null;
             },
@@ -96,7 +94,6 @@ class SignupScreenState extends State<SignupScreen> {
                       final formState = AForm.maybeOf(context);
                       formState?.onSubmit();
                     },
-                    loading: _isLoading,
                     color: AppColors.primary,
                     textColor: AppColors.background,
                     fontWeight: FontWeight.bold,
