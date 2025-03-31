@@ -1,0 +1,23 @@
+targets:
+  $default:
+    builders:
+      json_serializable:
+        generate_for:
+          include:
+            - lib/models/**.dart
+        options:
+          field_rename: snake
+          explicit_to_json: true
+          include_if_null: false
+      freezed:freezed:
+        generate_for:
+          include:
+            - lib/models/**.dart
+        options:
+          copy_with: true
+          build_extensions:
+            '^lib/models/{{}}.dart': ['lib/models/generated/{{}}.freezed.dart']
+      source_gen|combining_builder:
+        options:
+          build_extensions:
+            '^lib/models/{{}}.dart': ['lib/models/generated/{{}}.g.dart']

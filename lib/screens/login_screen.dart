@@ -1,11 +1,13 @@
+import 'package:almeidatec/models/forgot_password.dart';
+import 'package:almeidatec/models/login.dart';
 import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_form.dart';
+import 'package:awidgets/general/a_form_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:awidgets/fields/a_field_email.dart';
 import 'package:awidgets/fields/a_field_password.dart';
 import '../configs.dart';
-import '../utils/validators.dart';
 import '../services/auth_service.dart';
 import '../routes.dart';
 import '../core/colors.dart';
@@ -24,77 +26,31 @@ class LoginScreenState extends State<LoginScreen> {
   bool _stayConnected = false;
   bool _isLoading = false;
 
-  void _showForgotPasswordDialog() {
-    TextEditingController emailResetController = TextEditingController();
-    bool isValidEmail = false;
-    bool hasTyped = false;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return buildStandardDialog(
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(AppLocalizations.of(context)!.enterYourEmail),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: emailResetController,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.email,
-                      border: const OutlineInputBorder(),
-                      errorText: hasTyped &&
-                              Validators.validateEmail(
-                                      emailResetController.text, context) !=
-                                  null
-                          ? AppLocalizations.of(context)!.enterValidEmail
-                          : null,
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        hasTyped = true;
-                        isValidEmail =
-                            Validators.validateEmail(value, context) == null;
-                      });
-                    },
-                  ),
-                ],
-              ),
-              footer: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(AppLocalizations.of(context)!.dialogCancel),
-                ),
-                AButton(
-                  text: AppLocalizations.of(context)!.send,
-                  onPressed: isValidEmail
-                      ? () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(AppLocalizations.of(context)!
-                                  .passwordResetSent),
-                              backgroundColor: AppColors.green,
-                            ),
-                          );
-                          Navigator.pop(context);
-                        }
-                      : null,
-                  color: AppColors.primary,
-                  textColor: AppColors.background,
-                  fontWeight: FontWeight.bold,
-                  borderRadius: radiusBorder.topLeft.x,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                )
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
+  Future<void> _showForgotPasswordDialog() async {
+  await AFormDialog.show<ForgotPasswordData>(
+    context,
+    title: AppLocalizations.of(context)!.forgotPassword,
+    persistent: true,
+    submitText: AppLocalizations.of(context)!.send,
+    fromJson: (json) => ForgotPasswordData.fromJson(json as Map<String, dynamic>),
+    onSubmit: (ForgotPasswordData data) async {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.passwordResetSent),
+          backgroundColor: AppColors.green,
+        ),
+      );
+      return null;
+    },
+    fields: [
+      AFieldEmail(
+        identifier: 'email',
+        label: AppLocalizations.of(context)!.email,
+        required: true,
+      ),
+    ],
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -141,19 +97,19 @@ class LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      AForm<Map<String, dynamic>>(
-                        fromJson: (json) => json as Map<String, dynamic>,
+                      AForm<LoginData>(
+                        fromJson: (json) => LoginData.fromJson(json as Map<String, dynamic>),
                         showDefaultAction: false,
                         submitText: AppLocalizations.of(context)!.login,
-                        onSubmit: (data) async {
+                        onSubmit: (LoginData data) async {
                           setState(() => _isLoading = true);
                           final navigator = Navigator.of(context);
                           final messenger = ScaffoldMessenger.of(context);
                           final localizations = AppLocalizations.of(context)!;
 
                           try {
-                            final email = data['email']?.trim() ?? '';
-                            final password = data['password']?.trim() ?? '';
+                            final email = data.email.trim();
+                            final password = data.password.trim();
 
                             if (email == "teste@email.com" &&
                                 password == "123456") {
@@ -208,8 +164,8 @@ class LoginScreenState extends State<LoginScreen> {
                               Checkbox(
                                 value: _stayConnected,
                                 onChanged: (value) {
-                                  setState(
-                                      () => _stayConnected = value ?? false);
+                                  setState(() => 
+                                    _stayConnected = value ?? false);
                                 },
                                 activeColor: AppColors.primary,
                               ),
@@ -250,8 +206,8 @@ class LoginScreenState extends State<LoginScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SignupScreen()),
+                                      builder: (context) => const SignupScreen(),
+                                  ),
                                 );
                               },
                               child: Text(
