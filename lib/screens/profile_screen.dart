@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
+import 'package:almeidatec/models/profile.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:almeidatec/services/auth_service.dart';
 import 'package:awidgets/general/a_button.dart';
@@ -26,10 +29,22 @@ class ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _name = prefs.getString('user_name') ?? "Nathaly Nascimento";
-      _email = prefs.getString('user_email') ?? "teste@email.com";
-    });
+    // Supondo que há dados do profile salvos como JSON em 'profile_data'
+    final profileJson = prefs.getString('profile_data');
+    if (profileJson != null) {
+      final Map<String, dynamic> jsonData = jsonDecode(profileJson);
+      final profile = ProfileData.fromJson(jsonData);
+      setState(() {
+        _name = profile.name;
+        _email = profile.email;
+      });
+    } else {
+      // Caso não haja dados salvos no formato JSON
+      setState(() {
+        _name = prefs.getString('user_name') ?? "Nathaly Nascimento";
+        _email = prefs.getString('user_email') ?? "teste@email.com";
+      });
+    }
   }
 
   Future<void> _logout(BuildContext context) async {
@@ -54,8 +69,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   Text(
                     localizations.confirmLogoutTitle,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
                   Text(localizations.confirmLogoutMessage),
