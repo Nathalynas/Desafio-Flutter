@@ -1,5 +1,6 @@
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
+import 'package:almeidatec/models/product.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_table.dart';
@@ -20,44 +21,64 @@ class ProductListScreen extends StatefulWidget {
 }
 
 class _ProductListScreenState extends State<ProductListScreen> {
-  final GlobalKey<ATableState<Map<String, dynamic>>> tableKey =
-      GlobalKey<ATableState<Map<String, dynamic>>>();
+  final GlobalKey<ATableState<Product>> tableKey =
+      GlobalKey<ATableState<Product>>();
 
   @override
   Widget build(BuildContext context) {
-    final columns = <ATableColumn<Map<String, dynamic>>>[
+    final provider = Provider.of<ProductProvider>(context, listen: false);
+    final columns = <ATableColumn<Product>>[
       ATableColumn(
-        titleWidget: Text(AppLocalizations.of(context)!.code, style: const TextStyle(color: AppColors.background),),
-        cellBuilder: (_, __, item) => Text(item['id'].toString()),
+        titleWidget: Text(
+          AppLocalizations.of(context)!.code,
+          style: const TextStyle(color: AppColors.background),
+        ),
+        cellBuilder: (_, __, product) => Text(product.id.toString()),
       ),
       ATableColumn(
-        titleWidget: Text(AppLocalizations.of(context)!.name, style: const TextStyle(color: AppColors.background),),
-        cellBuilder: (_, __, item) => Text(
-          AppLocalizations.of(context)!.getProductTranslation(item['name']),
+        titleWidget: Text(
+          AppLocalizations.of(context)!.name,
+          style: const TextStyle(color: AppColors.background),
+        ),
+        cellBuilder: (_, __, product) => Text(
+          AppLocalizations.of(context)!.getProductTranslation(product.name),
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       ATableColumn(
-        titleWidget: Text(AppLocalizations.of(context)!.category, style: const TextStyle(color: AppColors.background),),
-        cellBuilder: (_, __, item) => Text(
+        titleWidget: Text(
+          AppLocalizations.of(context)!.category,
+          style: const TextStyle(color: AppColors.background),
+        ),
+        cellBuilder: (_, __, product) => Text(
           AppLocalizations.of(context)!
-              .getCategoryTranslation(item['category']),
+              .getCategoryTranslation(product.category),
         ),
       ),
       ATableColumn(
-        titleWidget: Text(AppLocalizations.of(context)!.quantity, style: const TextStyle(color: AppColors.background),),
-        cellBuilder: (_, __, item) => Text(
-          item['quantity'].toString(),
+        titleWidget: Text(
+          AppLocalizations.of(context)!.quantity,
+          style: const TextStyle(color: AppColors.background),
+        ),
+        cellBuilder: (_, __, product) => Text(
+          product.quantity.toString(),
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       ATableColumn(
-        titleWidget: Text(AppLocalizations.of(context)!.price, style: const TextStyle(color: AppColors.background),),
-        cellBuilder: (_, __, item) => Text(item['price'] ?? 'R\$ 0,00'),
+        titleWidget: Text(
+          AppLocalizations.of(context)!.price,
+          style: const TextStyle(color: AppColors.background),
+        ),
+        cellBuilder: (_, __, product) =>
+            Text('R\$ ${product.price.toStringAsFixed(2)}'),
       ),
       ATableColumn(
-        titleWidget: Text(AppLocalizations.of(context)!.actions, style: const TextStyle(color: AppColors.background),),
-        cellBuilder: (_, __, item) => Row(
+        titleWidget: Text(
+          AppLocalizations.of(context)!.actions,
+          style: const TextStyle(color: AppColors.background),
+        ),
+        cellBuilder: (_, __, product) => Row(
           children: [
             Tooltip(
               message: AppLocalizations.of(context)!.edit,
@@ -66,8 +87,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   onPressed: () async {
                     await showProductDialog(
                       context,
-                      product: item,
-                      onCompleted: (result) {
+                      product: product,
+                      onCompleted: (String result) {
                         if (!mounted) return;
                         _showProductSnackBar(result);
                         tableKey.currentState?.reload();
@@ -80,11 +101,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               child: IconButton(
                 icon: const Icon(Icons.delete, color: AppColors.accent),
                 onPressed: () {
-                  _showDeleteConfirmationDialog(
-                    context,
-                    Provider.of<ProductProvider>(context, listen: false),
-                    item['id'],
-                  );
+                  _showDeleteConfirmationDialog(context, provider, product.id);
                 },
               ),
             ),
@@ -248,20 +265,19 @@ class _ProductListScreenState extends State<ProductListScreen> {
               child: Consumer<ProductProvider>(
                 builder: (context, provider, child) {
                   return Theme(
-                    data: Theme.of(context).copyWith(
-                      secondaryHeaderColor: AppColors.primary,
-                    ),
-                    child: ATable<Map<String, dynamic>>(
-                      key: tableKey,
-                      columns: columns,
-                      loadItems: (_, __) async => provider.products,
-                      striped: true,
-                      fontSize: 14,
-                      rowPadding: const EdgeInsets.all(12),
-                      customRowColor: (item) =>
-                          item['quantity'] == 0 ? Colors.red.shade50 : null,
-                    ),
-                  );
+                      data: Theme.of(context).copyWith(
+                        secondaryHeaderColor: AppColors.primary,
+                      ),
+                      child: ATable<Product>(
+                        key: tableKey,
+                        columns: columns,
+                        loadItems: (_, __) async => provider.products,
+                        striped: true,
+                        fontSize: 14,
+                        rowPadding: const EdgeInsets.all(12),
+                        customRowColor: (product) =>
+                            product.quantity == 0 ? Colors.red.shade50 : null,
+                      ));
                 },
               ),
             ),

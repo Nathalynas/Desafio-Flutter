@@ -1,4 +1,5 @@
 import 'package:almeidatec/core/colors.dart';
+import 'package:almeidatec/models/product.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:awidgets/fields/a_drop_option.dart';
 import 'package:awidgets/fields/a_field_drop_down.dart';
@@ -55,13 +56,20 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                     final newProductId =
                         DateTime.now().millisecondsSinceEpoch % 10000;
 
-                    final newProduct = {
-                      'id': newProductId,
-                      'name': data['product_name'],
-                      'category': data['category'],
-                      'quantity': int.tryParse(data['product_quantity']) ?? 0,
-                      'price': data['product_price'],
-                    };
+                    final newProduct = Product(
+                      id: newProductId,
+                      name: data['product_name'],
+                      category: data['category'],
+                      quantity: int.tryParse(data['product_quantity']) ?? 0,
+                      price: data['product_price'] is String
+                          ? double.tryParse(
+                                (data['product_price'] as String)
+                                    .replaceAll('.', '')
+                                    .replaceAll(',', '.'),
+                              ) ??
+                              0.0
+                          : (data['product_price'] ?? 0.0),
+                    );
 
                     provider.addProduct(newProduct);
 
