@@ -53,7 +53,6 @@ const double kDialogMinHeight = 200.0;
 const double kDialogMaxHeight = 600.0;
 
 /// Função para criar um diálogo padronizado
-/// Função para criar um diálogo padronizado
 Widget buildStandardDialog({required Widget content, List<Widget>? footer}) {
   return Dialog(
     shape: RoundedRectangleBorder(borderRadius: radiusBorder),
