@@ -13,7 +13,7 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  bool isLoggedIn = await AuthService.isUserLoggedIn();
+  bool isLoggedIn = await AuthService.isUserLoggedInAndStayConnected();
 
   runApp(
     MultiProvider(
@@ -28,6 +28,8 @@ void main() async {
 
 class MyApp extends StatefulWidget {
   final bool isLoggedIn;
+
+  static final GlobalKey<NavigatorState> appStateKey = GlobalKey<NavigatorState>();
 
   const MyApp({super.key, required this.isLoggedIn});
 
@@ -49,6 +51,7 @@ class MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: scaffoldMessengerKey, 
+      navigatorKey: MyApp.appStateKey,
 
       locale: _locale, 
       supportedLocales: const [

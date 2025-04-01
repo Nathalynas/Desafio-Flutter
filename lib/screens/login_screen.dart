@@ -1,3 +1,5 @@
+import 'package:almeidatec/api/api.dart';
+import 'package:almeidatec/core/http_utils.dart';
 import 'package:almeidatec/models/forgot_password.dart';
 import 'package:almeidatec/models/login.dart';
 import 'package:awidgets/general/a_button.dart';
@@ -27,30 +29,31 @@ class LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
 
   Future<void> _showForgotPasswordDialog() async {
-  await AFormDialog.show<ForgotPasswordData>(
-    context,
-    title: AppLocalizations.of(context)!.forgotPassword,
-    persistent: true,
-    submitText: AppLocalizations.of(context)!.send,
-    fromJson: (json) => ForgotPasswordData.fromJson(json as Map<String, dynamic>),
-    onSubmit: (ForgotPasswordData data) async {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.passwordResetSent),
-          backgroundColor: AppColors.green,
+    await AFormDialog.show<ForgotPasswordData>(
+      context,
+      title: AppLocalizations.of(context)!.forgotPassword,
+      persistent: true,
+      submitText: AppLocalizations.of(context)!.send,
+      fromJson: (json) =>
+          ForgotPasswordData.fromJson(json as Map<String, dynamic>),
+      onSubmit: (ForgotPasswordData data) async {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.passwordResetSent),
+            backgroundColor: AppColors.green,
+          ),
+        );
+        return null;
+      },
+      fields: [
+        AFieldEmail(
+          identifier: 'email',
+          label: AppLocalizations.of(context)!.email,
+          required: true,
         ),
-      );
-      return null;
-    },
-    fields: [
-      AFieldEmail(
-        identifier: 'email',
-        label: AppLocalizations.of(context)!.email,
-        required: true,
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,25 +101,32 @@ class LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       AForm<LoginData>(
-                        fromJson: (json) => LoginData.fromJson(json as Map<String, dynamic>),
+                        fromJson: (json) =>
+                            LoginData.fromJson(json as Map<String, dynamic>),
                         showDefaultAction: false,
                         submitText: AppLocalizations.of(context)!.login,
                         onSubmit: (LoginData data) async {
                           setState(() => _isLoading = true);
+
                           final navigator = Navigator.of(context);
                           final messenger = ScaffoldMessenger.of(context);
                           final localizations = AppLocalizations.of(context)!;
 
                           try {
-                            final email = data.email.trim();
-                            final password = data.password.trim();
+                            await API.login.login(
+                              email: data.email.trim(),
+                              password: data.password.trim(),
+                            );
 
-                            if (email == "teste@email.com" &&
-                                password == "123456") {
-                              await AuthService.saveLoginToken(email);
-                              navigator.pushNamedAndRemoveUntil(
-                                  Routes.productList, (route) => false);
-                            } else {
+                            await AuthService.saveLoginToken(data.email);
+                            await AuthService.setStayConnected(_stayConnected);
+
+                            navigator.pushNamedAndRemoveUntil(Routes.productList, (route) => false);
+                          
+                          } catch (e) {
+                            if (e is HTTPError) {
+                              // ignore: avoid_print
+                              print('Erro: ${e.statusCode} - ${e.message}');
                               messenger.showSnackBar(
                                 SnackBar(
                                   content:
@@ -164,8 +174,8 @@ class LoginScreenState extends State<LoginScreen> {
                               Checkbox(
                                 value: _stayConnected,
                                 onChanged: (value) {
-                                  setState(() => 
-                                    _stayConnected = value ?? false);
+                                  setState(
+                                      () => _stayConnected = value ?? false);
                                 },
                                 activeColor: AppColors.primary,
                               ),
@@ -206,7 +216,7 @@ class LoginScreenState extends State<LoginScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const SignupScreen(),
+                                    builder: (context) => const SignupScreen(),
                                   ),
                                 );
                               },

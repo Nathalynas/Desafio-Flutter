@@ -27,8 +27,10 @@ dependencies:
 
   freezed_annotation: ^2.4.1
   json_annotation: ^4.9.0
+  dio: ^5.3.3
 
   flutter_native_splash: ^2.4.4
+  flutter_secure_storage: ^8.0.0
 
 dev_dependencies:
   flutter_lints: ^5.0.0
