@@ -42,8 +42,7 @@ class API {
       (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () => HttpClient()
         ..badCertificateCallback = (X509Certificate cert, String host, int port) {
           return <String>{
-            'api.v2.chatmaster.com.br',
-            'chatmaster.com.br',
+            'estagio.almt.app',
           }.contains(host);
         };
     }
