@@ -129,5 +129,7 @@
   "pageNotFound": "Página não encontrada :(",
   "@pageNotFound": {},
   "toggleTheme": "Toggle theme",
-  "@toggleTheme": {}
+  "@toggleTheme": {},
+  "emailAlreadyInUse": "Email already in use",
+  "@emailAlreadyInUse": {}
 }

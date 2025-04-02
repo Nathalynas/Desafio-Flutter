@@ -19,7 +19,6 @@ class SignupScreen extends StatefulWidget {
 }
 
 class SignupScreenState extends State<SignupScreen> {
-
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
@@ -43,22 +42,41 @@ class SignupScreenState extends State<SignupScreen> {
             ],
           ),
           child: AForm<SignupData>(
-            fromJson: (json) => SignupData.fromJson(json as Map<String, dynamic>),
+            fromJson: (json) =>
+                SignupData.fromJson(json as Map<String, dynamic>),
             showDefaultAction: false,
             submitText: localizations.signup,
             onSubmit: (SignupData data) async {
+              try {
+                await AuthService.registerUser(
+                  data.name.trim(),
+                  data.email.trim(),
+                  data.password.trim(),
+                );
 
-              await AuthService.registerUser(
-                data.name.trim(),
-                data.email.trim(),
-                data.password.trim(),
-              );
+                if (!mounted) return;
 
-              navigator.pushNamedAndRemoveUntil(
-                Routes.login,
-                (route) => false,
-              );
+                navigator.pushNamedAndRemoveUntil(
+                  Routes.login,
+                  (route) => false,
+                );
+              } catch (e) {
+                if (!mounted) return;
 
+                final localizations = AppLocalizations.of(this.context)!;
+
+                final errorMessage =
+                    e.toString().contains('already in use')
+                        ? localizations.emailAlreadyInUse
+                        : e.toString().replaceFirst('Exception: ', '');
+
+                ScaffoldMessenger.of(this.context).showSnackBar(
+                  SnackBar(
+                    content: Text(errorMessage),
+                    backgroundColor: AppColors.accent,
+                  ),
+                );
+              }
 
               return null;
             },

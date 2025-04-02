@@ -1,3 +1,4 @@
+import 'package:almeidatec/api/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
@@ -10,11 +11,18 @@ class AuthService {
     await prefs.setString(_keyToken, token);
   }
 
-  /// Simula o cadastro do usuário e salva um token fictício
-  static Future<void> registerUser(String name, String email, String password) async {
-    // Aqui você pode adicionar lógica para salvar o usuário em um banco de dados ou API
-    await Future.delayed(Duration(seconds: 2)); // Simula um tempo de resposta
-    await saveLoginToken("fake_token_12345"); // Salva um token fictício
+  /// Cadastro do usuário
+  static Future<void> registerUser(
+      String name, String email, String password) async {
+    final api = API.signup;
+
+    await api.signup(
+      name: name,
+      email: email,
+      password: password,
+    );
+
+    return;
   }
 
   /// Busca o token salvo e verifica se o usuário está logado

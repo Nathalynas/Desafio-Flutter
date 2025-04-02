@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
+import 'package:almeidatec/api/api_signup.dart';
 import 'package:almeidatec/models/profile.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
@@ -31,13 +32,15 @@ class API {
   static API instance = API();
 
   static LoginAPI get login => instance._login;
+  static SignupAPI get signup => instance._signup;
 
 
   late LoginAPI _login;
+  late SignupAPI _signup;
 
   API() {
     dio.interceptors.add(_cookies);
-    // Aceite de erro de certificado SSL
+    
     if (!kIsWeb) {
       (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () => HttpClient()
         ..badCertificateCallback = (X509Certificate cert, String host, int port) {
@@ -47,6 +50,7 @@ class API {
         };
     }
     _login = LoginAPI(this);
+    _signup = SignupAPI(this);
   }
 
   Codec<String, String> stringToBase64 = utf8.fuse(base64Url);
