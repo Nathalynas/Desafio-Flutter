@@ -139,5 +139,7 @@
   "somethingWentWrong": "Algo deu errado. Tente novamente.",
   "@somethingWentWrong": {},
   "confirm": "Confirmar",
-  "@confirm": {}
+  "@confirm": {},
+  "expiredCode": "O código de verificação expirou. Solicite um novo.",
+  "@expiredCode": {}
 }

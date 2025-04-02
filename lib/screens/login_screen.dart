@@ -56,10 +56,14 @@ class LoginScreenState extends State<LoginScreen> {
         } catch (e) {
           if (!mounted) return;
           if (e is HTTPError) {
+            final localizations = AppLocalizations.of(context)!;
+            final errorMessage = e.statusCode == 401
+                ? localizations.expiredCode
+                : (e.message ?? localizations.somethingWentWrong);
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(e.message ??
-                    AppLocalizations.of(context)!.somethingWentWrong),
+                content: Text(errorMessage),
                 backgroundColor: AppColors.accent,
               ),
             );
