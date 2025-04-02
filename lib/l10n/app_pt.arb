@@ -141,5 +141,15 @@
   "confirm": "Confirmar",
   "@confirm": {},
   "expiredCode": "O código de verificação expirou. Solicite um novo.",
-  "@expiredCode": {}
+  "@expiredCode": {},
+  "profileUpdated": "Perfil atualizado com sucesso!",
+  "@profileUpdated": {},
+  "editProfile": "Editar Perfil",
+  "@editProfile": {},
+  "currentPassword": "Senha atual",
+  "@currentPassword": {},
+  "wrongPassword": "Senha atual incorreta.",
+  "@wrongPassword": {},
+  "samePassword": "A nova senha não pode ser igual à anterior.",
+  "@samePassword": {}
 }
