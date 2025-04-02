@@ -131,5 +131,17 @@
   "toggleTheme": "Toggle theme",
   "@toggleTheme": {},
   "emailAlreadyInUse": "Email already in use",
-  "@emailAlreadyInUse": {}
+  "@emailAlreadyInUse": {},
+  "resetPassword": "Reset Password",
+  "@resetPassword": {},
+  "newPassword": "New Password",
+  "@newPassword": {},
+  "verificationCode": "Verification Code",
+  "@verificationCode": {},
+  "passwordChanged": "Password reset successfully",
+  "@passwordChanged": {},
+  "somethingWentWrong": "Something went wrong. Please try again.",
+  "@somethingWentWrong": {},
+  "confirm": "Confirm",
+  "@confirm": {}
 }

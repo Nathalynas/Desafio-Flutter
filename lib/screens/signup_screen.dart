@@ -68,7 +68,7 @@ class SignupScreenState extends State<SignupScreen> {
                 final errorMessage =
                     e.toString().contains('already in use')
                         ? localizations.emailAlreadyInUse
-                        : e.toString().replaceFirst('Exception: ', '');
+                        : localizations.somethingWentWrong;
 
                 ScaffoldMessenger.of(this.context).showSnackBar(
                   SnackBar(

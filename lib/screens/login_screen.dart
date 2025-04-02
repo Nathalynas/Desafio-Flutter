@@ -2,6 +2,7 @@ import 'package:almeidatec/api/api.dart';
 import 'package:almeidatec/core/http_utils.dart';
 import 'package:almeidatec/models/forgot_password.dart';
 import 'package:almeidatec/models/login.dart';
+import 'package:awidgets/fields/a_field_text.dart';
 import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_form.dart';
 import 'package:awidgets/general/a_form_dialog.dart';
@@ -37,12 +38,33 @@ class LoginScreenState extends State<LoginScreen> {
       fromJson: (json) =>
           ForgotPasswordData.fromJson(json as Map<String, dynamic>),
       onSubmit: (ForgotPasswordData data) async {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.passwordResetSent),
-            backgroundColor: AppColors.green,
-          ),
-        );
+        try {
+          await API.forgotPassword.sendRecoveryEmail(email: data.email.trim());
+          if (!mounted) return;
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.passwordResetSent),
+              backgroundColor: AppColors.green,
+            ),
+          );
+
+          // Mostrar o diálogo para redefinir senha
+          // ignore: avoid_print
+          print("Código de recuperação enviado com sucesso");
+          await _showResetPasswordDialog();
+        } catch (e) {
+          if (!mounted) return;
+          if (e is HTTPError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(e.message ??
+                    AppLocalizations.of(context)!.somethingWentWrong),
+                backgroundColor: AppColors.accent,
+              ),
+            );
+          }
+        }
         return null;
       },
       fields: [
@@ -121,8 +143,8 @@ class LoginScreenState extends State<LoginScreen> {
                             await AuthService.saveLoginToken(data.email);
                             await AuthService.setStayConnected(_stayConnected);
 
-                            navigator.pushNamedAndRemoveUntil(Routes.productList, (route) => false);
-                          
+                            navigator.pushNamedAndRemoveUntil(
+                                Routes.productList, (route) => false);
                           } catch (e) {
                             if (e is HTTPError) {
                               // ignore: avoid_print
@@ -284,6 +306,56 @@ class LoginScreenState extends State<LoginScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _showResetPasswordDialog() async {
+    await AFormDialog.show<Map<String, dynamic>>(
+      context,
+      title: AppLocalizations.of(context)!.resetPassword,
+      persistent: true,
+      submitText: AppLocalizations.of(context)!.confirm,
+      fromJson: (json) => json as Map<String, dynamic>,
+      onSubmit: (Map<String, dynamic> data) async {
+        try {
+          await API.forgotPassword.resetPassword(
+            code: data['code'],
+            newPassword: data['new_password'],
+          );
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.passwordChanged),
+              backgroundColor: AppColors.green,
+            ),
+          );
+        } catch (e) {
+          if (!mounted) return;
+          if (e is HTTPError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(e.message ??
+                    AppLocalizations.of(context)!.somethingWentWrong),
+                backgroundColor: AppColors.accent,
+              ),
+            );
+          }
+        }
+
+        return null;
+      },
+      fields: [
+        AFieldText(
+          identifier: 'code',
+          label: AppLocalizations.of(context)!.verificationCode,
+          required: true,
+        ),
+        AFieldPassword(
+          identifier: 'new_password',
+          label: AppLocalizations.of(context)!.newPassword,
+          minLength: 6,
+        ),
+      ],
     );
   }
 }

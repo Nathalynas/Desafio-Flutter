@@ -127,5 +127,17 @@
   "toggleTheme": "Alternar tema",
   "@toggleTheme": {},
   "emailAlreadyInUse": "E-mail já cadastrado",
-  "@emailAlreadyInUse": {}
+  "@emailAlreadyInUse": {},
+  "resetPassword": "Redefinir Senha",
+  "@resetPassword": {},
+  "newPassword": "Nova senha",
+  "@newPassword": {},
+  "verificationCode": "Código de verificação",
+  "@verificationCode": {},
+  "passwordChanged": "Senha redefinida com sucesso",
+  "@passwordChanged": {},
+  "somethingWentWrong": "Algo deu errado. Tente novamente.",
+  "@somethingWentWrong": {},
+  "confirm": "Confirmar",
+  "@confirm": {}
 }
