@@ -53,27 +53,28 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                   onSubmit: (data) async {
                     final provider =
                         Provider.of<ProductProvider>(context, listen: false);
-                    final newProductId =
-                        DateTime.now().millisecondsSinceEpoch % 10000;
-
                     final newProduct = Product(
-                      id: newProductId,
+                      id: 0,
                       name: data['product_name'],
                       category: data['category'],
                       quantity: int.tryParse(data['product_quantity']) ?? 0,
-                      price: data['product_price'] is String
-                          ? double.tryParse(
-                                (data['product_price'] as String)
-                                    .replaceAll('.', '')
-                                    .replaceAll(',', '.'),
-                              ) ??
-                              0.0
-                          : (data['product_price'] ?? 0.0),
+                      price: _parsePrice(data['product_price']),
                     );
 
-                    provider.addProduct(newProduct);
-
-                    Navigator.pop(context, 'added:$newProductId');
+                    try {
+                      await provider.addProduct(newProduct);
+                      if (!mounted) return;
+                      Navigator.pop(this.context, 'added');
+                    } catch (e) {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(this.context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              AppLocalizations.of(this.context)!.somethingWentWrong),
+                          backgroundColor: AppColors.accent,
+                        ),
+                      );
+                    }
 
                     return null;
                   },
@@ -107,19 +108,19 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                             identifier: 'category',
                             label: AppLocalizations.of(context)!.category,
                             required: true,
-                            initialValue: "dress",
+                            initialValue: "Vestido",
                             options: [
                               AOption<String>(
                                 label: AppLocalizations.of(context)!.dress,
-                                value: "dress",
+                                value: "Vestido",
                               ),
                               AOption<String>(
                                 label: AppLocalizations.of(context)!.pants,
-                                value: "pants",
+                                value: "Calça",
                               ),
                               AOption<String>(
                                 label: AppLocalizations.of(context)!.shirt,
-                                value: "shirt",
+                                value: "Camiseta",
                               ),
                             ],
                           ),
@@ -162,5 +163,15 @@ class ProductFormScreenState extends State<ProductFormScreen> {
         ), // Center
       ), // Container
     );
+  }
+
+  /// Método para converter string com vírgula/real em double
+  double _parsePrice(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is String) {
+      final cleaned = value.replaceAll('.', '').replaceAll(',', '.');
+      return double.tryParse(cleaned) ?? 0.0;
+    }
+    return value;
   }
 }

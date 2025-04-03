@@ -1,3 +1,4 @@
+import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/models/product.dart';
 import 'package:awidgets/fields/a_drop_option.dart';
 import 'package:awidgets/fields/a_field_drop_down.dart';
@@ -14,9 +15,6 @@ Future<void> showProductDialog(
   Product? product,
   void Function(String result)? onCompleted,
 }) async {
-  final int productCode =
-      product?.id ?? DateTime.now().millisecondsSinceEpoch % 10000;
-
   await AFormDialog.show<Map<String, dynamic>>(
     context,
     title: product == null
@@ -31,26 +29,29 @@ Future<void> showProductDialog(
       final bool isNewProduct = product == null;
 
       final newProduct = Product(
-        id: isNewProduct ? productCode : product.id,
+        id: isNewProduct ? 0 : product.id,
         name: data['product_name'] as String,
         category: data['category'] as String,
         quantity: int.tryParse(data['product_quantity']) ?? 0,
-        price: data['product_price'] is String
-            ? double.tryParse(
-                  (data['product_price'] as String)
-                      .replaceAll('.', '')
-                      .replaceAll(',', '.'),
-                ) ??
-                0.0
-            : (data['product_price'] ?? 0.0),
+        price: _parsePrice(data['product_price']),
       );
 
-      if (isNewProduct) {
-        provider.addProduct(newProduct);
-        onCompleted?.call('added:$productCode');
-      } else {
-        provider.updateProduct(newProduct);
-        onCompleted?.call('uptade:$productCode');
+      try {
+        if (isNewProduct) {
+          await provider.addProduct(newProduct);
+          onCompleted?.call('added');
+        } else {
+          await provider.updateProduct(newProduct);
+          onCompleted?.call('updated');
+        }
+      } catch (e) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.somethingWentWrong),
+            backgroundColor: AppColors.accent,
+          ),
+        );
       }
 
       return null;
@@ -66,11 +67,11 @@ Future<void> showProductDialog(
         identifier: "category",
         label: AppLocalizations.of(context)!.category,
         required: true,
-        initialValue: product?.category ?? 'dress',
+        initialValue: product?.category ?? 'Vestido',
         options: [
-          AOption(label: AppLocalizations.of(context)!.dress, value: 'dress'),
-          AOption(label: AppLocalizations.of(context)!.pants, value: 'pants'),
-          AOption(label: AppLocalizations.of(context)!.shirt, value: 'shirt'),
+          AOption(label: AppLocalizations.of(context)!.dress, value: 'Vestido'),
+          AOption(label: AppLocalizations.of(context)!.pants, value: 'Calça'),
+          AOption(label: AppLocalizations.of(context)!.shirt, value: 'Camiseta'),
         ],
       ),
       AFieldText(
@@ -99,4 +100,14 @@ Future<void> showProductDialog(
       ),
     ],
   );
+}
+
+/// Método para converter string com vírgula/real em double
+double _parsePrice(dynamic value) {
+  if (value == null) return 0.0;
+  if (value is String) {
+    final cleaned = value.replaceAll('.', '').replaceAll(',', '.');
+    return double.tryParse(cleaned) ?? 0.0;
+  }
+  return value;
 }

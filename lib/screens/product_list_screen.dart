@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/product_provider.dart';
 import '../providers/theme_provider.dart';
-import '../utils/app_localizations_extensions.dart';
 
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
@@ -41,7 +40,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           style: const TextStyle(color: AppColors.background),
         ),
         cellBuilder: (_, __, product) => Text(
-          AppLocalizations.of(context)!.getProductTranslation(product.name),
+          translateCategory(context,product.name),
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -51,8 +50,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           style: const TextStyle(color: AppColors.background),
         ),
         cellBuilder: (_, __, product) => Text(
-          AppLocalizations.of(context)!
-              .getCategoryTranslation(product.category),
+          translateCategory(context, product.category),
         ),
       ),
       ATableColumn(
@@ -271,7 +269,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       child: ATable<Product>(
                         key: tableKey,
                         columns: columns,
-                        loadItems: (_, __) async => provider.products,
+                        loadItems: (_, __) async {
+                          await provider.loadProducts();
+                          return provider.products;
+                        },
                         striped: true,
                         fontSize: 14,
                         rowPadding: const EdgeInsets.all(12),
@@ -316,9 +317,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   ),
                   const SizedBox(width: 10),
                   TextButton(
-                    onPressed: () {
-                      provider.deleteProduct(productId);
-                      Navigator.pop(context);
+                    onPressed: () async {
+                      await provider.deleteProduct(productId);
+                      if (!mounted) return;
+                      Navigator.pop(this.context);
                       tableKey.currentState?.reload();
                     },
                     style:
@@ -366,5 +368,20 @@ class _ProductListScreenState extends State<ProductListScreen> {
             : null,
       ),
     );
+  }
+
+  String translateCategory(BuildContext context, String rawCategory) {
+    final l10n = AppLocalizations.of(context)!;
+
+    switch (rawCategory.toLowerCase()) {
+      case 'vestido':
+        return l10n.dress;
+      case 'calça':
+        return l10n.pants;
+      case 'camiseta':
+        return l10n.shirt;
+      default:
+        return rawCategory;
+    }
   }
 }

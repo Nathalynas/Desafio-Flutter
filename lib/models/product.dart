@@ -5,12 +5,15 @@ part 'generated/product.g.dart';
 
 @Freezed()
 class Product with _$Product {
-  const factory Product({
+  factory Product({
     required int id,
     required String name,
-    required String category,
+    // ignore: invalid_annotation_target
+    @JsonKey(name: 'category_type') required String category,
     required int quantity,
-    required double price,
+    // ignore: invalid_annotation_target
+    @JsonKey(name: 'value') required double price,
+    String? url,
   }) = _Product;
 
   factory Product.fromJson(Map<String, dynamic> json) =>
