@@ -2,14 +2,17 @@ import 'package:almeidatec/api/api.dart';
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/core/http_utils.dart';
+import 'package:almeidatec/core/main_drawer.dart';
+import 'package:almeidatec/main.dart';
+import 'package:almeidatec/providers/theme_provider.dart';
 import 'package:almeidatec/routes.dart';
-import 'package:almeidatec/services/auth_service.dart';
 import 'package:awidgets/fields/a_field_password.dart';
 import 'package:awidgets/fields/a_field_text.dart';
 import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_form_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -43,75 +46,95 @@ class ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> _logout(BuildContext context) async {
-    bool confirmLogout = await _showLogoutConfirmationDialog(context);
-    if (confirmLogout) {
-      try {
-        await API.login.logout();
-      } catch (e) {
-        debugPrint('Erro ao deslogar do servidor: $e');
-      }
-
-      await AuthService.logout();
-      if (!context.mounted) return;
-      Navigator.pushNamedAndRemoveUntil(
-          context, Routes.login, (route) => false);
-    }
-  }
-
-  Future<bool> _showLogoutConfirmationDialog(BuildContext context) async {
-    final localizations = AppLocalizations.of(context)!;
-
-    return await showDialog(
-          context: context,
-          builder: (context) {
-            return buildStandardDialog(
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    localizations.confirmLogoutTitle,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(localizations.confirmLogoutMessage),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(false),
-                        child: Text(localizations.dialogCancel),
-                      ),
-                      const SizedBox(width: 10),
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        style: TextButton.styleFrom(
-                            foregroundColor: AppColors.accent),
-                        child: Text(localizations.logout),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        ) ??
-        false;
-  }
-
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-
     return Scaffold(
+      drawer: const MainDrawer(),
       appBar: AppBar(
+        automaticallyImplyLeading: true,
         title: Text(
-          localizations.profile,
+          AppLocalizations.of(context)!.profile,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: AppColors.primary,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.background),
+        actions: [
+          Tooltip(
+            message: AppLocalizations.of(context)!.toggleTheme,
+            child: IconButton(
+              icon: Icon(
+                Provider.of<ThemeProvider>(context).isDark
+                    ? Icons.dark_mode
+                    : Icons.light_mode,
+                size: 30,
+                color: AppColors.background,
+              ),
+              onPressed: () {
+                Provider.of<ThemeProvider>(context, listen: false)
+                    .toggleTheme();
+              },
+            ),
+          ),
+
+          /// Botão para mudar idioma
+          IconButton(
+            tooltip: AppLocalizations.of(context)!.chooseLanguage,
+            icon: const Icon(
+              Icons.language,
+              size: 30,
+              color: AppColors.background,
+            ),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return buildStandardDialog(
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!.chooseLanguage,
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                final myAppState = context
+                                    .findAncestorStateOfType<MyAppState>();
+                                myAppState?.changeLanguage(Locale('en'));
+                                Navigator.pushNamed(
+                                    context, Routes.profile);
+                              },
+                              child: const Text("English"),
+                            ),
+                            const SizedBox(width: 60),
+                            TextButton(
+                              onPressed: () {
+                                final myAppState = context
+                                    .findAncestorStateOfType<MyAppState>();
+                                myAppState?.changeLanguage(Locale('pt'));
+                                Navigator.pushNamed(
+                                    context, Routes.profile);
+                              },
+                              child: const Text("Português"),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Padding(
@@ -178,23 +201,6 @@ class ProfileScreenState extends State<ProfileScreen> {
                     borderRadius: radiusBorder.topLeft.x,
                   ),
                 ),
-
-                const SizedBox(height: 10),
-                // Botão de Logout
-                SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.25,
-                    child: AButton(
-                      text: localizations.logout,
-                      landingIcon: Icons.logout,
-                      onPressed: () => _logout(context),
-                      color: AppColors.accent,
-                      textColor: AppColors.background,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 20),
-                      borderRadius: radiusBorder.topLeft.x,
-                    )),
               ],
             ),
           ),

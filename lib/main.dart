@@ -1,5 +1,6 @@
 import 'package:almeidatec/providers/product_provider.dart';
 import 'package:almeidatec/providers/theme_provider.dart';
+import 'package:almeidatec/providers/user_provider.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -20,6 +21,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => ProductProvider()),
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => UserProvider()),
       ],
       child: MyApp(isLoggedIn: isLoggedIn),
     ),

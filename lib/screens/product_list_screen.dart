@@ -1,5 +1,6 @@
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
+import 'package:almeidatec/core/main_drawer.dart';
 import 'package:almeidatec/models/product.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:awidgets/general/a_button.dart';
@@ -40,7 +41,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           style: const TextStyle(color: AppColors.background),
         ),
         cellBuilder: (_, __, product) => Text(
-          translateCategory(context,product.name),
+          translateCategory(context, product.name),
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -110,8 +111,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).cardColor,
+
+      drawer: const MainDrawer(),
+
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         title: Text(
           AppLocalizations.of(context)!.productList,
           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -192,20 +196,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 },
               );
             },
-          ),
-
-          Tooltip(
-            message: AppLocalizations.of(context)!.profile,
-            child: IconButton(
-              icon: const Icon(
-                Icons.account_circle,
-                size: 30,
-                color: AppColors.background,
-              ),
-              onPressed: () {
-                Navigator.pushNamed(context, Routes.profile);
-              },
-            ),
           ),
         ],
       ),

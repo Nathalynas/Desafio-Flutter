@@ -9,7 +9,7 @@ class ProductProvider with ChangeNotifier {
 
   /// Carrega todos os produtos do backend
   Future<void> loadProducts() async {
-    final result = await API.products.getAllProducts();
+    final result = await API.products.getAllProducts(accountId: 1);
     _products = result.map((json) => Product.fromJson(json)).toList();
     notifyListeners();
   }

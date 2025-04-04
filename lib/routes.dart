@@ -1,4 +1,5 @@
 import 'package:almeidatec/screens/profile_screen.dart';
+import 'package:almeidatec/screens/user_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/product_form_screen.dart';
@@ -14,6 +15,7 @@ class Routes {
   static const String productForm = '/product-form';
   static const String productList = '/product-list';
   static const String profile = '/profile';
+  static const String userList = '/user-list';
 
   static Route<dynamic> generateRoute(
       RouteSettings settings, Function(Locale) changeLanguage) {
@@ -27,6 +29,9 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case productList:
         return MaterialPageRoute(builder: (_) => ProductListScreen());
+      case userList:
+        return MaterialPageRoute(
+            builder: (_) => const UserListScreen());
       default:
         return MaterialPageRoute(
           builder: (context) => Scaffold(

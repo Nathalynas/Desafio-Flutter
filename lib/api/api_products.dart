@@ -27,13 +27,18 @@ class ProductAPI extends BaseModuleAPI {
     debugPrint('Resposta: ${response.data}');
   }
 
-  Future<List<Map<String, dynamic>>> getAllProducts() async {
-    final response = await requestWrapper(
-      () => api.dio.get('/products'),
-    );
-    debugPrint('[RAW PRODUCTS RESPONSE] ${response.data}'); 
-    return List<Map<String, dynamic>>.from(response.data);
-  }
+  Future<List<Map<String, dynamic>>> getAllProducts({required int accountId}) async {
+  final response = await requestWrapper(
+    () => api.dio.get(
+      '/products',
+      queryParameters: {
+        'account_id': accountId, 
+      },
+    ),
+  );
+  debugPrint('[RAW PRODUCTS RESPONSE] ${response.data}');
+  return List<Map<String, dynamic>>.from(response.data);
+}
 
   Future<Map<String, dynamic>> getProductById(int productId) async {
     final response = await requestWrapper(
