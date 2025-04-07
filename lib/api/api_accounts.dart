@@ -13,7 +13,6 @@ class AccountAPI {
         '/accounts',
       );
       selectedAccount = Account.fromJson(response.data[0]);
-      print(selectedAccount);
       return Account.fromJson(response.data[0]);
     } on DioException catch (e) {
       // ignore: avoid_print

@@ -1,3 +1,5 @@
+import 'package:almeidatec/core/http_utils.dart';
+import 'package:almeidatec/models/account.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'generated/user.freezed.dart';
@@ -10,10 +12,8 @@ class User with _$User {
     required String name,
     required String email,
     required String password,
-    required Map<String, dynamic> permissions,
-    // ignore: invalid_annotation_target
-    @JsonKey(name: 'account_id') required int? accountId,
+    required List<PermissionData> permissions,
   }) = _User;
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  factory User.fromJson(JSON json) => _$UserFromJson(json);
 }

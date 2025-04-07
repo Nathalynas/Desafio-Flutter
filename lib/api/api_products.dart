@@ -23,26 +23,25 @@ class ProductAPI extends BaseModuleAPI {
           "category_type": categoryType,
           "quantity": quantity,
           "value": value,
-          "url": null, 
+          "url": null,
         }),
       ),
     );
     debugPrint('Resposta: ${response.data}');
   }
 
-  Future<List<Map<String, dynamic>>> getAllProducts({required int accountId}) async {
-    print(accountId);
-  final response = await requestWrapper(
-    () => api.dio.get(
-      '/products',
-      queryParameters: {
-        'account_id': selectedAccount!.id, 
-      },
-    ),
-  );
-  debugPrint('[RAW PRODUCTS RESPONSE] ${response.data}');
-  return List<Map<String, dynamic>>.from(response.data);
-}
+  Future<List<Map<String, dynamic>>> getAllProducts() async {
+    final response = await requestWrapper(
+      () => api.dio.get(
+        '/products',
+        queryParameters: {
+          'account_id': selectedAccount!.id,
+        },
+      ),
+    );
+    debugPrint('[RAW PRODUCTS RESPONSE] ${response.data}');
+    return List<Map<String, dynamic>>.from(response.data);
+  }
 
   Future<Map<String, dynamic>> getProductById(int productId) async {
     final response = await requestWrapper(
@@ -65,13 +64,13 @@ class ProductAPI extends BaseModuleAPI {
       "quantity": quantity,
       "value": value,
       "url": null,
-    };         
+    };
 
     await requestWrapper(
       () => api.dio.patch(
         '/product/update',
         queryParameters: {
-          'product_id': id, 
+          'product_id': id,
           'account_id': accountId ?? null,
         },
         data: jsonEncode(data),

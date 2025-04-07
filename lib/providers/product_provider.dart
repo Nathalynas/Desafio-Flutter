@@ -12,24 +12,18 @@ class ProductProvider with ChangeNotifier {
   int? get accountId => _accountId;
 
   Future<void> _loadAccountId() async {
-    if (_accountId != null) return;
-
-    _accountId = selectedAccount!.id;
-
-    if (_accountId == null) {
-      throw Exception("accountId não encontrado no token JWT");
-    }
+    await API.accounts.getAccounts();
   }
 
   /// Carrega todos os produtos do backend
   Future<void> loadProducts() async {
     await _loadAccountId();
 
-    if (_accountId == null) {
-      throw Exception("accountId não foi carregado");
+    if (selectedAccount == null) {
+      await API.accounts.getAccounts();
     }
 
-    final result = await API.products.getAllProducts(accountId: _accountId!);
+    final result = await API.products.getAllProducts();
     _products = result.map((json) => Product.fromJson(json)).toList();
     notifyListeners();
   }

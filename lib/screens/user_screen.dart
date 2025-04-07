@@ -3,6 +3,7 @@ import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/core/main_drawer.dart';
 import 'package:almeidatec/main.dart';
+import 'package:almeidatec/models/account.dart';
 import 'package:almeidatec/providers/theme_provider.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:awidgets/fields/a_field_checkbox_list.dart';
@@ -295,16 +296,11 @@ class _UserListScreenState extends State<UserListScreen> {
             name: json['name'],
             email: json['email'],
             password: json['password'],
-            permissions: Map<String, dynamic>.from(json['permissions']),
-            accountId: user?.accountId ?? 0,
+            permissions: json['permissions'],
           ),
           onSubmit: (userData) async {
             final provider = Provider.of<UserProvider>(context, listen: false);
-
-            final result = await API().getUserData();
-            final accountId = selectedAccount!.id;
-
-            final userToCreate = userData.copyWith(accountId: accountId ?? 0);
+            final userToCreate = userData.copyWith(id: user!.id);
 
             if (isEdit) {
               await provider.updateUser(userToCreate);

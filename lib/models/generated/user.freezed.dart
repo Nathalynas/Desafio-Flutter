@@ -24,10 +24,7 @@ mixin _$User {
   String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   String get password => throw _privateConstructorUsedError;
-  Map<String, dynamic> get permissions =>
-      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
-  @JsonKey(name: 'account_id')
-  int? get accountId => throw _privateConstructorUsedError;
+  List<PermissionData> get permissions => throw _privateConstructorUsedError;
 
   /// Serializes this User to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -48,8 +45,7 @@ abstract class $UserCopyWith<$Res> {
       String name,
       String email,
       String password,
-      Map<String, dynamic> permissions,
-      @JsonKey(name: 'account_id') int? accountId});
+      List<PermissionData> permissions});
 }
 
 /// @nodoc
@@ -72,7 +68,6 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? email = null,
     Object? password = null,
     Object? permissions = null,
-    Object? accountId = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -94,11 +89,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
       permissions: null == permissions
           ? _value.permissions
           : permissions // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>,
-      accountId: freezed == accountId
-          ? _value.accountId
-          : accountId // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as List<PermissionData>,
     ) as $Val);
   }
 }
@@ -115,8 +106,7 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       String name,
       String email,
       String password,
-      Map<String, dynamic> permissions,
-      @JsonKey(name: 'account_id') int? accountId});
+      List<PermissionData> permissions});
 }
 
 /// @nodoc
@@ -136,7 +126,6 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? email = null,
     Object? password = null,
     Object? permissions = null,
-    Object? accountId = freezed,
   }) {
     return _then(_$UserImpl(
       id: null == id
@@ -158,11 +147,7 @@ class __$$UserImplCopyWithImpl<$Res>
       permissions: null == permissions
           ? _value._permissions
           : permissions // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>,
-      accountId: freezed == accountId
-          ? _value.accountId
-          : accountId // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as List<PermissionData>,
     ));
   }
 }
@@ -175,8 +160,7 @@ class _$UserImpl implements _User {
       required this.name,
       required this.email,
       required this.password,
-      required final Map<String, dynamic> permissions,
-      @JsonKey(name: 'account_id') required this.accountId})
+      required final List<PermissionData> permissions})
       : _permissions = permissions;
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
@@ -190,22 +174,17 @@ class _$UserImpl implements _User {
   final String email;
   @override
   final String password;
-  final Map<String, dynamic> _permissions;
+  final List<PermissionData> _permissions;
   @override
-  Map<String, dynamic> get permissions {
-    if (_permissions is EqualUnmodifiableMapView) return _permissions;
+  List<PermissionData> get permissions {
+    if (_permissions is EqualUnmodifiableListView) return _permissions;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(_permissions);
+    return EqualUnmodifiableListView(_permissions);
   }
-
-// ignore: invalid_annotation_target
-  @override
-  @JsonKey(name: 'account_id')
-  final int? accountId;
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name, email: $email, password: $password, permissions: $permissions, accountId: $accountId)';
+    return 'User(id: $id, name: $name, email: $email, password: $password, permissions: $permissions)';
   }
 
   @override
@@ -219,15 +198,13 @@ class _$UserImpl implements _User {
             (identical(other.password, password) ||
                 other.password == password) &&
             const DeepCollectionEquality()
-                .equals(other._permissions, _permissions) &&
-            (identical(other.accountId, accountId) ||
-                other.accountId == accountId));
+                .equals(other._permissions, _permissions));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, email, password,
-      const DeepCollectionEquality().hash(_permissions), accountId);
+      const DeepCollectionEquality().hash(_permissions));
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
@@ -251,8 +228,7 @@ abstract class _User implements User {
       required final String name,
       required final String email,
       required final String password,
-      required final Map<String, dynamic> permissions,
-      @JsonKey(name: 'account_id') required final int? accountId}) = _$UserImpl;
+      required final List<PermissionData> permissions}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
@@ -265,10 +241,7 @@ abstract class _User implements User {
   @override
   String get password;
   @override
-  Map<String, dynamic> get permissions; // ignore: invalid_annotation_target
-  @override
-  @JsonKey(name: 'account_id')
-  int? get accountId;
+  List<PermissionData> get permissions;
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
