@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
+import 'package:almeidatec/api/api_accounts.dart';
 import 'package:almeidatec/api/api_forgot_password.dart';
 import 'package:almeidatec/api/api_products.dart';
 import 'package:almeidatec/api/api_profile.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'api_interceptor_web.dart'
     if (dart.library.io) 'api_interceptor_mobile.dart';
 import 'api_login.dart';
+import 'api_users.dart';
 
 
 // ignore: constant_identifier_names
@@ -40,12 +42,16 @@ class API {
   static ForgotPasswordAPI get forgotPassword => instance._forgotPassword;
   static ProfileAPI get profile => instance._profile;
   static ProductAPI get products => instance._products;
+  static UserAPI get users => instance._users;
+  static AccountAPI get accounts => instance._accounts;
 
   late LoginAPI _login;
   late SignupAPI _signup;
   late ForgotPasswordAPI _forgotPassword;
   late ProfileAPI _profile;
   late ProductAPI _products;
+  late UserAPI _users;
+  late AccountAPI _accounts;
 
   API() {
     dio.interceptors.add(_cookies);
@@ -63,6 +69,8 @@ class API {
     _forgotPassword = ForgotPasswordAPI(this);
     _profile = ProfileAPI(this); 
     _products = ProductAPI(this);
+    _users = UserAPI(this);
+    _accounts = AccountAPI(this);
   }
 
   Codec<String, String> stringToBase64 = utf8.fuse(base64Url);

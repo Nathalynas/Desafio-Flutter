@@ -11,6 +11,7 @@ class ProductAPI extends BaseModuleAPI {
     required String categoryType,
     required int quantity,
     required double value,
+    required int accountId,
   }) async {
     final response = await requestWrapper(
       () => api.dio.post(
@@ -20,6 +21,7 @@ class ProductAPI extends BaseModuleAPI {
           "category_type": categoryType,
           "quantity": quantity,
           "value": value,
+          "account_id": accountId, 
           "url": null, 
         }),
       ),
@@ -53,18 +55,25 @@ class ProductAPI extends BaseModuleAPI {
     required String categoryType,
     required int quantity,
     required double value,
+    int? accountId,
   }) async {
+    final Map<String, dynamic> data = {
+      "name": name,
+      "category_type": categoryType,
+      "quantity": quantity,
+      "value": value,
+      "url": null,
+    };
+
+    if (accountId != null) {
+      data["account_id"] = accountId;
+    }
+
     await requestWrapper(
       () => api.dio.patch(
         '/product/update',
         queryParameters: {'product_id': id},
-        data: jsonEncode({
-          "name": name,
-          "category_type": categoryType,
-          "quantity": quantity,
-          "value": value,
-          "url": null,
-        }),
+        data: jsonEncode(data),
       ),
     );
   }

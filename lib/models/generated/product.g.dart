@@ -14,6 +14,7 @@ _$ProductImpl _$$ProductImplFromJson(Map<String, dynamic> json) =>
       quantity: (json['quantity'] as num).toInt(),
       price: (json['value'] as num).toDouble(),
       url: json['url'] as String?,
+      accountId: (json['account_id'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$ProductImplToJson(_$ProductImpl instance) =>
@@ -24,4 +25,5 @@ Map<String, dynamic> _$$ProductImplToJson(_$ProductImpl instance) =>
       'quantity': instance.quantity,
       'value': instance.price,
       if (instance.url case final value?) 'url': value,
+      'account_id': instance.accountId,
     };

@@ -1,3 +1,4 @@
+import 'package:almeidatec/api/api.dart';
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/core/main_drawer.dart';
@@ -26,6 +27,21 @@ class UserListScreen extends StatefulWidget {
 class _UserListScreenState extends State<UserListScreen> {
   final GlobalKey<ATableState<User>> tableKey = GlobalKey<ATableState<User>>();
   String searchText = '';
+
+  final List<String> availablePermissions = [
+    'Gerenciamento de contas',
+    'Tela de Usuários',
+    'Cadastro e edição de produtos',
+  ];
+
+  List<Option> getPermissionOptions(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    return [
+      Option(localizations.accountManagement, 1),
+      Option(localizations.userScreen, 2),
+      Option(localizations.productForm, 3),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -248,33 +264,10 @@ class _UserListScreenState extends State<UserListScreen> {
                   'name': user.name,
                   'email': user.email,
                   'password': user.password,
-                  'permissions': user.permissions.map((p) {
-                    switch (p) {
-                      case 'Usuários':
-                        return 1;
-                      case 'Criar Produto':
-                        return 2;
-                      case 'Editar Produto':
-                        return 3;
-                      default:
-                        return 0;
-                    }
-                  }).toList(),
+                  'permissions': user.permissions,
                 }
               : null,
           fields: [
-            Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.only(top: 5),
-              child: Text(
-                AppLocalizations.of(context)!.newUser,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),
-              ),
-            ),
             AFieldText(
               label: AppLocalizations.of(context)!.name,
               identifier: 'name',
@@ -290,26 +283,10 @@ class _UserListScreenState extends State<UserListScreen> {
               identifier: 'password',
               required: true,
             ),
-            Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.only(top: 16),
-              child: Text(
-                AppLocalizations.of(context)!.permissions,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),
-              ),
-            ),
             AFieldCheckboxList(
-              label: '',
+              label: AppLocalizations.of(context)!.permissions,
               identifier: 'permissions',
-              options: [
-                Option(AppLocalizations.of(context)!.userScreen, 1),
-                Option(AppLocalizations.of(context)!.productForm, 2),
-                Option(AppLocalizations.of(context)!.productEdit, 3),
-              ],
+              options: getPermissionOptions(context),
               minRequired: 1,
             ),
           ],
@@ -318,26 +295,21 @@ class _UserListScreenState extends State<UserListScreen> {
             name: json['name'],
             email: json['email'],
             password: json['password'],
-            permissions: (json['permissions'] as List).map((id) {
-              switch (id) {
-                case 1:
-                  return AppLocalizations.of(context)!.userScreen;
-                case 2:
-                  return AppLocalizations.of(context)!.productForm;
-                case 3:
-                  return AppLocalizations.of(context)!.productEdit;
-                default:
-                  return AppLocalizations.of(context)!.unknownPermission;
-              }
-            }).toList(),
+            permissions: List<String>.from(json['permissions']),
+            accountId: user?.accountId ?? 0,
           ),
           onSubmit: (userData) async {
             final provider = Provider.of<UserProvider>(context, listen: false);
 
+            final result = await API().getUserData();
+            final accountId = result?.accountId;
+
+            final userToCreate = userData.copyWith(accountId: accountId ?? 0);
+
             if (isEdit) {
-              await provider.updateUser(userData);
+              await provider.updateUser(userToCreate);
             } else {
-              await provider.addUser(userData);
+              await provider.addUser(userToCreate);
             }
 
             return null;

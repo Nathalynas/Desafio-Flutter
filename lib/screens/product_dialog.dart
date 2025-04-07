@@ -26,6 +26,7 @@ Future<void> showProductDialog(
     initialData: product?.toJson(),
     onSubmit: (data) async {
       final provider = Provider.of<ProductProvider>(context, listen: false);
+      final accountId = provider.accountId;
       final bool isNewProduct = product == null;
 
       final newProduct = Product(
@@ -34,6 +35,7 @@ Future<void> showProductDialog(
         category: data['category'] as String,
         quantity: int.tryParse(data['product_quantity']) ?? 0,
         price: _parsePrice(data['product_price']),
+        accountId: accountId ?? 0,
       );
 
       try {

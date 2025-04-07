@@ -32,7 +32,7 @@
   "@edit": {},
   "delete": "Delete",
   "@delete": {},
-  "productForm": "Product Registration",
+  "productForm": "Product Management",
   "@productForm": {},
   "price": "Sale Price",
   "@price": {},
@@ -173,5 +173,7 @@
   "userAdded": "User successfully added!",
   "@userAdded": {},
   "userEdited": "User updated successfully!",
-  "@userEdited": {}
+  "@userEdited": {},
+  "accountManagement": "Account Management",
+  "@accountManagement": {}
 }
