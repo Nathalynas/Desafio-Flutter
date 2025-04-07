@@ -1,9 +1,7 @@
-import 'package:almeidatec/api/api.dart';
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/core/main_drawer.dart';
 import 'package:almeidatec/main.dart';
-import 'package:almeidatec/models/account.dart';
 import 'package:almeidatec/providers/theme_provider.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:awidgets/fields/a_field_checkbox_list.dart';
