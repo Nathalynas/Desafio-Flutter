@@ -24,8 +24,8 @@ mixin _$User {
   String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   String get password => throw _privateConstructorUsedError;
-  List<String> get permissions =>
-      throw _privateConstructorUsedError; 
+  Map<String, dynamic> get permissions =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'account_id')
   int? get accountId => throw _privateConstructorUsedError;
 
@@ -48,7 +48,7 @@ abstract class $UserCopyWith<$Res> {
       String name,
       String email,
       String password,
-      List<String> permissions,
+      Map<String, dynamic> permissions,
       @JsonKey(name: 'account_id') int? accountId});
 }
 
@@ -94,7 +94,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
       permissions: null == permissions
           ? _value.permissions
           : permissions // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as Map<String, dynamic>,
       accountId: freezed == accountId
           ? _value.accountId
           : accountId // ignore: cast_nullable_to_non_nullable
@@ -115,7 +115,7 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       String name,
       String email,
       String password,
-      List<String> permissions,
+      Map<String, dynamic> permissions,
       @JsonKey(name: 'account_id') int? accountId});
 }
 
@@ -158,7 +158,7 @@ class __$$UserImplCopyWithImpl<$Res>
       permissions: null == permissions
           ? _value._permissions
           : permissions // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as Map<String, dynamic>,
       accountId: freezed == accountId
           ? _value.accountId
           : accountId // ignore: cast_nullable_to_non_nullable
@@ -175,7 +175,7 @@ class _$UserImpl implements _User {
       required this.name,
       required this.email,
       required this.password,
-      required final List<String> permissions,
+      required final Map<String, dynamic> permissions,
       @JsonKey(name: 'account_id') required this.accountId})
       : _permissions = permissions;
 
@@ -190,14 +190,15 @@ class _$UserImpl implements _User {
   final String email;
   @override
   final String password;
-  final List<String> _permissions;
+  final Map<String, dynamic> _permissions;
   @override
-  List<String> get permissions {
-    if (_permissions is EqualUnmodifiableListView) return _permissions;
+  Map<String, dynamic> get permissions {
+    if (_permissions is EqualUnmodifiableMapView) return _permissions;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_permissions);
+    return EqualUnmodifiableMapView(_permissions);
   }
 
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'account_id')
   final int? accountId;
@@ -250,7 +251,7 @@ abstract class _User implements User {
       required final String name,
       required final String email,
       required final String password,
-      required final List<String> permissions,
+      required final Map<String, dynamic> permissions,
       @JsonKey(name: 'account_id') required final int? accountId}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
@@ -264,7 +265,7 @@ abstract class _User implements User {
   @override
   String get password;
   @override
-  List<String> get permissions;
+  Map<String, dynamic> get permissions; // ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'account_id')
   int? get accountId;

@@ -21,10 +21,7 @@ ProfileData _$ProfileDataFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ProfileData {
   String get name => throw _privateConstructorUsedError;
-  String get email =>
-      throw _privateConstructorUsedError; 
-  @JsonKey(name: 'account_id')
-  int get accountId => throw _privateConstructorUsedError;
+  String get email => throw _privateConstructorUsedError;
 
   /// Serializes this ProfileData to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,8 +39,7 @@ abstract class $ProfileDataCopyWith<$Res> {
           ProfileData value, $Res Function(ProfileData) then) =
       _$ProfileDataCopyWithImpl<$Res, ProfileData>;
   @useResult
-  $Res call(
-      {String name, String email, @JsonKey(name: 'account_id') int accountId});
+  $Res call({String name, String email});
 }
 
 /// @nodoc
@@ -63,7 +59,6 @@ class _$ProfileDataCopyWithImpl<$Res, $Val extends ProfileData>
   $Res call({
     Object? name = null,
     Object? email = null,
-    Object? accountId = null,
   }) {
     return _then(_value.copyWith(
       name: null == name
@@ -74,10 +69,6 @@ class _$ProfileDataCopyWithImpl<$Res, $Val extends ProfileData>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
-      accountId: null == accountId
-          ? _value.accountId
-          : accountId // ignore: cast_nullable_to_non_nullable
-              as int,
     ) as $Val);
   }
 }
@@ -90,8 +81,7 @@ abstract class _$$ProfileDataImplCopyWith<$Res>
       __$$ProfileDataImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String name, String email, @JsonKey(name: 'account_id') int accountId});
+  $Res call({String name, String email});
 }
 
 /// @nodoc
@@ -109,7 +99,6 @@ class __$$ProfileDataImplCopyWithImpl<$Res>
   $Res call({
     Object? name = null,
     Object? email = null,
-    Object? accountId = null,
   }) {
     return _then(_$ProfileDataImpl(
       name: null == name
@@ -120,10 +109,6 @@ class __$$ProfileDataImplCopyWithImpl<$Res>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
-      accountId: null == accountId
-          ? _value.accountId
-          : accountId // ignore: cast_nullable_to_non_nullable
-              as int,
     ));
   }
 }
@@ -131,10 +116,7 @@ class __$$ProfileDataImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$ProfileDataImpl implements _ProfileData {
-  const _$ProfileDataImpl(
-      {required this.name,
-      required this.email,
-      @JsonKey(name: 'account_id') required this.accountId});
+  const _$ProfileDataImpl({required this.name, required this.email});
 
   factory _$ProfileDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProfileDataImplFromJson(json);
@@ -143,13 +125,10 @@ class _$ProfileDataImpl implements _ProfileData {
   final String name;
   @override
   final String email;
-  @override
-  @JsonKey(name: 'account_id')
-  final int accountId;
 
   @override
   String toString() {
-    return 'ProfileData(name: $name, email: $email, accountId: $accountId)';
+    return 'ProfileData(name: $name, email: $email)';
   }
 
   @override
@@ -158,14 +137,12 @@ class _$ProfileDataImpl implements _ProfileData {
         (other.runtimeType == runtimeType &&
             other is _$ProfileDataImpl &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.email, email) || other.email == email) &&
-            (identical(other.accountId, accountId) ||
-                other.accountId == accountId));
+            (identical(other.email, email) || other.email == email));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, name, email, accountId);
+  int get hashCode => Object.hash(runtimeType, name, email);
 
   /// Create a copy of ProfileData
   /// with the given fields replaced by the non-null parameter values.
@@ -185,10 +162,8 @@ class _$ProfileDataImpl implements _ProfileData {
 
 abstract class _ProfileData implements ProfileData {
   const factory _ProfileData(
-          {required final String name,
-          required final String email,
-          @JsonKey(name: 'account_id') required final int accountId}) =
-      _$ProfileDataImpl;
+      {required final String name,
+      required final String email}) = _$ProfileDataImpl;
 
   factory _ProfileData.fromJson(Map<String, dynamic> json) =
       _$ProfileDataImpl.fromJson;
@@ -196,10 +171,7 @@ abstract class _ProfileData implements ProfileData {
   @override
   String get name;
   @override
-  String get email; 
-  @override
-  @JsonKey(name: 'account_id')
-  int get accountId;
+  String get email;
 
   /// Create a copy of ProfileData
   /// with the given fields replaced by the non-null parameter values.

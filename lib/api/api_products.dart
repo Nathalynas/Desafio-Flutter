@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:almeidatec/api/api_base_module.dart';
+import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/http_utils.dart';
 import 'package:flutter/foundation.dart';
 
@@ -30,11 +31,12 @@ class ProductAPI extends BaseModuleAPI {
   }
 
   Future<List<Map<String, dynamic>>> getAllProducts({required int accountId}) async {
+    print(accountId);
   final response = await requestWrapper(
     () => api.dio.get(
       '/products',
       queryParameters: {
-        'account_id': accountId, 
+        'account_id': selectedAccount!.id, 
       },
     ),
   );

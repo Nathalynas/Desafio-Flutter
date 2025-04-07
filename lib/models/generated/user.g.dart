@@ -11,9 +11,7 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
       name: json['name'] as String,
       email: json['email'] as String,
       password: json['password'] as String,
-      permissions: (json['permissions'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
+      permissions: json['permissions'] as Map<String, dynamic>,
       accountId: (json['account_id'] as num?)?.toInt(),
     );
 

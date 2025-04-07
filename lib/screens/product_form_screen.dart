@@ -53,14 +53,12 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                   onSubmit: (data) async {
                     final provider =
                         Provider.of<ProductProvider>(context, listen: false);
-                    final accountId = provider.accountId;
                     final newProduct = Product(
                       id: 0,
                       name: data['product_name'],
                       category: data['category'],
                       quantity: int.tryParse(data['product_quantity']) ?? 0,
                       price: _parsePrice(data['product_price']),
-                      accountId: accountId ?? 0,
                     );
 
                     try {
@@ -71,8 +69,8 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                       if (!mounted) return;
                       ScaffoldMessenger.of(this.context).showSnackBar(
                         SnackBar(
-                          content: Text(
-                              AppLocalizations.of(this.context)!.somethingWentWrong),
+                          content: Text(AppLocalizations.of(this.context)!
+                              .somethingWentWrong),
                           backgroundColor: AppColors.accent,
                         ),
                       );

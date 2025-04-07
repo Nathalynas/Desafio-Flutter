@@ -10,7 +10,7 @@ class User with _$User {
     required String name,
     required String email,
     required String password,
-    required List<String> permissions,
+    required Map<String, dynamic> permissions,
     // ignore: invalid_annotation_target
     @JsonKey(name: 'account_id') required int? accountId,
   }) = _User;

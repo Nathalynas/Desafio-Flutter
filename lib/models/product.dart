@@ -14,8 +14,6 @@ class Product with _$Product {
     // ignore: invalid_annotation_target
     @JsonKey(name: 'value') required double price,
     String? url,
-    // ignore: invalid_annotation_target
-    @JsonKey(name: 'account_id') required int accountId,
   }) = _Product;
 
   factory Product.fromJson(Map<String, dynamic> json) =>

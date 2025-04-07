@@ -1,4 +1,5 @@
 import 'package:almeidatec/api/api.dart';
+import 'package:almeidatec/configs.dart';
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 
@@ -11,28 +12,27 @@ class ProductProvider with ChangeNotifier {
   int? get accountId => _accountId;
 
   Future<void> _loadAccountId() async {
-  if (_accountId != null) return;
+    if (_accountId != null) return;
 
-  final profile = await API().getUserData();
-  _accountId = profile?.accountId;
+    _accountId = selectedAccount!.id;
 
-  if (_accountId == null) {
-    throw Exception("accountId não encontrado no token JWT");
+    if (_accountId == null) {
+      throw Exception("accountId não encontrado no token JWT");
+    }
   }
-}
 
   /// Carrega todos os produtos do backend
   Future<void> loadProducts() async {
-  await _loadAccountId();
+    await _loadAccountId();
 
-  if (_accountId == null) {
-    throw Exception("accountId não foi carregado");
+    if (_accountId == null) {
+      throw Exception("accountId não foi carregado");
+    }
+
+    final result = await API.products.getAllProducts(accountId: _accountId!);
+    _products = result.map((json) => Product.fromJson(json)).toList();
+    notifyListeners();
   }
-
-  final result = await API.products.getAllProducts(accountId: _accountId!);
-  _products = result.map((json) => Product.fromJson(json)).toList();
-  notifyListeners();
-}
 
   /// Adiciona um novo produto via backend
   Future<void> addProduct(Product product) async {

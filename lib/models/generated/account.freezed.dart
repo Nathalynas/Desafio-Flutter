@@ -22,7 +22,6 @@ Account _$AccountFromJson(Map<String, dynamic> json) {
 mixin _$Account {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  List<String> get permissions => throw _privateConstructorUsedError;
 
   /// Serializes this Account to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -38,7 +37,7 @@ abstract class $AccountCopyWith<$Res> {
   factory $AccountCopyWith(Account value, $Res Function(Account) then) =
       _$AccountCopyWithImpl<$Res, Account>;
   @useResult
-  $Res call({int id, String name, List<String> permissions});
+  $Res call({int id, String name});
 }
 
 /// @nodoc
@@ -58,7 +57,6 @@ class _$AccountCopyWithImpl<$Res, $Val extends Account>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? permissions = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -69,10 +67,6 @@ class _$AccountCopyWithImpl<$Res, $Val extends Account>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      permissions: null == permissions
-          ? _value.permissions
-          : permissions // ignore: cast_nullable_to_non_nullable
-              as List<String>,
     ) as $Val);
   }
 }
@@ -84,7 +78,7 @@ abstract class _$$AccountImplCopyWith<$Res> implements $AccountCopyWith<$Res> {
       __$$AccountImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name, List<String> permissions});
+  $Res call({int id, String name});
 }
 
 /// @nodoc
@@ -102,7 +96,6 @@ class __$$AccountImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? permissions = null,
   }) {
     return _then(_$AccountImpl(
       id: null == id
@@ -113,10 +106,6 @@ class __$$AccountImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      permissions: null == permissions
-          ? _value._permissions
-          : permissions // ignore: cast_nullable_to_non_nullable
-              as List<String>,
     ));
   }
 }
@@ -124,11 +113,7 @@ class __$$AccountImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$AccountImpl implements _Account {
-  const _$AccountImpl(
-      {required this.id,
-      required this.name,
-      required final List<String> permissions})
-      : _permissions = permissions;
+  const _$AccountImpl({required this.id, required this.name});
 
   factory _$AccountImpl.fromJson(Map<String, dynamic> json) =>
       _$$AccountImplFromJson(json);
@@ -137,17 +122,10 @@ class _$AccountImpl implements _Account {
   final int id;
   @override
   final String name;
-  final List<String> _permissions;
-  @override
-  List<String> get permissions {
-    if (_permissions is EqualUnmodifiableListView) return _permissions;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_permissions);
-  }
 
   @override
   String toString() {
-    return 'Account(id: $id, name: $name, permissions: $permissions)';
+    return 'Account(id: $id, name: $name)';
   }
 
   @override
@@ -156,15 +134,12 @@ class _$AccountImpl implements _Account {
         (other.runtimeType == runtimeType &&
             other is _$AccountImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name) &&
-            const DeepCollectionEquality()
-                .equals(other._permissions, _permissions));
+            (identical(other.name, name) || other.name == name));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, name, const DeepCollectionEquality().hash(_permissions));
+  int get hashCode => Object.hash(runtimeType, id, name);
 
   /// Create a copy of Account
   /// with the given fields replaced by the non-null parameter values.
@@ -183,10 +158,8 @@ class _$AccountImpl implements _Account {
 }
 
 abstract class _Account implements Account {
-  const factory _Account(
-      {required final int id,
-      required final String name,
-      required final List<String> permissions}) = _$AccountImpl;
+  const factory _Account({required final int id, required final String name}) =
+      _$AccountImpl;
 
   factory _Account.fromJson(Map<String, dynamic> json) = _$AccountImpl.fromJson;
 
@@ -194,8 +167,6 @@ abstract class _Account implements Account {
   int get id;
   @override
   String get name;
-  @override
-  List<String> get permissions;
 
   /// Create a copy of Account
   /// with the given fields replaced by the non-null parameter values.

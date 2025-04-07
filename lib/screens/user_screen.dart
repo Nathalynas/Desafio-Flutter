@@ -67,7 +67,7 @@ class _UserListScreenState extends State<UserListScreen> {
           AppLocalizations.of(context)!.permissions,
           style: const TextStyle(color: Colors.white),
         ),
-        cellBuilder: (_, __, user) => Text(user.permissions.join(', ')),
+        cellBuilder: (_, __, user) => Text('${user.permissions}'),
       ),
       ATableColumn(
         titleWidget: Text(
@@ -295,14 +295,14 @@ class _UserListScreenState extends State<UserListScreen> {
             name: json['name'],
             email: json['email'],
             password: json['password'],
-            permissions: List<String>.from(json['permissions']),
+            permissions: Map<String, dynamic>.from(json['permissions']),
             accountId: user?.accountId ?? 0,
           ),
           onSubmit: (userData) async {
             final provider = Provider.of<UserProvider>(context, listen: false);
 
             final result = await API().getUserData();
-            final accountId = result?.accountId;
+            final accountId = selectedAccount!.id;
 
             final userToCreate = userData.copyWith(accountId: accountId ?? 0);
 

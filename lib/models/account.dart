@@ -8,7 +8,6 @@ class Account with _$Account {
   const factory Account({
     required int id,
     required String name,
-    required List<String> permissions,
   }) = _Account;
 
   factory Account.fromJson(Map<String, dynamic> json) =>

@@ -143,10 +143,10 @@ class LoginScreenState extends State<LoginScreen> {
                               email: data.email.trim(),
                               password: data.password.trim(),
                             );
-
                             await AuthService.saveLoginToken(data.email);
                             await AuthService.setStayConnected(_stayConnected);
-
+                            await API.accounts.getAccounts();
+                            
                             navigator.pushNamedAndRemoveUntil(
                                 Routes.productList, (route) => false);
                           } catch (e) {

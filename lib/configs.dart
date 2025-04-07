@@ -1,7 +1,9 @@
+import 'package:almeidatec/models/account.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+Account? selectedAccount;
 // Definição da variável para bordas arredondadas
 BorderRadius radiusBorder = BorderRadius.circular(8);
 

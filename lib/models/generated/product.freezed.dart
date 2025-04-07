@@ -22,17 +22,14 @@ Product _$ProductFromJson(Map<String, dynamic> json) {
 mixin _$Product {
   int get id => throw _privateConstructorUsedError;
   String get name =>
-      throw _privateConstructorUsedError; 
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'category_type')
   String get category => throw _privateConstructorUsedError;
   int get quantity =>
-      throw _privateConstructorUsedError; 
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'value')
   double get price => throw _privateConstructorUsedError;
-  String? get url =>
-      throw _privateConstructorUsedError;
-  @JsonKey(name: 'account_id')
-  int get accountId => throw _privateConstructorUsedError;
+  String? get url => throw _privateConstructorUsedError;
 
   /// Serializes this Product to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -54,8 +51,7 @@ abstract class $ProductCopyWith<$Res> {
       @JsonKey(name: 'category_type') String category,
       int quantity,
       @JsonKey(name: 'value') double price,
-      String? url,
-      @JsonKey(name: 'account_id') int accountId});
+      String? url});
 }
 
 /// @nodoc
@@ -79,7 +75,6 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
     Object? quantity = null,
     Object? price = null,
     Object? url = freezed,
-    Object? accountId = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -106,10 +101,6 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
           ? _value.url
           : url // ignore: cast_nullable_to_non_nullable
               as String?,
-      accountId: null == accountId
-          ? _value.accountId
-          : accountId // ignore: cast_nullable_to_non_nullable
-              as int,
     ) as $Val);
   }
 }
@@ -127,8 +118,7 @@ abstract class _$$ProductImplCopyWith<$Res> implements $ProductCopyWith<$Res> {
       @JsonKey(name: 'category_type') String category,
       int quantity,
       @JsonKey(name: 'value') double price,
-      String? url,
-      @JsonKey(name: 'account_id') int accountId});
+      String? url});
 }
 
 /// @nodoc
@@ -150,7 +140,6 @@ class __$$ProductImplCopyWithImpl<$Res>
     Object? quantity = null,
     Object? price = null,
     Object? url = freezed,
-    Object? accountId = null,
   }) {
     return _then(_$ProductImpl(
       id: null == id
@@ -177,10 +166,6 @@ class __$$ProductImplCopyWithImpl<$Res>
           ? _value.url
           : url // ignore: cast_nullable_to_non_nullable
               as String?,
-      accountId: null == accountId
-          ? _value.accountId
-          : accountId // ignore: cast_nullable_to_non_nullable
-              as int,
     ));
   }
 }
@@ -194,8 +179,7 @@ class _$ProductImpl implements _Product {
       @JsonKey(name: 'category_type') required this.category,
       required this.quantity,
       @JsonKey(name: 'value') required this.price,
-      this.url,
-      @JsonKey(name: 'account_id') required this.accountId});
+      this.url});
 
   factory _$ProductImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProductImplFromJson(json);
@@ -204,23 +188,22 @@ class _$ProductImpl implements _Product {
   final int id;
   @override
   final String name;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'category_type')
   final String category;
   @override
   final int quantity;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'value')
   final double price;
   @override
   final String? url;
-  @override
-  @JsonKey(name: 'account_id')
-  final int accountId;
 
   @override
   String toString() {
-    return 'Product(id: $id, name: $name, category: $category, quantity: $quantity, price: $price, url: $url, accountId: $accountId)';
+    return 'Product(id: $id, name: $name, category: $category, quantity: $quantity, price: $price, url: $url)';
   }
 
   @override
@@ -235,15 +218,13 @@ class _$ProductImpl implements _Product {
             (identical(other.quantity, quantity) ||
                 other.quantity == quantity) &&
             (identical(other.price, price) || other.price == price) &&
-            (identical(other.url, url) || other.url == url) &&
-            (identical(other.accountId, accountId) ||
-                other.accountId == accountId));
+            (identical(other.url, url) || other.url == url));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, name, category, quantity, price, url, accountId);
+  int get hashCode =>
+      Object.hash(runtimeType, id, name, category, quantity, price, url);
 
   /// Create a copy of Product
   /// with the given fields replaced by the non-null parameter values.
@@ -263,34 +244,29 @@ class _$ProductImpl implements _Product {
 
 abstract class _Product implements Product {
   factory _Product(
-          {required final int id,
-          required final String name,
-          @JsonKey(name: 'category_type') required final String category,
-          required final int quantity,
-          @JsonKey(name: 'value') required final double price,
-          final String? url,
-          @JsonKey(name: 'account_id') required final int accountId}) =
-      _$ProductImpl;
+      {required final int id,
+      required final String name,
+      @JsonKey(name: 'category_type') required final String category,
+      required final int quantity,
+      @JsonKey(name: 'value') required final double price,
+      final String? url}) = _$ProductImpl;
 
   factory _Product.fromJson(Map<String, dynamic> json) = _$ProductImpl.fromJson;
 
   @override
   int get id;
   @override
-  String get name; 
+  String get name; // ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'category_type')
   String get category;
   @override
-  int get quantity; 
+  int get quantity; // ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'value')
   double get price;
   @override
   String? get url;
-  @override
-  @JsonKey(name: 'account_id')
-  int get accountId;
 
   /// Create a copy of Product
   /// with the given fields replaced by the non-null parameter values.
