@@ -16,12 +16,12 @@ class ProductAPI extends BaseModuleAPI {
     final response = await requestWrapper(
       () => api.dio.post(
         '/product',
+        queryParameters: {'account_id': accountId},
         data: jsonEncode({
           "name": name,
           "category_type": categoryType,
           "quantity": quantity,
           "value": value,
-          "account_id": accountId, 
           "url": null, 
         }),
       ),
@@ -63,16 +63,15 @@ class ProductAPI extends BaseModuleAPI {
       "quantity": quantity,
       "value": value,
       "url": null,
-    };
-
-    if (accountId != null) {
-      data["account_id"] = accountId;
-    }
+    };         
 
     await requestWrapper(
       () => api.dio.patch(
         '/product/update',
-        queryParameters: {'product_id': id},
+        queryParameters: {
+          'product_id': id, 
+          'account_id': accountId ?? null,
+        },
         data: jsonEncode(data),
       ),
     );
