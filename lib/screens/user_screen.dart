@@ -76,7 +76,27 @@ class _UserListScreenState extends State<UserListScreen> {
           AppLocalizations.of(context)!.permissions,
           style: const TextStyle(color: Colors.white),
         ),
-        cellBuilder: (_, __, user) => Text('${user.permissions}'),
+        cellBuilder: (_, __, user) => Wrap(
+          spacing: 6,
+          runSpacing: 4,
+          children: user.permissions.map((p) {
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                // ignore: deprecated_member_use
+                color: AppColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                p.ptBr,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            );
+          }).toList(),
+        ),
       ),
       ATableColumn(
         titleWidget: Text(
@@ -280,6 +300,7 @@ class _UserListScreenState extends State<UserListScreen> {
                         );
                       })
                       .where((i) => i != -1)
+                      .toSet()
                       .toList(),
                 }
               : null,
@@ -313,6 +334,7 @@ class _UserListScreenState extends State<UserListScreen> {
             password: json['password'],
             permissions: (json['permissions'] as List<dynamic>)
                 .map((index) => allPermissions[index as int])
+                .toSet()
                 .toList(),
           ),
           onSubmit: (userData) async {
