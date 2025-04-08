@@ -84,6 +84,8 @@
   "@confirmDelete": {},
   "deleteMessage": "Tem certeza de que deseja excluir este item?",
   "@deleteMessage": {},
+  "snackbarProductDeleted": "Produto deletado com sucesso",
+  "@snackbarProductDeleted": {},
   "editProduct": "Editar Produto",
   "@editProduct": {},
   "snackbarProductUpdated": "Produto atualizado com sucesso!",

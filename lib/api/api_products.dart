@@ -45,7 +45,12 @@ class ProductAPI extends BaseModuleAPI {
 
   Future<Map<String, dynamic>> getProductById(int productId) async {
     final response = await requestWrapper(
-      () => api.dio.get('/product/$productId'),
+      () => api.dio.get(
+        '/product/$productId',
+        queryParameters: {
+          'account_id': selectedAccount!.id,
+        },
+      ),
     );
     return Map<String, dynamic>.from(response.data);
   }
@@ -56,7 +61,7 @@ class ProductAPI extends BaseModuleAPI {
     required String categoryType,
     required int quantity,
     required double value,
-    int? accountId,
+    required int accountId,
   }) async {
     final Map<String, dynamic> data = {
       "name": name,
@@ -71,7 +76,7 @@ class ProductAPI extends BaseModuleAPI {
         '/product/update',
         queryParameters: {
           'product_id': id,
-          'account_id': accountId ?? null,
+          'account_id': accountId,
         },
         data: jsonEncode(data),
       ),
@@ -80,7 +85,12 @@ class ProductAPI extends BaseModuleAPI {
 
   Future<void> deleteProduct(int productId) async {
     await requestWrapper(
-      () => api.dio.delete('/product/$productId'),
+      () => api.dio.delete(
+        '/product/$productId',
+        queryParameters: {
+          'account_id': selectedAccount!.id,
+        },
+      ),
     );
   }
 }

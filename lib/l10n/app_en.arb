@@ -82,6 +82,8 @@
   "@snackbarUndo": {},
   "confirmDelete": "Confirm Deletion",
   "@confirmDelete": {},
+  "snackbarProductDeleted": "Product successfully deleted",
+  "@snackbarProductDeleted": {},
   "deleteMessage": "Are you sure you want to delete this item?",
   "@deleteMessage": {},
   "editProduct": "Edit Product",

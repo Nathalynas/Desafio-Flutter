@@ -13,6 +13,7 @@ class ProductProvider with ChangeNotifier {
 
   Future<void> _loadAccountId() async {
     await API.accounts.getAccounts();
+    _accountId = selectedAccount?.id;
   }
 
   /// Carrega todos os produtos do backend
@@ -50,6 +51,7 @@ class ProductProvider with ChangeNotifier {
       categoryType: product.category,
       quantity: product.quantity,
       value: product.price,
+      accountId: _accountId!,
     );
     await loadProducts();
   }
@@ -61,9 +63,16 @@ class ProductProvider with ChangeNotifier {
     await loadProducts();
   }
 
-  /// (Opcional) Buscar produto por ID
+  /// Buscar produto por ID
   Future<Product?> getProductById(int id) async {
     final result = await API.products.getProductById(id);
+    result['id'] ??= 0;
+    result['name'] ??= '';
+    result['category_type'] ??= '';
+    result['quantity'] ??= 0;
+    result['value'] ??= 0.0;
+    result['url'] == null;
+
     return Product.fromJson(result);
   }
 }

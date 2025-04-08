@@ -1,5 +1,7 @@
 enum AccountPermission {
+  // ignore: constant_identifier_names
   add_and_delete_products,
+  // ignore: constant_identifier_names
   account_management,
   users,
 }

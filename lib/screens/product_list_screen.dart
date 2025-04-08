@@ -111,9 +111,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).cardColor,
-
       drawer: const MainDrawer(),
-
       appBar: AppBar(
         automaticallyImplyLeading: true,
         title: Text(
@@ -307,14 +305,40 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   ),
                   const SizedBox(width: 10),
                   TextButton(
+                    style:
+                        TextButton.styleFrom(foregroundColor: AppColors.accent),
                     onPressed: () async {
+                      final deletedProduct =
+                          await provider.getProductById(productId);
                       await provider.deleteProduct(productId);
+
                       if (!mounted) return;
                       Navigator.pop(this.context);
                       tableKey.currentState?.reload();
+
+                      final localizations = AppLocalizations.of(this.context)!;
+                      ScaffoldMessenger.of(this.context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            localizations.snackbarProductDeleted,
+                            style: const TextStyle(color: AppColors.background),
+                          ),
+                          backgroundColor: AppColors.green,
+                          duration: const Duration(seconds: 5),
+                          behavior: SnackBarBehavior.floating,
+                          action: SnackBarAction(
+                            label: localizations.snackbarUndo,
+                            textColor: AppColors.background,
+                            onPressed: () async {
+                              if (deletedProduct != null) {
+                                await provider.addProduct(deletedProduct);
+                                tableKey.currentState?.reload();
+                              }
+                            },
+                          ),
+                        ),
+                      );
                     },
-                    style:
-                        TextButton.styleFrom(foregroundColor: AppColors.accent),
                     child: Text(AppLocalizations.of(context)!.delete),
                   ),
                 ],
