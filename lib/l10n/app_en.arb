@@ -177,5 +177,15 @@
   "userEdited": "User updated successfully!",
   "@userEdited": {},
   "accountManagement": "Account Management",
-  "@accountManagement": {}
+  "@accountManagement": {},
+  "createUserError": "Error creating user: {error}",
+  "@createUserError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "snackbarUserDeleted": "User successfully deleted.",
+  "@snackbarUserDeleted": {}
 }

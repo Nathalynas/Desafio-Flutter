@@ -1,7 +1,10 @@
+import 'package:almeidatec/api/api.dart';
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/core/main_drawer.dart';
 import 'package:almeidatec/main.dart';
+import 'package:almeidatec/models/account.dart';
+import 'package:almeidatec/models/account_permission.dart';
 import 'package:almeidatec/providers/theme_provider.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:awidgets/fields/a_field_checkbox_list.dart';
@@ -27,19 +30,26 @@ class _UserListScreenState extends State<UserListScreen> {
   final GlobalKey<ATableState<User>> tableKey = GlobalKey<ATableState<User>>();
   String searchText = '';
 
-  final List<String> availablePermissions = [
-    'Gerenciamento de contas',
-    'Tela de Usuários',
-    'Cadastro e edição de produtos',
+  final List<PermissionData> allPermissions = [
+    PermissionData(
+      permission: AccountPermission.account_management,
+      ptBr: 'Gerenciamento de contas',
+    ),
+    PermissionData(
+      permission: AccountPermission.users,
+      ptBr: 'Tela de Usuários',
+    ),
+    PermissionData(
+      permission: AccountPermission.add_and_delete_products,
+      ptBr: 'Cadastro e edição de produtos',
+    ),
   ];
 
   List<Option> getPermissionOptions(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
-    return [
-      Option(localizations.accountManagement, 1),
-      Option(localizations.userScreen, 2),
-      Option(localizations.productForm, 3),
-    ];
+    return List.generate(
+      allPermissions.length,
+      (index) => Option(allPermissions[index].ptBr, index),
+    );
   }
 
   @override
@@ -263,7 +273,14 @@ class _UserListScreenState extends State<UserListScreen> {
                   'name': user.name,
                   'email': user.email,
                   'password': user.password,
-                  'permissions': user.permissions,
+                  'permissions': user.permissions
+                      .map((p) {
+                        return allPermissions.indexWhere(
+                          (perm) => perm.permission == p.permission,
+                        );
+                      })
+                      .where((i) => i != -1)
+                      .toList(),
                 }
               : null,
           fields: [
@@ -294,26 +311,44 @@ class _UserListScreenState extends State<UserListScreen> {
             name: json['name'],
             email: json['email'],
             password: json['password'],
-            permissions: json['permissions'],
+            permissions: (json['permissions'] as List<dynamic>)
+                .map((index) => allPermissions[index as int])
+                .toList(),
           ),
           onSubmit: (userData) async {
             final provider = Provider.of<UserProvider>(context, listen: false);
-            final userToCreate = userData.copyWith(id: user!.id);
+            final userToCreate =
+                isEdit ? userData.copyWith(id: user.id) : userData;
 
             if (isEdit) {
               await provider.updateUser(userToCreate);
             } else {
-              await provider.addUser(userToCreate);
+              try {
+                final accountId = selectedAccount?.id ?? 0;
+                final createdUser =
+                    await API.users.createUser(accountId, userToCreate);
+                await provider.addUser(createdUser);
+              } catch (e) {
+                if (!mounted) return;
+                final localizations = AppLocalizations.of(this.context)!;
+                ScaffoldMessenger.of(this.context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      localizations.createUserError(e.toString()),
+                    ),
+                    backgroundColor: AppColors.accent,
+                  ),
+                );
+                rethrow;
+              }
             }
 
             return null;
           },
           onSuccess: () {
-            if (tableKey.currentState?.mounted ?? false) {
-              tableKey.currentState?.reload();
-            }
+            if (!mounted) return;
 
-            Navigator.of(context).pop();
+            tableKey.currentState?.reload();
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -357,16 +392,49 @@ class _UserListScreenState extends State<UserListScreen> {
                   ),
                   const SizedBox(width: 10),
                   TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.accent,
+                    ),
                     onPressed: () async {
                       final provider =
                           Provider.of<UserProvider>(context, listen: false);
+                      final deletedUser = provider.users.firstWhere(
+                        (u) => u.id == userId,
+                        orElse: () => User(
+                          id: 0,
+                          name: '',
+                          email: '',
+                          password: '',
+                          permissions: [],
+                        ),
+                      );
+
                       await provider.deleteUser(userId);
                       if (!mounted) return;
-                      tableKey.currentState?.reload();
                       Navigator.of(this.context).pop();
+                      tableKey.currentState?.reload();
+
+                      final localizations = AppLocalizations.of(this.context)!;
+                      ScaffoldMessenger.of(this.context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            localizations.snackbarUserDeleted,
+                            style: const TextStyle(color: AppColors.background),
+                          ),
+                          backgroundColor: AppColors.green,
+                          duration: const Duration(seconds: 5),
+                          behavior: SnackBarBehavior.floating,
+                          action: SnackBarAction(
+                            label: localizations.snackbarUndo,
+                            textColor: AppColors.background,
+                            onPressed: () async {
+                              await provider.addUser(deletedUser);
+                              tableKey.currentState?.reload();
+                            },
+                          ),
+                        ),
+                      );
                     },
-                    style:
-                        TextButton.styleFrom(foregroundColor: AppColors.accent),
                     child: Text(AppLocalizations.of(context)!.delete),
                   ),
                 ],
