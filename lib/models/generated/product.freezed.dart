@@ -26,7 +26,7 @@ mixin _$Product {
   @JsonKey(name: 'category_type')
   String get category => throw _privateConstructorUsedError;
   int get quantity =>
-      throw _privateConstructorUsedError; 
+      throw _privateConstructorUsedError;
   @JsonKey(name: 'value')
   double get price => throw _privateConstructorUsedError;
   String? get url => throw _privateConstructorUsedError;

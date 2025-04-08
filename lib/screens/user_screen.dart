@@ -28,6 +28,7 @@ class UserListScreen extends StatefulWidget {
 
 class _UserListScreenState extends State<UserListScreen> {
   final GlobalKey<ATableState<User>> tableKey = GlobalKey<ATableState<User>>();
+  
   String searchText = '';
 
   final List<PermissionData> allPermissions = [
@@ -100,23 +101,54 @@ class _UserListScreenState extends State<UserListScreen> {
       ),
       ATableColumn(
         titleWidget: Text(
+          'Status',
+          style: const TextStyle(color: AppColors.background),
+        ),
+        cellBuilder: (_, __, user) => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: user.isActive
+                // ignore: deprecated_member_use
+                ? AppColors.green.withOpacity(0.1)
+                // ignore: deprecated_member_use
+                : AppColors.accent.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            user.isActive ? 'Ativo' : 'Inativo',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: user.isActive ? AppColors.green : AppColors.accent,
+            ),
+          ),
+        ),
+      ),
+      ATableColumn(
+        titleWidget: Text(
           AppLocalizations.of(context)!.actions,
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(color: AppColors.background),
         ),
         cellBuilder: (_, __, user) => Row(
           children: [
             IconButton(
+              tooltip: AppLocalizations.of(context)!.edit,
               icon: const Icon(Icons.edit),
               onPressed: () {
                 _openUserDialog(user: user);
               },
             ),
             IconButton(
-              icon: const Icon(Icons.delete),
-              color: AppColors.accent,
-              onPressed: () {
-                _showDeleteConfirmationDialog(context, user.id);
-              },
+              tooltip: user.isActive
+                  ? AppLocalizations.of(context)!.deactivateUser
+                  : AppLocalizations.of(context)!.activateUser,
+              icon: Icon(
+                user.isActive ? Icons.toggle_on : Icons.toggle_off,
+                color:
+                    user.isActive ? AppColors.green : AppColors.textSecondary,
+                size: 28,
+              ),
+              onPressed: () => _toggleUserActive(user),
             ),
           ],
         ),
@@ -212,44 +244,44 @@ class _UserListScreenState extends State<UserListScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          children: [
-            Row(
               children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(context)!.searchHint,
+                          prefixIcon: const Icon(Icons.search),
+                        ),
+                        onChanged: (value) {
+                          setState(() => searchText = value);
+                          tableKey.currentState?.reload();
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    AButton(
+                      text: AppLocalizations.of(context)!.newUser,
+                      landingIcon: Icons.person_add,
+                      onPressed: _openUserDialog,
+                      color: AppColors.accent,
+                      textColor: AppColors.background,
+                      fontWeight: FontWeight.bold,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      borderRadius: radiusBorder.topLeft.x,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
                 Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context)!.searchHint,
-                      prefixIcon: const Icon(Icons.search),
-                    ),
-                    onChanged: (value) {
-                      setState(() => searchText = value);
-                      tableKey.currentState?.reload();
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                AButton(
-                  text: AppLocalizations.of(context)!.newUser,
-                  landingIcon: Icons.person_add,
-                  onPressed: _openUserDialog,
-                  color: AppColors.accent,
-                  textColor: AppColors.background,
-                  fontWeight: FontWeight.bold,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  borderRadius: radiusBorder.topLeft.x,
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: Consumer<UserProvider>(
-                builder: (context, provider, child) {
-                  return Theme(
-                    data: Theme.of(context).copyWith(
-                      secondaryHeaderColor: AppColors.primary,
-                    ),
-                    child: ATable<User>(
+                  child: Consumer<UserProvider>(
+                    builder: (context, provider, child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          secondaryHeaderColor: AppColors.primary,
+                        ),
+                        child: ATable<User>(
                       key: tableKey,
                       columns: columns,
                       loadItems: (_, __) async {
@@ -257,18 +289,18 @@ class _UserListScreenState extends State<UserListScreen> {
                         return provider.users
                             .where((u) =>
                                 u.name
-                                    .toLowerCase()
-                                    .contains(searchText.toLowerCase()) ||
-                                u.email
-                                    .toLowerCase()
+                                  .toLowerCase()
+                                  .contains(searchText.toLowerCase()) ||
+                              u.email
+                                  .toLowerCase()
                                     .contains(searchText.toLowerCase()))
                             .toList();
                       },
                       striped: true,
-                    ),
-                  );
-                },
-              ),
+                        ),
+                      );
+                    },
+                  ),
             ),
           ],
         ),
@@ -292,7 +324,7 @@ class _UserListScreenState extends State<UserListScreen> {
               ? {
                   'name': user.name,
                   'email': user.email,
-                  'password': user.password,
+                  'password': '',
                   'permissions': user.permissions
                       .map((p) {
                         return allPermissions.indexWhere(
@@ -318,7 +350,7 @@ class _UserListScreenState extends State<UserListScreen> {
             AFieldText(
               label: AppLocalizations.of(context)!.password,
               identifier: 'password',
-              required: true,
+              required: !isEdit,
             ),
             AFieldCheckboxList(
               label: AppLocalizations.of(context)!.permissions,
@@ -339,25 +371,34 @@ class _UserListScreenState extends State<UserListScreen> {
           ),
           onSubmit: (userData) async {
             final provider = Provider.of<UserProvider>(context, listen: false);
-            final userToCreate =
-                isEdit ? userData.copyWith(id: user.id) : userData;
+            final accountId = selectedAccount?.id ?? 0;
+
+            final userToSave = isEdit
+                ? user.copyWith(
+                    name: userData.name,
+                    email: userData.email,
+                    password: userData.password.trim().isEmpty
+                        ? user.password
+                        : userData.password,
+                    permissions: userData.permissions,
+                  )
+                : userData;
 
             if (isEdit) {
-              await provider.updateUser(userToCreate);
+              await API.users
+                  .editMember(accountId: accountId, user: userToSave);
+              await provider.updateUser(userToSave);
             } else {
               try {
-                final accountId = selectedAccount?.id ?? 0;
                 final createdUser =
-                    await API.users.createUser(accountId, userToCreate);
+                    await API.users.createMember(accountId, userToSave);
                 await provider.addUser(createdUser);
               } catch (e) {
                 if (!mounted) return;
                 final localizations = AppLocalizations.of(this.context)!;
                 ScaffoldMessenger.of(this.context).showSnackBar(
                   SnackBar(
-                    content: Text(
-                      localizations.createUserError(e.toString()),
-                    ),
+                    content: Text(localizations.createUserError(e.toString())),
                     backgroundColor: AppColors.accent,
                   ),
                 );
@@ -386,85 +427,41 @@ class _UserListScreenState extends State<UserListScreen> {
     );
   }
 
-  void _showDeleteConfirmationDialog(BuildContext context, int userId) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return buildStandardDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.confirmDelete,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              Text(AppLocalizations.of(context)!.deleteMessage),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text(AppLocalizations.of(context)!.dialogCancel),
-                  ),
-                  const SizedBox(width: 10),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppColors.accent,
-                    ),
-                    onPressed: () async {
-                      final provider =
-                          Provider.of<UserProvider>(context, listen: false);
-                      final deletedUser = provider.users.firstWhere(
-                        (u) => u.id == userId,
-                        orElse: () => User(
-                          id: 0,
-                          name: '',
-                          email: '',
-                          password: '',
-                          permissions: [],
-                        ),
-                      );
+  Future<void> _toggleUserActive(User user) async {
+    try {
+      final provider = Provider.of<UserProvider>(context, listen: false);
+      final updated = user.copyWith(isActive: !user.isActive);
 
-                      await provider.deleteUser(userId);
-                      if (!mounted) return;
-                      Navigator.of(this.context).pop();
-                      tableKey.currentState?.reload();
+      final accountId = selectedAccount?.id ?? 0;
 
-                      final localizations = AppLocalizations.of(this.context)!;
-                      ScaffoldMessenger.of(this.context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            localizations.snackbarUserDeleted,
-                            style: const TextStyle(color: AppColors.background),
-                          ),
-                          backgroundColor: AppColors.green,
-                          duration: const Duration(seconds: 5),
-                          behavior: SnackBarBehavior.floating,
-                          action: SnackBarAction(
-                            label: localizations.snackbarUndo,
-                            textColor: AppColors.background,
-                            onPressed: () async {
-                              await provider.addUser(deletedUser);
-                              tableKey.currentState?.reload();
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                    child: Text(AppLocalizations.of(context)!.delete),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
+      await API.users.toggleActive(
+        userId: user.id,
+        accountId: accountId,
+        isActive: updated.isActive,
+      );
+
+      await provider.updateUser(updated);
+      tableKey.currentState?.reload();
+      if (!mounted) return;
+
+      final localizations = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(updated.isActive
+              ? localizations.userActivated
+              : localizations.userDeactivated),
+          backgroundColor: updated.isActive ? Colors.green : Colors.orange,
+        ),
+      );
+    } catch (e) {
+      final localizations = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${localizations.toggleStatusError}: ${e.toString()}'),
+          duration: const Duration(seconds: 5),
+          backgroundColor: AppColors.accent,
+        ),
+      );
+    }
   }
 }

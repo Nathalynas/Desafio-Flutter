@@ -183,5 +183,15 @@
     }
   },
   "snackbarUserDeleted": "Usuário deletado com sucesso.",
-  "@snackbarUserDeleted": {}
+  "@snackbarUserDeleted": {},
+  "userActivated": "Usuário ativado com sucesso.",
+  "@userActivated": {},
+  "userDeactivated": "Usuário desativado com sucesso.",
+  "@userDeactivated": {},
+  "toggleStatusError": "Erro ao alterar status",
+  "@toggleStatusError": {},
+  "activateUser": "Ativar usuário",
+  "@activateUser": {},
+  "deactivateUser": "Desativar usuário",
+  "@deactivateUser": {}
 }

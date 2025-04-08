@@ -1,3 +1,5 @@
+import 'package:almeidatec/api/api.dart';
+import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/models/user.dart';
 import 'package:flutter/foundation.dart';
 
@@ -7,25 +9,49 @@ class UserProvider extends ChangeNotifier {
   List<User> get users => _users;
 
   Future<void> loadUsers() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-  }
-
-  Future<void> addUser(User user) async {
-    _users.add(user);
+    final accountId = selectedAccount?.id ?? 0;
+    final response = await API.users.getMembers(accountId);
+    final loadedUsers = response.map(User.fromJson).toList();
+    _users
+      ..clear()
+      ..addAll(loadedUsers);
     notifyListeners();
   }
 
-  Future<void> updateUser(User updatedUser) async {
-    final index = _users.indexWhere((u) => u.id == updatedUser.id);
+  Future<void> addUser(User user) async {
+    final accountId = selectedAccount?.id ?? 0;
+    final createdMember = await API.users.createMember(accountId, user);
+    _users.add(createdMember);
+    notifyListeners();
+  }
+
+  Future<void> updateUser(User user) async {
+    final accountId = selectedAccount?.id ?? 0;
+
+    final updatedUser =
+        await API.users.editMember(accountId: accountId, user: user);
+
+    final index = _users.indexWhere((u) => u.id == user.id);
     if (index != -1) {
       _users[index] = updatedUser;
       notifyListeners();
     }
   }
 
-  Future<void> deleteUser(int userId) async {
-    _users.removeWhere((u) => u.id == userId);
-    notifyListeners();
+  Future<void> toggleUserActive(User user, bool isActive) async {
+    final accountId = selectedAccount?.id;
+    if (accountId == null) throw Exception('Conta não selecionada.');
+
+    await API.users.toggleActive(
+      userId: user.id,
+      accountId: accountId,
+      isActive: isActive,
+    );
+
+    final index = _users.indexWhere((u) => u.id == user.id);
+    if (index != -1) {
+      _users[index] = user.copyWith(isActive: isActive);
+      notifyListeners();
+    }
   }
 }
-
