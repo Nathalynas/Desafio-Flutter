@@ -22,11 +22,11 @@ Product _$ProductFromJson(Map<String, dynamic> json) {
 mixin _$Product {
   int get id => throw _privateConstructorUsedError;
   String get name =>
-      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+      throw _privateConstructorUsedError; 
   @JsonKey(name: 'category_type')
   String? get category => throw _privateConstructorUsedError;
   int? get quantity =>
-      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+      throw _privateConstructorUsedError; 
   @JsonKey(name: 'value')
   double get price => throw _privateConstructorUsedError;
   String? get url => throw _privateConstructorUsedError;
@@ -188,13 +188,13 @@ class _$ProductImpl implements _Product {
   final int id;
   @override
   final String name;
-// ignore: invalid_annotation_target
+
   @override
   @JsonKey(name: 'category_type')
   final String? category;
   @override
   final int? quantity;
-// ignore: invalid_annotation_target
+
   @override
   @JsonKey(name: 'value')
   final double price;
@@ -256,12 +256,12 @@ abstract class _Product implements Product {
   @override
   int get id;
   @override
-  String get name; // ignore: invalid_annotation_target
+  String get name; 
   @override
   @JsonKey(name: 'category_type')
   String? get category;
   @override
-  int? get quantity; // ignore: invalid_annotation_target
+  int? get quantity; 
   @override
   @JsonKey(name: 'value')
   double get price;
