@@ -28,7 +28,7 @@ class UserListScreen extends StatefulWidget {
 
 class _UserListScreenState extends State<UserListScreen> {
   final GlobalKey<ATableState<User>> tableKey = GlobalKey<ATableState<User>>();
-  
+
   String searchText = '';
 
   final List<PermissionData> allPermissions = [
@@ -244,44 +244,42 @@ class _UserListScreenState extends State<UserListScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: AppLocalizations.of(context)!.searchHint,
-                          prefixIcon: const Icon(Icons.search),
-                        ),
-                        onChanged: (value) {
-                          setState(() => searchText = value);
-                          tableKey.currentState?.reload();
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    AButton(
-                      text: AppLocalizations.of(context)!.newUser,
-                      landingIcon: Icons.person_add,
-                      onPressed: _openUserDialog,
-                      color: AppColors.accent,
-                      textColor: AppColors.background,
-                      fontWeight: FontWeight.bold,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
-                      borderRadius: radiusBorder.topLeft.x,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
                 Expanded(
-                  child: Consumer<UserProvider>(
-                    builder: (context, provider, child) {
-                      return Theme(
-                        data: Theme.of(context).copyWith(
-                          secondaryHeaderColor: AppColors.primary,
-                        ),
-                        child: ATable<User>(
+                  child: AFieldText(
+                    label: AppLocalizations.of(context)!.searchHint,
+                    identifier: 'search',
+                    onChanged: (value) {
+                      setState(() => searchText = value!);
+                      tableKey.currentState?.reload();
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                AButton(
+                  text: AppLocalizations.of(context)!.newUser,
+                  landingIcon: Icons.person_add,
+                  onPressed: _openUserDialog,
+                  color: AppColors.accent,
+                  textColor: AppColors.background,
+                  fontWeight: FontWeight.bold,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  borderRadius: radiusBorder.topLeft.x,
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: Consumer<UserProvider>(
+                builder: (context, provider, child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      secondaryHeaderColor: AppColors.primary,
+                    ),
+                    child: ATable<User>(
                       key: tableKey,
                       columns: columns,
                       loadItems: (_, __) async {
@@ -289,18 +287,18 @@ class _UserListScreenState extends State<UserListScreen> {
                         return provider.users
                             .where((u) =>
                                 u.name
-                                  .toLowerCase()
-                                  .contains(searchText.toLowerCase()) ||
-                              u.email
-                                  .toLowerCase()
+                                    .toLowerCase()
+                                    .contains(searchText.toLowerCase()) ||
+                                u.email
+                                    .toLowerCase()
                                     .contains(searchText.toLowerCase()))
                             .toList();
                       },
                       striped: true,
-                        ),
-                      );
-                    },
-                  ),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
