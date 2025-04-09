@@ -309,27 +309,25 @@ class _UserListScreenState extends State<UserListScreen> {
   void _openUserDialog({User? user}) {
     final isEdit = user != null;
 
+    final List<int> selectedPermissionIndexes = isEdit
+      ? user.permissions
+          .map((p) => allPermissions.indexWhere(
+                (perm) => perm.permission == p.permission))
+          .where((i) => i != -1)
+          .toList()
+      : [];
+
     showDialog(
       context: context,
       builder: (context) {
+        return StatefulBuilder( 
+        builder: (context, setState) {
         return AFormDialog<User>(
           title: isEdit
               ? AppLocalizations.of(context)!.editUser
               : AppLocalizations.of(context)!.newUser,
           submitText: AppLocalizations.of(context)!.dialogSave,
           persistent: true,
-          initialData: isEdit
-              ? {
-                  'name': user.name,
-                  'email': user.email,
-                  'password': '',
-                  'permissions': user.permissions
-                      .map((p) => allPermissions.indexWhere(
-                          (perm) => perm.permission == p.permission))
-                      .where((i) => i != -1)
-                      .toList(),
-                }
-              : null,
           fields: [
             if (!isEdit)
               AFieldText(
@@ -351,6 +349,15 @@ class _UserListScreenState extends State<UserListScreen> {
               identifier: 'permissions',
               options: getPermissionOptions(context),
               minRequired: 1,
+              initialValue: selectedPermissionIndexes,
+                onChanged: (newValues) {
+                  setState(() {
+                    selectedPermissionIndexes.clear();
+                    selectedPermissionIndexes.addAll(
+                        // ignore: unnecessary_cast
+                        newValues!.map((e) => e as int).toList());
+                  });
+                },
             ),
           ],
           fromJson: (json) => User(
@@ -358,8 +365,8 @@ class _UserListScreenState extends State<UserListScreen> {
             name: json['name'] ?? user?.name ?? '',
             email: json['email'] ?? user?.email ?? '',
             password: json['password'] ?? '',
-            permissions: (json['permissions'] as List<dynamic>)
-                .map((index) => allPermissions[index as int])
+            permissions: selectedPermissionIndexes
+                .map((i) => allPermissions[i])
                 .toList(),
           ),
           onSubmit: (userData) async {
@@ -378,34 +385,18 @@ class _UserListScreenState extends State<UserListScreen> {
                 : userData;
 
             if (isEdit) {
-              await API.users
-                  .editMember(accountId: accountId, user: userToSave);
+              await API.users.editMember(accountId: accountId, user: userToSave);
               await provider.updateUser(userToSave);
             } else {
-              try {
-                final createdUser =
-                    await API.users.createMember(accountId, userToSave);
+                final createdUser = await API.users.createMember(accountId, userToSave);
                 await provider.addUser(createdUser);
-              } catch (e) {
-                if (!mounted) return;
-                final localizations = AppLocalizations.of(this.context)!;
-                ScaffoldMessenger.of(this.context).showSnackBar(
-                  SnackBar(
-                    content: Text(localizations.createUserError(e.toString())),
-                    backgroundColor: AppColors.accent,
-                  ),
-                );
-                rethrow;
-              }
             }
-
+            
             return null;
           },
           onSuccess: () {
             if (!mounted) return;
-
             tableKey.currentState?.reload();
-
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(isEdit
@@ -417,6 +408,8 @@ class _UserListScreenState extends State<UserListScreen> {
           },
         );
       },
+    );
+  },
     );
   }
 
