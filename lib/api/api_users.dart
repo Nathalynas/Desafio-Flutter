@@ -75,6 +75,7 @@ class UserAPI {
       await _api.dio.put(
         path,
         queryParameters: {
+          'member_id': userId,
           'account_id': accountId,
         },
       );
