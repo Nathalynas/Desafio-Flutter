@@ -320,9 +320,6 @@ class _UserListScreenState extends State<UserListScreen> {
           persistent: true,
           initialData: isEdit
               ? {
-                  'name': user.name,
-                  'email': user.email,
-                  'password': '',
                   'permissions': user.permissions
                       .map((p) {
                         return allPermissions.indexWhere(
@@ -335,21 +332,13 @@ class _UserListScreenState extends State<UserListScreen> {
                 }
               : null,
           fields: [
+            if (!isEdit)
             AFieldText(
-              label: AppLocalizations.of(context)!.name,
-              identifier: 'name',
-              required: true,
-            ),
-            AFieldText(
-              label: AppLocalizations.of(context)!.email,
-              identifier: 'email',
-              required: true,
-            ),
-            AFieldText(
-              label: AppLocalizations.of(context)!.password,
-              identifier: 'password',
-              required: !isEdit,
-            ),
+              label: AppLocalizations.of(context)!.name,identifier: 'name',required: true),
+            if (!isEdit)
+            AFieldText(label: AppLocalizations.of(context)!.email,identifier: 'email',required: true),
+            if (!isEdit)
+            AFieldText(label: AppLocalizations.of(context)!.password,identifier: 'password',required: !isEdit),
             AFieldCheckboxList(
               label: AppLocalizations.of(context)!.permissions,
               identifier: 'permissions',
