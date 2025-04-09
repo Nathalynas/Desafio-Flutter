@@ -20,10 +20,11 @@ User _$UserFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$User {
+  @JsonKey(name: 'user_id')
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
-  String get password => throw _privateConstructorUsedError;
+  String? get password => throw _privateConstructorUsedError;
   List<PermissionData> get permissions => throw _privateConstructorUsedError;
   bool get isActive => throw _privateConstructorUsedError;
 
@@ -42,10 +43,10 @@ abstract class $UserCopyWith<$Res> {
       _$UserCopyWithImpl<$Res, User>;
   @useResult
   $Res call(
-      {int id,
+      {@JsonKey(name: 'user_id') int id,
       String name,
       String email,
-      String password,
+      String? password,
       List<PermissionData> permissions,
       bool isActive});
 }
@@ -68,7 +69,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? id = null,
     Object? name = null,
     Object? email = null,
-    Object? password = null,
+    Object? password = freezed,
     Object? permissions = null,
     Object? isActive = null,
   }) {
@@ -85,10 +86,10 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
-      password: null == password
+      password: freezed == password
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       permissions: null == permissions
           ? _value.permissions
           : permissions // ignore: cast_nullable_to_non_nullable
@@ -109,10 +110,10 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {int id,
+      {@JsonKey(name: 'user_id') int id,
       String name,
       String email,
-      String password,
+      String? password,
       List<PermissionData> permissions,
       bool isActive});
 }
@@ -132,7 +133,7 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? email = null,
-    Object? password = null,
+    Object? password = freezed,
     Object? permissions = null,
     Object? isActive = null,
   }) {
@@ -149,10 +150,10 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
-      password: null == password
+      password: freezed == password
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       permissions: null == permissions
           ? _value._permissions
           : permissions // ignore: cast_nullable_to_non_nullable
@@ -169,7 +170,7 @@ class __$$UserImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UserImpl implements _User {
   _$UserImpl(
-      {required this.id,
+      {@JsonKey(name: 'user_id') required this.id,
       required this.name,
       required this.email,
       this.password = '',
@@ -181,6 +182,7 @@ class _$UserImpl implements _User {
       _$$UserImplFromJson(json);
 
   @override
+  @JsonKey(name: 'user_id')
   final int id;
   @override
   final String name;
@@ -188,7 +190,7 @@ class _$UserImpl implements _User {
   final String email;
   @override
   @JsonKey()
-  final String password;
+  final String? password;
   final List<PermissionData> _permissions;
   @override
   List<PermissionData> get permissions {
@@ -245,23 +247,24 @@ class _$UserImpl implements _User {
 
 abstract class _User implements User {
   factory _User(
-      {required final int id,
+      {@JsonKey(name: 'user_id') required final int id,
       required final String name,
       required final String email,
-      final String password,
+      final String? password,
       required final List<PermissionData> permissions,
       final bool isActive}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
   @override
+  @JsonKey(name: 'user_id')
   int get id;
   @override
   String get name;
   @override
   String get email;
   @override
-  String get password;
+  String? get password;
   @override
   List<PermissionData> get permissions;
   @override

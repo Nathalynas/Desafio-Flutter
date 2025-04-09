@@ -377,7 +377,7 @@ class _UserListScreenState extends State<UserListScreen> {
                 ? user.copyWith(
                     name: userData.name,
                     email: userData.email,
-                    password: userData.password.trim().isEmpty
+                    password: userData.password!.trim().isEmpty
                         ? user.password
                         : userData.password,
                     permissions: userData.permissions,

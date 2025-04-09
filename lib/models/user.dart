@@ -8,10 +8,10 @@ part 'generated/user.g.dart';
 @freezed
 class User with _$User {
   factory User({
-    required int id,
+    @JsonKey(name: 'user_id') required int id,
     required String name,
     required String email,
-    @Default('') String password,
+    @Default('') String? password,
     required List<PermissionData> permissions,
     @Default(true) bool isActive,
   }) = _User;
