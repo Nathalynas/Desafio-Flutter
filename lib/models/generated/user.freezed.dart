@@ -20,7 +20,6 @@ User _$UserFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$User {
-  @JsonKey(name: 'user_id')
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
@@ -43,7 +42,7 @@ abstract class $UserCopyWith<$Res> {
       _$UserCopyWithImpl<$Res, User>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'user_id') int id,
+      {int id,
       String name,
       String email,
       String password,
@@ -110,7 +109,7 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'user_id') int id,
+      {int id,
       String name,
       String email,
       String password,
@@ -170,7 +169,7 @@ class __$$UserImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UserImpl implements _User {
   _$UserImpl(
-      {@JsonKey(name: 'user_id') required this.id,
+      {required this.id,
       required this.name,
       required this.email,
       this.password = '',
@@ -182,7 +181,6 @@ class _$UserImpl implements _User {
       _$$UserImplFromJson(json);
 
   @override
-  @JsonKey(name: 'user_id')
   final int id;
   @override
   final String name;
@@ -247,7 +245,7 @@ class _$UserImpl implements _User {
 
 abstract class _User implements User {
   factory _User(
-      {@JsonKey(name: 'user_id') required final int id,
+      {required final int id,
       required final String name,
       required final String email,
       final String password,
@@ -257,7 +255,6 @@ abstract class _User implements User {
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
   @override
-  @JsonKey(name: 'user_id')
   int get id;
   @override
   String get name;

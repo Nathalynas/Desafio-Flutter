@@ -22,11 +22,11 @@ Product _$ProductFromJson(Map<String, dynamic> json) {
 mixin _$Product {
   int get id => throw _privateConstructorUsedError;
   String get name =>
-      throw _privateConstructorUsedError; 
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'category_type')
-  String get category => throw _privateConstructorUsedError;
-  int get quantity =>
-      throw _privateConstructorUsedError;
+  String? get category => throw _privateConstructorUsedError;
+  int? get quantity =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'value')
   double get price => throw _privateConstructorUsedError;
   String? get url => throw _privateConstructorUsedError;
@@ -48,8 +48,8 @@ abstract class $ProductCopyWith<$Res> {
   $Res call(
       {int id,
       String name,
-      @JsonKey(name: 'category_type') String category,
-      int quantity,
+      @JsonKey(name: 'category_type') String? category,
+      int? quantity,
       @JsonKey(name: 'value') double price,
       String? url});
 }
@@ -71,8 +71,8 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? category = null,
-    Object? quantity = null,
+    Object? category = freezed,
+    Object? quantity = freezed,
     Object? price = null,
     Object? url = freezed,
   }) {
@@ -85,14 +85,14 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      category: null == category
+      category: freezed == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
-      quantity: null == quantity
+              as String?,
+      quantity: freezed == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -115,8 +115,8 @@ abstract class _$$ProductImplCopyWith<$Res> implements $ProductCopyWith<$Res> {
   $Res call(
       {int id,
       String name,
-      @JsonKey(name: 'category_type') String category,
-      int quantity,
+      @JsonKey(name: 'category_type') String? category,
+      int? quantity,
       @JsonKey(name: 'value') double price,
       String? url});
 }
@@ -136,8 +136,8 @@ class __$$ProductImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? category = null,
-    Object? quantity = null,
+    Object? category = freezed,
+    Object? quantity = freezed,
     Object? price = null,
     Object? url = freezed,
   }) {
@@ -150,14 +150,14 @@ class __$$ProductImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      category: null == category
+      category: freezed == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
-      quantity: null == quantity
+              as String?,
+      quantity: freezed == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -176,8 +176,8 @@ class _$ProductImpl implements _Product {
   _$ProductImpl(
       {required this.id,
       required this.name,
-      @JsonKey(name: 'category_type') required this.category,
-      required this.quantity,
+      @JsonKey(name: 'category_type') this.category,
+      this.quantity,
       @JsonKey(name: 'value') required this.price,
       this.url});
 
@@ -188,13 +188,13 @@ class _$ProductImpl implements _Product {
   final int id;
   @override
   final String name;
-
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'category_type')
-  final String category;
+  final String? category;
   @override
-  final int quantity;
-
+  final int? quantity;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'value')
   final double price;
@@ -246,8 +246,8 @@ abstract class _Product implements Product {
   factory _Product(
       {required final int id,
       required final String name,
-      @JsonKey(name: 'category_type') required final String category,
-      required final int quantity,
+      @JsonKey(name: 'category_type') final String? category,
+      final int? quantity,
       @JsonKey(name: 'value') required final double price,
       final String? url}) = _$ProductImpl;
 
@@ -256,12 +256,12 @@ abstract class _Product implements Product {
   @override
   int get id;
   @override
-  String get name; 
+  String get name; // ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'category_type')
-  String get category;
+  String? get category;
   @override
-  int get quantity; 
+  int? get quantity; // ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'value')
   double get price;

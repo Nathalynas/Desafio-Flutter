@@ -51,7 +51,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           style: const TextStyle(color: AppColors.background),
         ),
         cellBuilder: (_, __, product) => Text(
-          translateCategory(context, product.category),
+          translateCategory(context, product.category ?? ''),
         ),
       ),
       ATableColumn(
@@ -60,7 +60,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           style: const TextStyle(color: AppColors.background),
         ),
         cellBuilder: (_, __, product) => Text(
-          product.quantity.toString(),
+          '${product.quantity ?? ''}',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),

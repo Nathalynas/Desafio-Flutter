@@ -35,8 +35,8 @@ class ProductProvider with ChangeNotifier {
     await API.products.createProduct(
       accountId: _accountId!,
       name: product.name,
-      categoryType: product.category,
-      quantity: product.quantity,
+      categoryType: product.category!,
+      quantity: product.quantity!,
       value: product.price,
     );
     await loadProducts();
@@ -48,8 +48,8 @@ class ProductProvider with ChangeNotifier {
     await API.products.updateProduct(
       id: product.id,
       name: product.name,
-      categoryType: product.category,
-      quantity: product.quantity,
+      categoryType: product.category!,
+      quantity: product.quantity!,
       value: product.price,
       accountId: _accountId!,
     );
