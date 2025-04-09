@@ -193,5 +193,7 @@
   "activateUser": "Ativar usuário",
   "@activateUser": {},
   "deactivateUser": "Desativar usuário",
-  "@deactivateUser": {}
+  "@deactivateUser": {},
+  "inactiveUsers": "Usuários Inativos",
+  "@inactiveUsers": {}
 }

@@ -197,5 +197,7 @@
   "activateUser": "Activate user",
   "@activateUser": {},
   "deactivateUser": "Deactivate user",
-  "@deactivateUser": {}
+  "@deactivateUser": {},
+  "inactiveUsers": "Inactive Users",
+  "@inactiveUsers": {}
 }

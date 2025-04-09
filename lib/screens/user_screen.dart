@@ -269,6 +269,18 @@ class _UserListScreenState extends State<UserListScreen> {
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   borderRadius: radiusBorder.topLeft.x,
                 ),
+                const SizedBox(width: 12),
+                AButton(
+                  text: AppLocalizations.of(context)!.inactiveUsers,
+                  landingIcon: Icons.person_off,
+                  onPressed: _showInactiveUsersDialog,
+                  color: AppColors.textSecondary,
+                  textColor: AppColors.background,
+                  fontWeight: FontWeight.bold,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  borderRadius: radiusBorder.topRight.x,
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -310,106 +322,109 @@ class _UserListScreenState extends State<UserListScreen> {
     final isEdit = user != null;
 
     final List<int> selectedPermissionIndexes = isEdit
-      ? user.permissions
-          .map((p) => allPermissions.indexWhere(
-                (perm) => perm.permission == p.permission))
-          .where((i) => i != -1)
-          .toList()
-      : [];
+        ? user.permissions
+            .map((p) => allPermissions
+                .indexWhere((perm) => perm.permission == p.permission))
+            .where((i) => i != -1)
+            .toList()
+        : [];
 
     showDialog(
       context: context,
       builder: (context) {
-        return StatefulBuilder( 
-        builder: (context, setState) {
-        return AFormDialog<User>(
-          title: isEdit
-              ? AppLocalizations.of(context)!.editUser
-              : AppLocalizations.of(context)!.newUser,
-          submitText: AppLocalizations.of(context)!.dialogSave,
-          persistent: true,
-          fields: [
-            if (!isEdit)
-              AFieldText(
-                  label: AppLocalizations.of(context)!.name,
-                  identifier: 'name',
-                  required: true),
-            if (!isEdit)
-              AFieldText(
-                  label: AppLocalizations.of(context)!.email,
-                  identifier: 'email',
-                  required: true),
-            if (!isEdit)
-              AFieldText(
-                  label: AppLocalizations.of(context)!.password,
-                  identifier: 'password',
-                  required: !isEdit),
-            AFieldCheckboxList(
-              label: AppLocalizations.of(context)!.permissions,
-              identifier: 'permissions',
-              options: getPermissionOptions(context),
-              minRequired: 1,
-              initialValue: selectedPermissionIndexes,
-                onChanged: (newValues) {
-                  setState(() {
-                    selectedPermissionIndexes.clear();
-                    selectedPermissionIndexes.addAll(
-                        // ignore: unnecessary_cast
-                        newValues!.map((e) => e as int).toList());
-                  });
-                },
-            ),
-          ],
-          fromJson: (json) => User(
-            id: user?.id ?? 0,
-            name: json['name'] ?? user?.name ?? '',
-            email: json['email'] ?? user?.email ?? '',
-            password: json['password'] ?? '',
-            permissions: selectedPermissionIndexes
-                .map((i) => allPermissions[i])
-                .toList(),
-          ),
-          onSubmit: (userData) async {
-            final provider = Provider.of<UserProvider>(context, listen: false);
-            final accountId = selectedAccount?.id ?? 0;
-
-            final userToSave = isEdit
-                ? user.copyWith(
-                    name: userData.name,
-                    email: userData.email,
-                    password: userData.password!.trim().isEmpty
-                        ? user.password
-                        : userData.password,
-                    permissions: userData.permissions,
-                  )
-                : userData;
-
-            if (isEdit) {
-              await API.users.editMember(accountId: accountId, user: userToSave);
-              await provider.updateUser(userToSave);
-            } else {
-                final createdUser = await API.users.createMember(accountId, userToSave);
-                await provider.addUser(createdUser);
-            }
-            
-            return null;
-          },
-          onSuccess: () {
-            if (!mounted) return;
-            tableKey.currentState?.reload();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(isEdit
-                    ? AppLocalizations.of(context)!.userEdited
-                    : AppLocalizations.of(context)!.userAdded),
-                backgroundColor: AppColors.green,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AFormDialog<User>(
+              title: isEdit
+                  ? AppLocalizations.of(context)!.editUser
+                  : AppLocalizations.of(context)!.newUser,
+              submitText: AppLocalizations.of(context)!.dialogSave,
+              persistent: true,
+              fields: [
+                if (!isEdit)
+                  AFieldText(
+                      label: AppLocalizations.of(context)!.name,
+                      identifier: 'name',
+                      required: true),
+                if (!isEdit)
+                  AFieldText(
+                      label: AppLocalizations.of(context)!.email,
+                      identifier: 'email',
+                      required: true),
+                if (!isEdit)
+                  AFieldText(
+                      label: AppLocalizations.of(context)!.password,
+                      identifier: 'password',
+                      required: !isEdit),
+                AFieldCheckboxList(
+                  label: AppLocalizations.of(context)!.permissions,
+                  identifier: 'permissions',
+                  options: getPermissionOptions(context),
+                  minRequired: 1,
+                  initialValue: selectedPermissionIndexes,
+                  onChanged: (newValues) {
+                    setState(() {
+                      selectedPermissionIndexes.clear();
+                      selectedPermissionIndexes.addAll(
+                          // ignore: unnecessary_cast
+                          newValues!.map((e) => e as int).toList());
+                    });
+                  },
+                ),
+              ],
+              fromJson: (json) => User(
+                id: user?.id ?? 0,
+                name: json['name'] ?? user?.name ?? '',
+                email: json['email'] ?? user?.email ?? '',
+                password: json['password'] ?? '',
+                permissions: selectedPermissionIndexes
+                    .map((i) => allPermissions[i])
+                    .toList(),
               ),
+              onSubmit: (userData) async {
+                final provider =
+                    Provider.of<UserProvider>(context, listen: false);
+                final accountId = selectedAccount?.id ?? 0;
+
+                final userToSave = isEdit
+                    ? user.copyWith(
+                        name: userData.name,
+                        email: userData.email,
+                        password: userData.password!.trim().isEmpty
+                            ? user.password
+                            : userData.password,
+                        permissions: userData.permissions,
+                      )
+                    : userData;
+
+                if (isEdit) {
+                  await API.users
+                      .editMember(accountId: accountId, user: userToSave);
+                  await provider.updateUser(userToSave);
+                } else {
+                  final createdUser =
+                      await API.users.createMember(accountId, userToSave);
+                  await provider.addUser(createdUser);
+                }
+
+                return null;
+              },
+              onSuccess: () {
+                if (!mounted) return;
+                tableKey.currentState?.reload();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(isEdit
+                        ? AppLocalizations.of(context)!.userEdited
+                        : AppLocalizations.of(context)!.userAdded),
+                    backgroundColor: AppColors.green,
+                  ),
+                );
+              },
             );
           },
         );
       },
-    );
-  },
     );
   }
 
@@ -449,5 +464,69 @@ class _UserListScreenState extends State<UserListScreen> {
         ),
       );
     }
+  }
+
+  void _showInactiveUsersDialog() {
+    final provider = Provider.of<UserProvider>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.inactiveUsers),
+          content: SizedBox(
+            width: 600,
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                secondaryHeaderColor: AppColors.primary,
+              ),
+              child: ATable<User>(
+                columns: [
+                  ATableColumn(
+                    titleWidget: Text(
+                      AppLocalizations.of(context)!.name,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    cellBuilder: (_, __, user) => Text(user.name),
+                  ),
+                  ATableColumn(
+                    titleWidget: Text(
+                      AppLocalizations.of(context)!.email,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    cellBuilder: (_, __, user) => Text(user.email),
+                  ),
+                  ATableColumn(
+                    titleWidget: Text(
+                      AppLocalizations.of(context)!.actions,
+                      style: const TextStyle(color: AppColors.background),
+                    ),
+                    cellBuilder: (_, __, user) => IconButton(
+                      icon: const Icon(Icons.toggle_on),
+                      tooltip: AppLocalizations.of(context)!.activateUser,
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _toggleUserActive(user);
+                      },
+                    ),
+                  ),
+                ],
+                loadItems: (_, __) async {
+                await provider.loadUsers();
+                return provider.users.where((u) => !u.isActive).toList();
+              },
+                striped: true,
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: Text(AppLocalizations.of(context)!.dialogCancel),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
