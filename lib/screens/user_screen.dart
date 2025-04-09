@@ -320,25 +320,32 @@ class _UserListScreenState extends State<UserListScreen> {
           persistent: true,
           initialData: isEdit
               ? {
+                  'name': user.name,
+                  'email': user.email,
+                  'password': '',
                   'permissions': user.permissions
-                      .map((p) {
-                        return allPermissions.indexWhere(
-                          (perm) => perm.permission == p.permission,
-                        );
-                      })
+                      .map((p) => allPermissions.indexWhere(
+                          (perm) => perm.permission == p.permission))
                       .where((i) => i != -1)
-                      .toSet()
                       .toList(),
                 }
               : null,
           fields: [
             if (!isEdit)
-            AFieldText(
-              label: AppLocalizations.of(context)!.name,identifier: 'name',required: true),
+              AFieldText(
+                  label: AppLocalizations.of(context)!.name,
+                  identifier: 'name',
+                  required: true),
             if (!isEdit)
-            AFieldText(label: AppLocalizations.of(context)!.email,identifier: 'email',required: true),
+              AFieldText(
+                  label: AppLocalizations.of(context)!.email,
+                  identifier: 'email',
+                  required: true),
             if (!isEdit)
-            AFieldText(label: AppLocalizations.of(context)!.password,identifier: 'password',required: !isEdit),
+              AFieldText(
+                  label: AppLocalizations.of(context)!.password,
+                  identifier: 'password',
+                  required: !isEdit),
             AFieldCheckboxList(
               label: AppLocalizations.of(context)!.permissions,
               identifier: 'permissions',
@@ -348,12 +355,11 @@ class _UserListScreenState extends State<UserListScreen> {
           ],
           fromJson: (json) => User(
             id: user?.id ?? 0,
-            name: json['name'],
-            email: json['email'],
-            password: json['password'],
+            name: json['name'] ?? user?.name ?? '',
+            email: json['email'] ?? user?.email ?? '',
+            password: json['password'] ?? '',
             permissions: (json['permissions'] as List<dynamic>)
                 .map((index) => allPermissions[index as int])
-                .toSet()
                 .toList(),
           ),
           onSubmit: (userData) async {
