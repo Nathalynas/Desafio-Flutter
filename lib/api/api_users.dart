@@ -53,7 +53,7 @@ class UserAPI {
     final response = await requestWrapper(() => _api.dio.put(
           '/member/edit',
           queryParameters: {
-            'member_id': user.id,
+            'user_id': user.id,
             'account_id': accountId,
           },
           data: data,
