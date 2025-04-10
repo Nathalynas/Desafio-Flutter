@@ -9,8 +9,7 @@ class UserAPI {
   final API _api;
   UserAPI(this._api);
 
-  Future<List<User>> getMembers(
-      int accountId, bool active) async {
+  Future<List<User>> getMembers(int accountId, bool active) async {
     final response = await requestWrapper(
       () => _api.dio.get(
         '/members/$accountId',
@@ -21,9 +20,7 @@ class UserAPI {
     );
 
     debugPrint('[RAW USERS RESPONSE] ${response.data}');
-    return <User>[
-      for (JSON member in response.data!) User.fromJson(member);
-    ];
+    return <User>[for (JSON member in response.data!) User.fromJson(member)];
   }
 
   Future<User> createMember(int accountId, User user) async {
