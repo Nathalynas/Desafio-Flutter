@@ -70,9 +70,7 @@ class UserAPI {
     required int accountId,
     required bool isActive,
   }) async {
-    final path = isActive
-        ? '/member/activate/$userId'
-        : '/member/deactivate/active/$userId';
+    final path = '/member/deactivate/active/$userId';
 
     try {
       await _api.dio.put(
