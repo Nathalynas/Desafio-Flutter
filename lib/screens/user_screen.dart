@@ -1,7 +1,7 @@
 import 'package:almeidatec/api/api.dart';
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
-import 'package:almeidatec/core/main_drawer.dart';
+import 'package:almeidatec/core/responsiveScaffold.dart';
 import 'package:almeidatec/main.dart';
 import 'package:almeidatec/models/account.dart';
 import 'package:almeidatec/models/account_permission.dart';
@@ -154,17 +154,8 @@ class _UserListScreenState extends State<UserListScreen> {
       ),
     ];
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).cardColor,
-      drawer: const MainDrawer(),
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: Text(
-          AppLocalizations.of(context)!.userScreen,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.background),
+    return ResponsiveScaffold(
+        title: AppLocalizations.of(context)!.userScreen,
         actions: [
           Tooltip(
             message: AppLocalizations.of(context)!.toggleTheme,
@@ -239,7 +230,6 @@ class _UserListScreenState extends State<UserListScreen> {
             },
           ),
         ],
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

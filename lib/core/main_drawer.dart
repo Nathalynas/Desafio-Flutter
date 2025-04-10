@@ -76,18 +76,28 @@ class MainDrawer extends StatelessWidget {
     final localizations = AppLocalizations.of(context)!;
 
     return Drawer(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+      ),
       child: Column(
         children: [
           DrawerHeader(
             decoration: BoxDecoration(color: AppColors.primary),
             child: Align(
               alignment: Alignment.bottomLeft,
-              child: Text(
-                localizations.menu,
-                style: const TextStyle(
-                  color: AppColors.background,
-                  fontSize: 24,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const SizedBox(height: 4),
+                  Text(selectedAccount?.name ?? 'Empresa',
+                    style: const TextStyle(
+                      color: AppColors.background,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -99,7 +109,6 @@ class MainDrawer extends StatelessWidget {
                   leading: const Icon(Icons.shopping_bag),
                   title: Text(localizations.productList),
                   onTap: () {
-                    Navigator.pop(context);
                     Navigator.pushReplacementNamed(context, Routes.productList);
                   },
                 ),
@@ -107,7 +116,6 @@ class MainDrawer extends StatelessWidget {
                   leading: const Icon(Icons.group),
                   title: Text(localizations.users),
                   onTap: () {
-                    Navigator.pop(context);
                     Navigator.pushReplacementNamed(context, Routes.userList);
                   },
                 ),
@@ -115,7 +123,6 @@ class MainDrawer extends StatelessWidget {
                   leading: const Icon(Icons.account_circle),
                   title: Text(localizations.profile),
                   onTap: () {
-                    Navigator.pop(context);
                     Navigator.pushReplacementNamed(context, Routes.profile);
                   },
                 ),
@@ -126,7 +133,7 @@ class MainDrawer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
             child: SizedBox(
-              width: double.infinity, 
+              width: double.infinity,
               child: AButton(
                 text: localizations.logout,
                 landingIcon: Icons.logout,
@@ -135,8 +142,7 @@ class MainDrawer extends StatelessWidget {
                 textColor: AppColors.background,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12), 
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 borderRadius: radiusBorder.topLeft.x,
               ),
             ),

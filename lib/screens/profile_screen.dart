@@ -2,7 +2,7 @@ import 'package:almeidatec/api/api.dart';
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/core/http_utils.dart';
-import 'package:almeidatec/core/main_drawer.dart';
+import 'package:almeidatec/core/responsiveScaffold.dart';
 import 'package:almeidatec/main.dart';
 import 'package:almeidatec/providers/theme_provider.dart';
 import 'package:almeidatec/routes.dart';
@@ -49,16 +49,8 @@ class ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    return Scaffold(
-      drawer: const MainDrawer(),
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: Text(
-          AppLocalizations.of(context)!.profile,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.background),
+    return ResponsiveScaffold(
+      title: AppLocalizations.of(context)!.profile,
         actions: [
           Tooltip(
             message: AppLocalizations.of(context)!.toggleTheme,
@@ -135,7 +127,6 @@ class ProfileScreenState extends State<ProfileScreen> {
             },
           ),
         ],
-      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

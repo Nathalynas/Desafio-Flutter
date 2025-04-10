@@ -1,7 +1,7 @@
 import 'package:almeidatec/api/api.dart';
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
-import 'package:almeidatec/core/main_drawer.dart';
+import 'package:almeidatec/core/responsiveScaffold.dart';
 import 'package:almeidatec/models/product.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:awidgets/general/a_button.dart';
@@ -108,17 +108,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
       ),
     ];
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).cardColor,
-      drawer: const MainDrawer(),
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: Text(
-          AppLocalizations.of(context)!.productList,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.background),
+    return ResponsiveScaffold(
+        title: AppLocalizations.of(context)!.productList,
         actions: [
           Tooltip(
             message: AppLocalizations.of(context)!.toggleTheme,
@@ -195,7 +186,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
             },
           ),
         ],
-      ),
       body: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(16.0),
