@@ -30,6 +30,7 @@ class _UserListScreenState extends State<UserListScreen> {
   final GlobalKey<ATableState<User>> tableKey = GlobalKey<ATableState<User>>();
 
   String searchText = '';
+  bool showInactives = false;
 
   final List<PermissionData> allPermissions = [
     PermissionData(
@@ -273,7 +274,12 @@ class _UserListScreenState extends State<UserListScreen> {
                 AButton(
                   text: AppLocalizations.of(context)!.inactiveUsers,
                   landingIcon: Icons.person_off,
-                  onPressed: _showInactiveUsersDialog,
+                  onPressed: () {
+                    setState(() {
+                      showInactives = false;
+                    });
+                    tableKey.currentState!.reload();
+                  },
                   color: AppColors.textSecondary,
                   textColor: AppColors.background,
                   fontWeight: FontWeight.bold,
@@ -295,16 +301,8 @@ class _UserListScreenState extends State<UserListScreen> {
                       key: tableKey,
                       columns: columns,
                       loadItems: (_, __) async {
-                        await provider.loadUsers();
-                        return provider.users
-                            .where((u) =>
-                                u.name
-                                    .toLowerCase()
-                                    .contains(searchText.toLowerCase()) ||
-                                u.email
-                                    .toLowerCase()
-                                    .contains(searchText.toLowerCase()))
-                            .toList();
+                        return await API.users
+                            .getMembers(selectedAccount!.id, showInactives);
                       },
                       striped: true,
                     ),
@@ -466,9 +464,6 @@ class _UserListScreenState extends State<UserListScreen> {
     }
   }
 
-  void _showInactiveUsersDialog() {
-    final provider = Provider.of<UserProvider>(context, listen: false);
-
     showDialog(
       context: context,
       builder: (_) {
@@ -512,9 +507,9 @@ class _UserListScreenState extends State<UserListScreen> {
                   ),
                 ],
                 loadItems: (_, __) async {
-                await provider.loadUsers();
-                return provider.users.where((u) => !u.isActive).toList();
-              },
+                        return await API.users
+                            .getMembers(selectedAccount!.id, showInactives);
+                      },
                 striped: true,
               ),
             ),

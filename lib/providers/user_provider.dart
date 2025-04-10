@@ -8,16 +8,6 @@ class UserProvider extends ChangeNotifier {
 
   List<User> get users => _users;
 
-  Future<void> loadUsers() async {
-    final accountId = selectedAccount?.id ?? 0;
-    final response = await API.users.getMembers(accountId);
-    final loadedUsers = response.map(User.fromJson).toList();
-    _users
-      ..clear()
-      ..addAll(loadedUsers);
-    notifyListeners();
-  }
-
   Future<void> addUser(User user) async {
     final accountId = selectedAccount?.id ?? 0;
     final createdMember = await API.users.createMember(accountId, user);

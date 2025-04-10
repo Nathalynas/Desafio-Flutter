@@ -9,15 +9,21 @@ class UserAPI {
   final API _api;
   UserAPI(this._api);
 
-  Future<List<Map<String, dynamic>>> getMembers(int accountId) async {
+  Future<List<User>> getMembers(
+      int accountId, bool active) async {
     final response = await requestWrapper(
       () => _api.dio.get(
         '/members/$accountId',
+        queryParameters: {
+          'active': active,
+        },
       ),
     );
 
     debugPrint('[RAW USERS RESPONSE] ${response.data}');
-    return List<Map<String, dynamic>>.from(response.data);
+    return <User>[
+      for (JSON member in response.data!) User.fromJson(member);
+    ];
   }
 
   Future<User> createMember(int accountId, User user) async {
