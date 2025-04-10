@@ -168,6 +168,8 @@
   "@unknownPermission": {},
   "searchHint": "Pesquisar por nome ou email",
   "@searchHint": {},
+  "searchproduct": "Pesquisar Produto",
+  "@searchproduct": {},
   "userAdded": "Usuário adicionado com sucesso!",
   "@userAdded": {},
   "userEdited": "Usuário atualizado com sucesso!",

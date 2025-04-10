@@ -4,6 +4,7 @@ import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/core/responsiveScaffold.dart';
 import 'package:almeidatec/models/product.dart';
 import 'package:almeidatec/routes.dart';
+import 'package:awidgets/fields/a_field_text.dart';
 import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_table.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -23,6 +24,8 @@ class ProductListScreen extends StatefulWidget {
 class _ProductListScreenState extends State<ProductListScreen> {
   final GlobalKey<ATableState<Product>> tableKey =
       GlobalKey<ATableState<Product>>();
+
+  String searchText = '';
 
   @override
   Widget build(BuildContext context) {
@@ -194,6 +197,17 @@ class _ProductListScreenState extends State<ProductListScreen> {
           children: [
             Row(
               children: [
+                Expanded(
+                  child: AFieldText(
+                    label: AppLocalizations.of(context)!.searchproduct,
+                    identifier: 'search',
+                    onChanged: (value) {
+                      setState(() => searchText = value!);
+                      tableKey.currentState?.reload();
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
                 AButton(
                   text: AppLocalizations.of(context)!.newProduct,
                   onPressed: () async {
@@ -209,7 +223,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   textColor: AppColors.background,
                   fontWeight: FontWeight.bold,
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   borderRadius: radiusBorder.topLeft.x,
                 ),
                 const SizedBox(width: 10),
@@ -230,7 +244,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   textColor: AppColors.background,
                   fontWeight: FontWeight.bold,
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   borderRadius: radiusBorder.topLeft.x,
                 )
               ],

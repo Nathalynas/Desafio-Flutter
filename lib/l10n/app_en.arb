@@ -172,6 +172,8 @@
   "@unknownPermission": {},
   "searchHint": "Search by name or email",
   "@searchHint": {},
+  "searchproduct": "Search Product",
+  "@searchproduct": {},
   "userAdded": "User successfully added!",
   "@userAdded": {},
   "userEdited": "User updated successfully!",
