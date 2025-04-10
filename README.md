@@ -1,54 +1,32 @@
 # Desafio Flutter
 
-Este projeto faz parte de um desafio para praticar e demonstrar habilidades no desenvolvimento com Flutter. Ele inclui telas de login, cadastro de produtos e listagem de produtos.
+Este projeto faz parte de um desafio para praticar e demonstrar habilidades no desenvolvimento com Flutter. Ele inclui telas de login, cadastro de produtos, listagem de produtos e gerenciamento de usuários.
 
 ## 📌 Funcionalidades
-- Tela de **Login** estilizada
-- Cadastro de **produtos** com campos personalizados
-- Listagem de produtos com **tabela interativa**
-- Uso do **Provider** para gerenciamento de estado
+- **Tela de Login**: Autenticação com validação de credenciais.
+- **Gerenciamento de Usuários**: Cadastro, listagem e permissões configuráveis.
+- **Cadastro de Produtos**: Formulário com validações e categorias.
+- **Listagem de Produtos**: Tabela interativa com opções de edição e exclusão.
+- **Gerenciamento de Estado**: Implementado com o **Provider**.
 
 ## 🛠 Tecnologias Utilizadas
-- **Flutter (Dart)**
-- **Provider** (Gerenciamento de estado)
-- **Intl** (Formatação de números e datas)
+- **Flutter (Dart)**: Framework para desenvolvimento multiplataforma.
+- **Provider**: Gerenciamento de estado.
+- **Intl**: Formatação de números e datas.
+- **Dio**: Requisições HTTP.
 
-## 📜 Estrutura do Projeto
-### 1. main.dart - Configuracao Principal
-- Importa as bibliotecas necessarias:
-  - `material.dart`: Interface do Flutter
-  - `services.dart`: Manipulacao de entrada de dados
-  - `provider.dart`: Gerenciamento de estado
-  - `intl.dart`: Formatacao de numeros e moedas
+## 📂 Estrutura de Pastas
+- **lib/screens**: Contém as telas do aplicativo (ex.: Login, Cadastro de Produtos, Gerenciamento de Usuários).
+- **lib/models**: Modelos de dados (ex.: `Product`, `User`).
+- **lib/providers**: Gerenciamento de estado com `Provider` (ex.: `ProductProvider`, `UserProvider`).
+- **lib/core**: Utilitários e configurações globais (ex.: `http_utils`, interceptores de API).
+- **lib/api**: Integração com a API, incluindo serviços e endpoints.
 
-### 2. MyApp - Configuração do Tema e Provider
-- `ChangeNotifierProvider`: Define um Provider para gerenciar o estado global dos produtos.
-- `theme`: Configura o tema do aplicativo.
-- `home: LoginScreen()`: Define a tela inicial como a tela de login.
-
-### 3. LoginScreen - Tela de Login
-- `TextEditingController`: Controla a entrada de texto do e-mail e senha.
-- `bool _stayConnected = false;` Define se o usuario quer manter-se conectado.
-- Ao clicar em "Entrar", navega para a tela de listagem de produtos.
-
-### 4. ProductFormScreen - Tela de Cadastro de Produtos
-- Campos de entrada do formulario:
-  - Codigo do produto
-  - Nome
-  - Quantidade
-  - Valor de Venda (formatado como moeda)
-  - Categoria (dropdown com opcoes: Vestido, Calca, Camiseta)
-- Dropdown para selecao de categoria.
-- Salva os produtos no Provider e exibe uma mensagem de sucesso.
-
-### 5. ProductListScreen - Tela de Listagem de Produtos
-- Exibe a listagem dos produtos cadastrados.
-- Icone no canto superior direito permite voltar para o login.
-- Botão para cadastrar um novo produto.
-- Exibe uma tabela de produtos cadastrados.
-- Possui botões de editar e excluir.
-
-### 6. ProductProvider - Gerenciador de Estado
-- Gerencia os produtos cadastrados.
-- Método `addProduct` adiciona um novo produto.
-- Método `deleteProduct` remove um produto pelo ID.
+## 🚀 Como Executar
+1. Clone o repositório.
+2. Instale as dependências:
+   ```bash
+   flutter pub get
+3. Execute o projeto:
+    ```bash
+    flutter run
