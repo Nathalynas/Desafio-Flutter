@@ -1,3 +1,4 @@
+import 'package:almeidatec/api/api.dart';
 import 'package:almeidatec/configs.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/core/main_drawer.dart';
@@ -10,7 +11,6 @@ import 'package:almeidatec/main.dart';
 import 'package:almeidatec/screens/product_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/product_provider.dart';
 import '../providers/theme_provider.dart';
 
 class ProductListScreen extends StatefulWidget {
@@ -26,7 +26,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ProductProvider>(context, listen: false);
     final columns = <ATableColumn<Product>>[
       ATableColumn(
         titleWidget: Text(
@@ -51,7 +50,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           style: const TextStyle(color: AppColors.background),
         ),
         cellBuilder: (_, __, product) => Text(
-          translateCategory(context, product.category ?? ''),
+          translateCategory(context, product.category),
         ),
       ),
       ATableColumn(
@@ -60,7 +59,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           style: const TextStyle(color: AppColors.background),
         ),
         cellBuilder: (_, __, product) => Text(
-          '${product.quantity ?? ''}',
+          '${product.quantity}',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -100,7 +99,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               child: IconButton(
                 icon: const Icon(Icons.delete, color: AppColors.accent),
                 onPressed: () {
-                  _showDeleteConfirmationDialog(context, provider, product.id);
+                  _showDeleteConfirmationDialog(context, product.id);
                 },
               ),
             ),
@@ -248,26 +247,23 @@ class _ProductListScreenState extends State<ProductListScreen> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: Consumer<ProductProvider>(
-                builder: (context, provider, child) {
-                  return Theme(
-                      data: Theme.of(context).copyWith(
-                        secondaryHeaderColor: AppColors.primary,
-                      ),
-                      child: ATable<Product>(
-                        key: tableKey,
-                        columns: columns,
-                        loadItems: (_, __) async {
-                          await provider.loadProducts();
-                          return provider.products;
-                        },
-                        striped: true,
-                        fontSize: 14,
-                        rowPadding: const EdgeInsets.all(12),
-                        customRowColor: (product) =>
-                            product.quantity == 0 ? Colors.red.shade50 : null,
-                      ));
-                },
+              child: Theme(
+                data: Theme.of(context).copyWith(
+                  secondaryHeaderColor: AppColors.primary,
+                ),
+                child: ATable<Product>(
+                  key: tableKey,
+                  columns: columns,
+                  loadItems: (_, __) async {
+                    final raw = await API.products.getAllProducts();
+                    return raw.map(Product.fromJson).toList();
+                  },
+                  striped: true,
+                  fontSize: 14,
+                  rowPadding: const EdgeInsets.all(12),
+                  customRowColor: (product) =>
+                      product.quantity == 0 ? Colors.red.shade50 : null,
+                ),
               ),
             ),
           ],
@@ -276,8 +272,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     );
   }
 
-  void _showDeleteConfirmationDialog(
-      BuildContext context, ProductProvider provider, int productId) {
+  void _showDeleteConfirmationDialog(BuildContext context, int productId) {
     showDialog(
       context: context,
       builder: (context) {
@@ -308,9 +303,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     style:
                         TextButton.styleFrom(foregroundColor: AppColors.accent),
                     onPressed: () async {
-                      final deletedProduct =
-                          await provider.getProductById(productId);
-                      await provider.deleteProduct(productId);
+                      final deletedProduct = await API.products.getProductById(productId);
+                      await API.products.deleteProduct(productId);
 
                       if (!mounted) return;
                       Navigator.pop(this.context);
@@ -330,10 +324,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             label: localizations.snackbarUndo,
                             textColor: AppColors.background,
                             onPressed: () async {
-                              if (deletedProduct != null) {
-                                await provider.addProduct(deletedProduct);
+                               await API.products.createProduct(
+                              name: deletedProduct['name'],
+                              categoryType: deletedProduct['category_type'],
+                              quantity: deletedProduct['quantity'],
+                              value: (deletedProduct['value'] as num).toDouble(),
+                              accountId: selectedAccount!.id,
+                            );
                                 tableKey.currentState?.reload();
-                              }
                             },
                           ),
                         ),
@@ -351,7 +349,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   void _showProductSnackBar(String typeWithId) {
-    final provider = Provider.of<ProductProvider>(context, listen: false);
 
     final split = typeWithId.split(':');
     final type = split.first;
@@ -375,7 +372,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 label: AppLocalizations.of(context)!.snackbarUndo,
                 textColor: AppColors.background,
                 onPressed: () async {
-                  provider.deleteProduct(productId);
+                  await API.products.deleteProduct(productId);
                   tableKey.currentState?.reload();
                 },
               )

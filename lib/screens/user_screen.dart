@@ -17,7 +17,7 @@ import 'package:awidgets/general/a_table.dart';
 import 'package:awidgets/general/a_form_dialog.dart';
 import '../models/user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../providers/user_provider.dart';
+
 
 class UserListScreen extends StatefulWidget {
   const UserListScreen({super.key});
@@ -56,8 +56,6 @@ class _UserListScreenState extends State<UserListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<UserProvider>(context, listen: false);
-
     final columns = <ATableColumn<User>>[
       ATableColumn(
         titleWidget: Text(
@@ -378,8 +376,6 @@ class _UserListScreenState extends State<UserListScreen> {
                     .toList(),
               ),
               onSubmit: (userData) async {
-                final provider =
-                    Provider.of<UserProvider>(context, listen: false);
                 final accountId = selectedAccount?.id ?? 0;
 
                 final userToSave = isEdit
@@ -394,13 +390,9 @@ class _UserListScreenState extends State<UserListScreen> {
                     : userData;
 
                 if (isEdit) {
-                  await API.users
-                      .editMember(accountId: accountId, user: userToSave);
-                  await provider.updateUser(userToSave);
+                  await API.users.editMember(accountId: accountId, user: userToSave);
                 } else {
-                  final createdUser =
-                      await API.users.createMember(accountId, userToSave);
-                  await provider.addUser(createdUser);
+                  await API.users.createMember(accountId, userToSave);
                 }
 
                 return null;
@@ -426,7 +418,6 @@ class _UserListScreenState extends State<UserListScreen> {
 
   Future<void> _toggleUserActive(User user) async {
     try {
-      final provider = Provider.of<UserProvider>(context, listen: false);
       final updated = user.copyWith(isActive: !user.isActive);
       final accountId = selectedAccount?.id ?? 0;
 
@@ -436,7 +427,6 @@ class _UserListScreenState extends State<UserListScreen> {
         isActive: updated.isActive,
       );
 
-      await provider.updateUser(updated);
       tableKey.currentState?.reload();
       if (!mounted) return;
 

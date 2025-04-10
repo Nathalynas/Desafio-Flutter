@@ -1,3 +1,4 @@
+import 'package:almeidatec/api/api.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/models/product.dart';
 import 'package:awidgets/fields/a_drop_option.dart';
@@ -7,8 +8,8 @@ import 'package:awidgets/fields/a_field_text.dart';
 import 'package:awidgets/general/a_form_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/product_provider.dart';
+import 'package:almeidatec/configs.dart';
+
 
 Future<void> showProductDialog(
   BuildContext context, {
@@ -25,7 +26,7 @@ Future<void> showProductDialog(
     fromJson: (json) => json as Map<String, dynamic>,
     initialData: product?.toJson(),
     onSubmit: (data) async {
-      final provider = Provider.of<ProductProvider>(context, listen: false);
+      final accountId = selectedAccount!.id;
       final bool isNewProduct = product == null;
 
       final newProduct = Product(
@@ -38,10 +39,23 @@ Future<void> showProductDialog(
 
       try {
         if (isNewProduct) {
-          await provider.addProduct(newProduct);
+          await API.products.createProduct(
+            name: newProduct.name,
+            categoryType: newProduct.category,
+            quantity: newProduct.quantity,
+            value: newProduct.price,
+            accountId: accountId,
+          );
           onCompleted?.call('added');
         } else {
-          await provider.updateProduct(newProduct);
+          await API.products.updateProduct(
+            id: newProduct.id,
+            name: newProduct.name,
+            categoryType: newProduct.category,
+            quantity: newProduct.quantity,
+            value: newProduct.price,
+            accountId: accountId,
+          );
           onCompleted?.call('updated');
         }
       } catch (e) {

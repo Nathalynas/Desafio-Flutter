@@ -1,3 +1,4 @@
+import 'package:almeidatec/api/api.dart';
 import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/models/product.dart';
 import 'package:almeidatec/routes.dart';
@@ -8,8 +9,8 @@ import 'package:awidgets/fields/a_field_text.dart';
 import 'package:awidgets/general/a_form.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/product_provider.dart';
+import 'package:almeidatec/configs.dart';
+
 
 class ProductFormScreen extends StatefulWidget {
   const ProductFormScreen({super.key});
@@ -51,8 +52,6 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                   fromJson: (json) => json as Map<String, dynamic>,
                   submitText: AppLocalizations.of(context)!.dialogSave,
                   onSubmit: (data) async {
-                    final provider =
-                        Provider.of<ProductProvider>(context, listen: false);
                     final newProduct = Product(
                       id: 0,
                       name: data['product_name'],
@@ -62,7 +61,13 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                     );
 
                     try {
-                      await provider.addProduct(newProduct);
+                      await API.products.createProduct(
+                        name: newProduct.name,
+                        categoryType: newProduct.category,
+                        quantity: newProduct.quantity,
+                        value: newProduct.price,
+                        accountId: selectedAccount!.id,
+                      );
                       if (!mounted) return;
                       Navigator.pop(this.context, 'added');
                     } catch (e) {
