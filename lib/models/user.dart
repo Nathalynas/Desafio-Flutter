@@ -1,3 +1,4 @@
+
 // ignore_for_file: invalid_annotation_target
 
 import 'package:almeidatec/core/http_utils.dart';
@@ -15,7 +16,7 @@ class User with _$User {
     required String email,
     @Default('') String? password,
     required List<PermissionData> permissions,
-    @Default(true) bool isActive,
+    @JsonKey(name: 'active') @Default(true) bool isActive,
   }) = _User;
 
   factory User.fromJson(JSON json) => _$UserFromJson(json);

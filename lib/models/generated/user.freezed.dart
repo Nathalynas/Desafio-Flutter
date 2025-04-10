@@ -26,6 +26,7 @@ mixin _$User {
   String get email => throw _privateConstructorUsedError;
   String? get password => throw _privateConstructorUsedError;
   List<PermissionData> get permissions => throw _privateConstructorUsedError;
+  @JsonKey(name: 'active')
   bool get isActive => throw _privateConstructorUsedError;
 
   /// Serializes this User to a JSON map.
@@ -48,7 +49,7 @@ abstract class $UserCopyWith<$Res> {
       String email,
       String? password,
       List<PermissionData> permissions,
-      bool isActive});
+      @JsonKey(name: 'active') bool isActive});
 }
 
 /// @nodoc
@@ -115,7 +116,7 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       String email,
       String? password,
       List<PermissionData> permissions,
-      bool isActive});
+      @JsonKey(name: 'active') bool isActive});
 }
 
 /// @nodoc
@@ -175,7 +176,7 @@ class _$UserImpl implements _User {
       required this.email,
       this.password = '',
       required final List<PermissionData> permissions,
-      this.isActive = true})
+      @JsonKey(name: 'active') this.isActive = true})
       : _permissions = permissions;
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
@@ -200,7 +201,7 @@ class _$UserImpl implements _User {
   }
 
   @override
-  @JsonKey()
+  @JsonKey(name: 'active')
   final bool isActive;
 
   @override
@@ -252,7 +253,7 @@ abstract class _User implements User {
       required final String email,
       final String? password,
       required final List<PermissionData> permissions,
-      final bool isActive}) = _$UserImpl;
+      @JsonKey(name: 'active') final bool isActive}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
@@ -268,6 +269,7 @@ abstract class _User implements User {
   @override
   List<PermissionData> get permissions;
   @override
+  @JsonKey(name: 'active')
   bool get isActive;
 
   /// Create a copy of User

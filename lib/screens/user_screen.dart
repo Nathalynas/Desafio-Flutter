@@ -299,8 +299,10 @@ class _UserListScreenState extends State<UserListScreen> {
                   key: tableKey,
                   columns: columns,
                   loadItems: (_, __) async {
-                    return await API.users
-                        .getMembers(selectedAccount!.id, showInactives);
+                    return await API.users.getMembers(
+                      selectedAccount!.id,
+                      !showInactives,
+                    );
                   },
                   striped: true,
                 ),
@@ -426,7 +428,6 @@ class _UserListScreenState extends State<UserListScreen> {
     try {
       final provider = Provider.of<UserProvider>(context, listen: false);
       final updated = user.copyWith(isActive: !user.isActive);
-
       final accountId = selectedAccount?.id ?? 0;
 
       await API.users.toggleActive(
