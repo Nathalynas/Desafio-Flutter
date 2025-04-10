@@ -276,7 +276,7 @@ class _UserListScreenState extends State<UserListScreen> {
                   landingIcon: Icons.person_off,
                   onPressed: () {
                     setState(() {
-                      showInactives = false;
+                      showInactives = !showInactives;
                     });
                     tableKey.currentState!.reload();
                   },
@@ -291,23 +291,19 @@ class _UserListScreenState extends State<UserListScreen> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: Consumer<UserProvider>(
-                builder: (context, provider, child) {
-                  return Theme(
-                    data: Theme.of(context).copyWith(
-                      secondaryHeaderColor: AppColors.primary,
-                    ),
-                    child: ATable<User>(
-                      key: tableKey,
-                      columns: columns,
-                      loadItems: (_, __) async {
-                        return await API.users
-                            .getMembers(selectedAccount!.id, showInactives);
-                      },
-                      striped: true,
-                    ),
-                  );
-                },
+              child: Theme(
+                data: Theme.of(context).copyWith(
+                  secondaryHeaderColor: AppColors.primary,
+                ),
+                child: ATable<User>(
+                  key: tableKey,
+                  columns: columns,
+                  loadItems: (_, __) async {
+                    return await API.users
+                        .getMembers(selectedAccount!.id, showInactives);
+                  },
+                  striped: true,
+                ),
               ),
             ),
           ],
