@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "548121456382",
+    "project_id": "almeidatec-c2c16",
+    "storage_bucket": "almeidatec-c2c16.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:548121456382:android:f3b6c9d1af9e3f275c7faf",
+        "android_client_info": {
+          "package_name": "com.example.almeidatec"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXmBsJwJb9w0KXE9TDqt9_qtSrv5djlrU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
