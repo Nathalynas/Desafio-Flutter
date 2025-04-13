@@ -22,7 +22,8 @@ dependencies:
       ref: main
       
   firebase_core: ^2.32.0
-  firebase_messaging: ^14.7.10
+  firebase_messaging: ^14.8.0
+  js: ^0.6.7
 
   cupertino_icons: ^1.0.8
   provider: ^6.1.2

@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_print
-
 import 'package:almeidatec/providers/theme_provider.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:almeidatec/services/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -20,8 +20,23 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+      options: const FirebaseOptions(
+        apiKey: "AIzaSyCPLXk44ckhXVR0M3Cnc9qXAIkKA9bwjP0",
+        authDomain: "almeidatec-c2c16.firebaseapp.com",
+        projectId: "almeidatec-c2c16",
+        storageBucket: "almeidatec-c2c16.appspot.com",
+        messagingSenderId: "54812456382",
+        appId: "1:54812456382:web:c174d24ab76786175c7faf",
+      ),
+    );
+  } else {
+    await Firebase.initializeApp();
+  }
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  
   bool isLoggedIn = await AuthService.isUserLoggedInAndStayConnected();
 
   runApp(
