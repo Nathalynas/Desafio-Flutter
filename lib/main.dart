@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 import 'package:almeidatec/providers/theme_provider.dart';
 import 'package:almeidatec/routes.dart';
+import 'package:almeidatec/services/firebase_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -36,6 +37,7 @@ void main() async {
     await Firebase.initializeApp();
   }
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await FirebaseNotificationService.initialize(MyApp.appStateKey);
   
   bool isLoggedIn = await AuthService.isUserLoggedInAndStayConnected();
 
@@ -92,28 +94,4 @@ class MyAppState extends State<MyApp> {
       onGenerateRoute: (settings) => Routes.generateRoute(settings, changeLanguage),
     );
   }
-
-  @override
-void initState() {
-  super.initState();
-
-  // Solicita permissão (Android 13+ e iOS)
-  FirebaseMessaging.instance.requestPermission();
-
-  // Mensagens recebidas com o app aberto
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    final notification = message.notification;
-    final android = message.notification?.android;
-
-    if (notification != null && android != null) {
-      final snackBar = SnackBar(content: Text(notification.title ?? 'Nova notificação'));
-      scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
-    }
-  });
-
-  // Quando o usuário clica na notificação e abre o app
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    print('📨 App aberto por notificação: ${message.data}');
-  });
-}
 }
