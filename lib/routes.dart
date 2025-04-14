@@ -6,7 +6,6 @@ import 'screens/product_form_screen.dart';
 import 'screens/product_list_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 typedef ChangeLanguageCallback = void Function(Locale locale);
 
 class Routes {
@@ -16,6 +15,7 @@ class Routes {
   static const String productList = '/product-list';
   static const String profile = '/profile';
   static const String userList = '/user-list';
+  static const String importScreen = '/import-dialog';
 
   static Route<dynamic> generateRoute(
       RouteSettings settings, Function(Locale) changeLanguage) {
@@ -30,8 +30,7 @@ class Routes {
       case productList:
         return MaterialPageRoute(builder: (_) => ProductListScreen());
       case userList:
-        return MaterialPageRoute(
-            builder: (_) => const UserListScreen());
+        return MaterialPageRoute(builder: (_) => const UserListScreen());
       default:
         return MaterialPageRoute(
           builder: (context) => Scaffold(

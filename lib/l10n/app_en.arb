@@ -201,5 +201,9 @@
   "deactivateUser": "Deactivate user",
   "@deactivateUser": {},
   "inactiveUsers": "Inactive Users",
-  "@inactiveUsers": {}
+  "@inactiveUsers": {},
+  "importFile": "Import File",
+  "@importFile": {},
+  "selectedFile": "Selected File",
+  "@selectedFile": {}
 }

@@ -4,6 +4,7 @@ import 'package:almeidatec/core/colors.dart';
 import 'package:almeidatec/core/responsiveScaffold.dart';
 import 'package:almeidatec/models/product.dart';
 import 'package:almeidatec/routes.dart';
+import 'package:almeidatec/screens/import_dialog.dart';
 import 'package:awidgets/fields/a_field_text.dart';
 import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_table.dart';
@@ -112,166 +113,192 @@ class _ProductListScreenState extends State<ProductListScreen> {
     ];
 
     return ResponsiveScaffold(
-        title: AppLocalizations.of(context)!.productList,
-        actions: [
-          Tooltip(
-            message: AppLocalizations.of(context)!.toggleTheme,
-            child: IconButton(
-              icon: Icon(
-                Provider.of<ThemeProvider>(context).isDark
-                    ? Icons.dark_mode
-                    : Icons.light_mode,
-                size: 30,
-                color: AppColors.background,
-              ),
-              onPressed: () {
-                Provider.of<ThemeProvider>(context, listen: false)
-                    .toggleTheme();
-              },
-            ),
-          ),
-
-          /// Botão para mudar idioma
-          IconButton(
-            tooltip: AppLocalizations.of(context)!.chooseLanguage,
-            icon: const Icon(
-              Icons.language,
+      title: AppLocalizations.of(context)!.productList,
+      actions: [
+        Tooltip(
+          message: AppLocalizations.of(context)!.toggleTheme,
+          child: IconButton(
+            icon: Icon(
+              Provider.of<ThemeProvider>(context).isDark
+                  ? Icons.dark_mode
+                  : Icons.light_mode,
               size: 30,
               color: AppColors.background,
             ),
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return buildStandardDialog(
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          AppLocalizations.of(context)!.chooseLanguage,
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                final myAppState = context
-                                    .findAncestorStateOfType<MyAppState>();
-                                myAppState?.changeLanguage(Locale('en'));
-                                Navigator.pushNamed(
-                                    context, Routes.productList);
-                              },
-                              child: const Text("English"),
-                            ),
-                            const SizedBox(width: 60),
-                            TextButton(
-                              onPressed: () {
-                                final myAppState = context
-                                    .findAncestorStateOfType<MyAppState>();
-                                myAppState?.changeLanguage(Locale('pt'));
-                                Navigator.pushNamed(
-                                    context, Routes.productList);
-                              },
-                              child: const Text("Português"),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
+              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
             },
           ),
-        ],
-      body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+        ),
+
+        /// Botão para mudar idioma
+        IconButton(
+          tooltip: AppLocalizations.of(context)!.chooseLanguage,
+          icon: const Icon(
+            Icons.language,
+            size: 30,
+            color: AppColors.background,
+          ),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return buildStandardDialog(
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.chooseLanguage,
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              final myAppState =
+                                  context.findAncestorStateOfType<MyAppState>();
+                              myAppState?.changeLanguage(Locale('en'));
+                              Navigator.pushNamed(context, Routes.productList);
+                            },
+                            child: const Text("English"),
+                          ),
+                          const SizedBox(width: 60),
+                          TextButton(
+                            onPressed: () {
+                              final myAppState =
+                                  context.findAncestorStateOfType<MyAppState>();
+                              myAppState?.changeLanguage(Locale('pt'));
+                              Navigator.pushNamed(context, Routes.productList);
+                            },
+                            child: const Text("Português"),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ],
+      body: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: AFieldText(
+                        label: AppLocalizations.of(context)!.searchproduct,
+                        identifier: 'search',
+                        onChanged: (value) {
+                          setState(() => searchText = value!);
+                          tableKey.currentState?.reload();
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    AButton(
+                      text: AppLocalizations.of(context)!.newProduct,
+                      onPressed: () async {
+                        final result = await Navigator.pushNamed(
+                            context, Routes.productForm);
+                        if (!mounted) return;
+                        if (result is String && result.startsWith('added')) {
+                          _showProductSnackBar(result);
+                          tableKey.currentState?.reload();
+                        }
+                      },
+                      color: AppColors.primary,
+                      textColor: AppColors.background,
+                      fontWeight: FontWeight.bold,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      borderRadius: radiusBorder.topLeft.x,
+                    ),
+                    const SizedBox(width: 10),
+                    AButton(
+                      text: AppLocalizations.of(context)!.newProduct,
+                      landingIcon: Icons.add,
+                      onPressed: () async {
+                        await showProductDialog(
+                          context,
+                          onCompleted: (result) {
+                            if (!mounted) return;
+                            _showProductSnackBar(result);
+                            tableKey.currentState?.reload();
+                          },
+                        );
+                      },
+                      color: AppColors.accent,
+                      textColor: AppColors.background,
+                      fontWeight: FontWeight.bold,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      borderRadius: radiusBorder.topLeft.x,
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20),
                 Expanded(
-                  child: AFieldText(
-                    label: AppLocalizations.of(context)!.searchproduct,
-                    identifier: 'search',
-                    onChanged: (value) {
-                      setState(() => searchText = value!);
-                      tableKey.currentState?.reload();
-                    },
+                  child: Theme(
+                    data: Theme.of(context).copyWith(
+                      secondaryHeaderColor: AppColors.primary,
+                    ),
+                    child: ATable<Product>(
+                      key: tableKey,
+                      columns: columns,
+                      loadItems: (_, __) async {
+                        final raw = await API.products.getAllProducts();
+                        return raw.map(Product.fromJson).toList();
+                      },
+                      striped: true,
+                      fontSize: 14,
+                      rowPadding: const EdgeInsets.all(12),
+                      customRowColor: (product) =>
+                          product.quantity == 0 ? Colors.red.shade50 : null,
+                    ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                AButton(
-                  text: AppLocalizations.of(context)!.newProduct,
-                  onPressed: () async {
-                    final result =
-                        await Navigator.pushNamed(context, Routes.productForm);
-                    if (!mounted) return;
-                    if (result is String && result.startsWith('added')) {
-                      _showProductSnackBar(result);
-                      tableKey.currentState?.reload();
-                    }
-                  },
-                  color: AppColors.primary,
-                  textColor: AppColors.background,
-                  fontWeight: FontWeight.bold,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  borderRadius: radiusBorder.topLeft.x,
-                ),
-                const SizedBox(width: 10),
-                AButton(
-                  text: AppLocalizations.of(context)!.newProduct,
-                  landingIcon: Icons.add,
-                  onPressed: () async {
-                    await showProductDialog(
-                      context,
-                      onCompleted: (result) {
-                        if (!mounted) return;
-                        _showProductSnackBar(result);
-                        tableKey.currentState?.reload();
-                      },
-                    );
-                  },
-                  color: AppColors.accent,
-                  textColor: AppColors.background,
-                  fontWeight: FontWeight.bold,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  borderRadius: radiusBorder.topLeft.x,
-                )
               ],
             ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: Theme(
-                data: Theme.of(context).copyWith(
-                  secondaryHeaderColor: AppColors.primary,
+          ),
+          Positioned(
+            bottom: 30,
+            right: 30,
+            child: Tooltip(
+              message: AppLocalizations.of(context)!.importFile,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(50),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
-                child: ATable<Product>(
-                  key: tableKey,
-                  columns: columns,
-                  loadItems: (_, __) async {
-                    final raw = await API.products.getAllProducts();
-                    return raw.map(Product.fromJson).toList();
-                  },
-                  striped: true,
-                  fontSize: 14,
-                  rowPadding: const EdgeInsets.all(12),
-                  customRowColor: (product) =>
-                      product.quantity == 0 ? Colors.red.shade50 : null,
-                ),
+                child: IconButton(
+                    icon: const Icon(Icons.upload_file, color: Colors.white),
+                    onPressed: () {
+                      showImportDialog(context);
+                    }),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -307,7 +334,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     style:
                         TextButton.styleFrom(foregroundColor: AppColors.accent),
                     onPressed: () async {
-                      final deletedProduct = await API.products.getProductById(productId);
+                      final deletedProduct =
+                          await API.products.getProductById(productId);
                       await API.products.deleteProduct(productId);
 
                       if (!mounted) return;
@@ -328,14 +356,15 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             label: localizations.snackbarUndo,
                             textColor: AppColors.background,
                             onPressed: () async {
-                               await API.products.createProduct(
-                              name: deletedProduct['name'],
-                              categoryType: deletedProduct['category_type'],
-                              quantity: deletedProduct['quantity'],
-                              value: (deletedProduct['value'] as num).toDouble(),
-                              accountId: selectedAccount!.id,
-                            );
-                                tableKey.currentState?.reload();
+                              await API.products.createProduct(
+                                name: deletedProduct['name'],
+                                categoryType: deletedProduct['category_type'],
+                                quantity: deletedProduct['quantity'],
+                                value:
+                                    (deletedProduct['value'] as num).toDouble(),
+                                accountId: selectedAccount!.id,
+                              );
+                              tableKey.currentState?.reload();
                             },
                           ),
                         ),
@@ -353,7 +382,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   void _showProductSnackBar(String typeWithId) {
-
     final split = typeWithId.split(':');
     final type = split.first;
     final productId = split.length > 1 ? int.tryParse(split[1]) : null;

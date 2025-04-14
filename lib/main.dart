@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 // ignore: avoid_web_libraries_in_flutter, deprecated_member_use
-import 'dart:js' as js;
+import 'services/web_service_worker.dart'
+    if (dart.library.io) 'services/stub_service_worker.dart';
 import 'package:almeidatec/providers/theme_provider.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:almeidatec/services/firebase_notifications.dart';
@@ -12,6 +13,7 @@ import 'package:almeidatec/services/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:almeidatec/firebase_options.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -26,47 +28,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (kIsWeb) {
-    js.context.callMethod('eval', [
-      """
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('firebase-messaging-sw.js')
-        .then(function(registration) {
-          console.log('✅ Service Worker registrado:', registration.scope);
-        }).catch(function(err) {
-          console.log('❌ Erro ao registrar o Service Worker:', err);
-        });
-      }
-    """
-    ]);
+    registerServiceWorker();
   }
 
-  if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyCPLXk44kchXVR0M3Cnc9qXAIkKA9bwjP0",
-        authDomain: "almeidatec-c2c16.firebaseapp.com",
-        projectId: "almeidatec-c2c16",
-        storageBucket: "almeidatec-c2c16.appspot.com",
-        messagingSenderId: "548121456382",
-        appId: "1:548121456382:web:c174d24ab76786175c7faf",
-        measurementId: "G-F5PDW45JL4",
-      ),
-    );
-  } else {
-    await Firebase.initializeApp();
-  }
-  Future<void> printFcmToken() async {
-    try {
-      String? token = await FirebaseMessaging.instance.getToken();
-      print('🔑 Token FCM Web: $token');
-    } catch (e) {
-      print('❌ Erro ao obter token: $e');
-    }
-  }
+  await _initializeFirebase();
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await FirebaseNotificationService.initialize(MyApp.appStateKey);
-  await printFcmToken();
+  await _printFcmToken();
 
   bool isLoggedIn = await AuthService.isUserLoggedInAndStayConnected();
 
@@ -78,6 +47,21 @@ void main() async {
       child: MyApp(isLoggedIn: isLoggedIn),
     ),
   );
+}
+
+Future<void> _initializeFirebase() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+}
+
+Future<void> _printFcmToken() async {
+  try {
+    String? token = await FirebaseMessaging.instance.getToken();
+    print('🔑 Token FCM: $token');
+  } catch (e) {
+    print('❌ Erro ao obter token: $e');
+  }
 }
 
 class MyApp extends StatefulWidget {

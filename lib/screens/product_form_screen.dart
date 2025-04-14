@@ -94,7 +94,7 @@ class ProductFormScreenState extends State<ProductFormScreen> {
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.textPrimary.withValues(alpha: 0.1),
+                            color: AppColors.textPrimary.withOpacity(0.1),
                             blurRadius: 10,
                             spreadRadius: 2,
                             offset: const Offset(0, 4),

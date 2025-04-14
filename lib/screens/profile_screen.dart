@@ -137,7 +137,7 @@ class ProfileScreenState extends State<ProfileScreen> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.textPrimary.withValues(alpha: 0.1),
+                  color: AppColors.textPrimary.withOpacity(0.1),
                   blurRadius: 10,
                   spreadRadius: 2,
                   offset: const Offset(0, 4),
