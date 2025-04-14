@@ -1,3 +1,4 @@
+import 'package:awidgets/general/a_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:almeidatec/main.dart'; // Para acessar scaffoldMessengerKey
@@ -31,18 +32,23 @@ class FirebaseNotificationService {
 
       if (notification != null && context != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          showDialog(
+          ADialogV2.show(
             context: context,
-            builder: (_) => AlertDialog(
-              title: Text(notification.title ?? 'Sem título'),
-              content: Text(notification.body ?? 'Sem conteúdo'),
-              actions: [
-                TextButton(
+            title: notification.title ?? 'Sem título',
+            content: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Text(notification.body ?? 'Sem conteúdo'),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text(AppLocalizations.of(context)!.dialogCancel),
                 ),
-              ],
-            ),
+              ),
+            ],
+            width: 400,
           );
         });
       }
