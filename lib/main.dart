@@ -2,6 +2,7 @@
 // ignore: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'services/web_service_worker.dart'
     if (dart.library.io) 'services/stub_service_worker.dart';
+import 'dart:io' show Platform;
 import 'package:almeidatec/providers/theme_provider.dart';
 import 'package:almeidatec/routes.dart';
 import 'package:almeidatec/services/firebase_notifications.dart';
@@ -55,10 +56,15 @@ Future<void> _initializeFirebase() async {
   );
 }
 
+
 Future<void> _printFcmToken() async {
   try {
-    String? token = await FirebaseMessaging.instance.getToken();
-    print('🔑 Token FCM: $token');
+    if (!kIsWeb && !Platform.isWindows) {
+      String? token = await FirebaseMessaging.instance.getToken();
+      print('🔑 Token FCM: $token');
+    } else {
+      print('🔕 FCM desabilitado para esta plataforma.');
+    }
   } catch (e) {
     print('❌ Erro ao obter token: $e');
   }
