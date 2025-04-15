@@ -2,7 +2,8 @@
 
 import 'dart:convert';
 import 'dart:io' show File;
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:excel/excel.dart' as excel_lib;
+import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:awidgets/general/a_dialog.dart';
@@ -13,6 +14,36 @@ import 'package:almeidatec/core/colors.dart';
 Future<void> showImportDialog(BuildContext context) async {
   String? fileName;
   String? fileContent;
+
+  /// Função auxiliar para ler CSV ou XLSX
+  Future<String> readSpreadsheet({
+    required String fileName,
+    Uint8List? bytes,
+    String? textPath,
+  }) async {
+    if (fileName.toLowerCase().endsWith('.xlsx')) {
+      final excel = excel_lib.Excel.decodeBytes(bytes!);
+      final buffer = StringBuffer();
+
+      for (final table in excel.tables.keys) {
+        for (final row in excel.tables[table]!.rows) {
+          final line = row.map((e) => e?.value?.toString() ?? '').join(' | ');
+          buffer.writeln(line);
+        }
+      }
+
+      return buffer.toString();
+    } else if (fileName.toLowerCase().endsWith('.csv')) {
+      if (kIsWeb) {
+        return utf8.decode(bytes!);
+      } else {
+        final file = File(textPath!);
+        return await file.readAsString();
+      }
+    } else {
+      throw Exception('Formato de arquivo não suportado.');
+    }
+  }
 
   await ADialogV2.show(
     context: context,
@@ -26,7 +57,7 @@ Future<void> showImportDialog(BuildContext context) async {
               child: AButton(
                 text: AppLocalizations.of(context)!.importFile,
                 landingIcon: Icons.upload_file,
-                color: AppColors.accent,
+                color: AppColors.primary,
                 textColor: AppColors.background,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -34,27 +65,26 @@ Future<void> showImportDialog(BuildContext context) async {
                   final result = await FilePicker.platform.pickFiles(
                     type: FileType.custom,
                     allowedExtensions: ['csv', 'xlsx'],
-                    withData: true, // necessário no Web
+                    withData: true,
                   );
 
                   if (result != null) {
                     final file = result.files.single;
                     fileName = file.name;
 
-                    if (kIsWeb) {
-                      if (file.bytes != null) {
-                        fileContent = utf8.decode(file.bytes!);
-                      }
-                    } else {
-                      if (file.path != null) {
-                        final f = File(file.path!);
-                        fileContent = await f.readAsString();
-                      }
-                    }
+                    try {
+                      fileContent = await readSpreadsheet(
+                        fileName: fileName!,
+                        bytes: file.bytes,
+                        textPath: file.path,
+                      );
 
-                    setState(() {});
-                    print('📄 Arquivo: $fileName');
-                    print('📄 Conteúdo:\n$fileContent');
+                      setState(() {});
+                      print('📄 Arquivo: $fileName');
+                      print('📄 Conteúdo:\n$fileContent');
+                    } catch (e) {
+                      print('❌ Erro ao ler o arquivo: $e');
+                    }
                   }
                 },
               ),
