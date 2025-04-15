@@ -214,5 +214,21 @@
       "success": {},
       "failed": {}
     }
+  },
+  "missingFields": "Campos obrigatórios ausentes",
+  "@missingFields": {},
+  "fixMissingData": "Corrija os dados ausentes.",
+  "@fixMissingData": {},
+  "snackbarProductImportSuccess": "✅ {count} produto(s) importado(s)",
+  "@snackbarProductImportSuccess": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "snackbarProductImportFailed": "❌ {count} produto(s) com erro",
+  "@snackbarProductImportFailed": {
+    "placeholders": {
+      "count": {}
+    }
   }
 }

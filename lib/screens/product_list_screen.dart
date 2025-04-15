@@ -291,11 +291,32 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   ],
                 ),
                 child: IconButton(
-                    icon: const Icon(Icons.upload_file, color: Colors.white),
-                    onPressed: () async {
-                      await showImportDialog(context);
-                      tableKey.currentState?.reload();
-                    }),
+                  icon: const Icon(Icons.upload_file, color: Colors.white),
+                  onPressed: () async {
+                    await showImportDialog(
+                      context,
+                      onCompleted: (success, failed) {
+                        final localizations = AppLocalizations.of(context)!;
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              '${localizations.snackbarProductImportSuccess(success)}\n'
+                              '${localizations.snackbarProductImportFailed(failed)}',
+                              style:
+                                  const TextStyle(color: AppColors.background),
+                            ),
+                            backgroundColor: AppColors.primary,
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+
+                        // Se estiver usando tabela com reload:
+                        tableKey.currentState?.reload();
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ),
