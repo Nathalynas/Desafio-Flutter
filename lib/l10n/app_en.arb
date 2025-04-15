@@ -205,5 +205,18 @@
   "importFile": "Import File",
   "@importFile": {},
   "selectedFile": "Selected File",
-  "@selectedFile": {}
+  "@selectedFile": {},
+  "unsupportedFileFormat": "Unsupported file format.",
+  "@unsupportedFileFormat": {},
+  "previewData": "Preview data:",
+  "@previewData": {},
+  "importData": "Import data",
+  "@importData": {},
+  "importResult": "{success} imported, {failed} failed",
+  "@importResult": {
+    "placeholders": {
+      "success": {},
+      "failed": {}
+    }
+  }
 }

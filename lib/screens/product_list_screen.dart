@@ -292,8 +292,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 ),
                 child: IconButton(
                     icon: const Icon(Icons.upload_file, color: Colors.white),
-                    onPressed: () {
-                      showImportDialog(context);
+                    onPressed: () async {
+                      await showImportDialog(context);
+                      tableKey.currentState?.reload();
                     }),
               ),
             ),
