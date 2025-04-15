@@ -13,36 +13,43 @@ import 'package:almeidatec/core/colors.dart';
 
 Future<void> showImportDialog(BuildContext context) async {
   String? fileName;
-  String? fileContent;
+  Map<String, List<List<String>>>? spreadsheetPages;
 
   /// Função auxiliar para ler CSV ou XLSX
-  Future<String> readSpreadsheet({
+  Future<Map<String, List<List<String>>>> readSpreadsheet({
     required String fileName,
     Uint8List? bytes,
     String? textPath,
   }) async {
+    final Map<String, List<List<String>>> parsedData = {};
+
     if (fileName.toLowerCase().endsWith('.xlsx')) {
       final excel = excel_lib.Excel.decodeBytes(bytes!);
-      final buffer = StringBuffer();
 
-      for (final table in excel.tables.keys) {
-        for (final row in excel.tables[table]!.rows) {
-          final line = row.map((e) => e?.value?.toString() ?? '').join(' | ');
-          buffer.writeln(line);
+      for (final sheetName in excel.tables.keys) {
+        final rows = excel.tables[sheetName]!.rows;
+        final pageData = <List<String>>[];
+
+        for (final row in rows) {
+          final cells = row.map((e) => e?.value?.toString() ?? '').toList();
+          pageData.add(cells);
         }
-      }
 
-      return buffer.toString();
-    } else if (fileName.toLowerCase().endsWith('.csv')) {
-      if (kIsWeb) {
-        return utf8.decode(bytes!);
-      } else {
-        final file = File(textPath!);
-        return await file.readAsString();
+        parsedData[sheetName] = pageData;
       }
+    } else if (fileName.toLowerCase().endsWith('.csv')) {
+      final content =
+          kIsWeb ? utf8.decode(bytes!) : await File(textPath!).readAsString();
+
+      final lines = const LineSplitter().convert(content);
+      final pageData = lines.map((line) => line.split(',')).toList();
+
+      parsedData['Página CSV'] = pageData;
     } else {
       throw Exception('Formato de arquivo não suportado.');
     }
+
+    return parsedData;
   }
 
   await ADialogV2.show(
@@ -73,15 +80,15 @@ Future<void> showImportDialog(BuildContext context) async {
                     fileName = file.name;
 
                     try {
-                      fileContent = await readSpreadsheet(
+                      spreadsheetPages = await readSpreadsheet(
                         fileName: fileName!,
                         bytes: file.bytes,
                         textPath: file.path,
                       );
 
-                      setState(() {});
+                      setState(() {}); 
                       print('📄 Arquivo: $fileName');
-                      print('📄 Conteúdo:\n$fileContent');
+                      print('📄 Dados por página: $spreadsheetPages');
                     } catch (e) {
                       print('❌ Erro ao ler o arquivo: $e');
                     }
@@ -96,24 +103,30 @@ Future<void> showImportDialog(BuildContext context) async {
                 textAlign: TextAlign.center,
               ),
             ],
-            if (fileContent != null) ...[
+            if (spreadsheetPages != null) ...[
               const SizedBox(height: 16),
-              Container(
-                height: 150,
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(4),
-                  color: Colors.grey.shade100,
+              SizedBox(
+                height: 200,
+                child: ListView(
+                  children: spreadsheetPages!.entries.map((entry) {
+                    final sheetName = entry.key;
+                    final rows = entry.value;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('📄 $sheetName',
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 6),
+                        ...rows.map((row) => Text(row.join(' | '))),
+                        const Divider(),
+                      ],
+                    );
+                  }).toList(),
                 ),
-                child: SingleChildScrollView(
-                  child: Text(
-                    fileContent!,
-                    style: const TextStyle(fontFamily: 'monospace'),
-                  ),
-                ),
-              ),
-            ],
+              )
+            ]
           ],
         ),
       ),
