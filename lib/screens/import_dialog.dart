@@ -5,6 +5,7 @@ import 'dart:io' show File;
 import 'package:almeidatec/api/api.dart';
 import 'package:almeidatec/configs.dart';
 import 'package:awidgets/fields/a_field_text.dart';
+import 'package:awidgets/general/a_table.dart';
 import 'package:excel/excel.dart' as excel_lib;
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
@@ -14,11 +15,22 @@ import 'package:awidgets/general/a_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:almeidatec/core/colors.dart';
 
-Future<void> showImportDialog(BuildContext context, {void Function(int success, int failed)? onCompleted}) async {
+class ImportRow {
+  Map<String, String> values;
+  ImportRow({required this.values});
+
+  bool get isValid =>
+      values['nome']?.trim().isNotEmpty == true &&
+      values['categoria']?.trim().isNotEmpty == true &&
+      values['quantidade']?.trim().isNotEmpty == true &&
+      values['valor de venda']?.trim().isNotEmpty == true;
+}
+
+Future<void> showImportDialog(BuildContext context,
+    {void Function(int success, int failed)? onCompleted}) async {
   String? fileName;
   Map<String, List<List<String>>> spreadsheetPages = {};
-  final List<Map<String, String>> rowsToFix = [];
-
+  final Map<String, List<ImportRow>> previewItemsMap = {};
   const requiredHeaders = ['nome', 'categoria', 'quantidade', 'valor de venda'];
 
   Future<Map<String, List<List<String>>>> readSpreadsheet({
@@ -60,82 +72,115 @@ Future<void> showImportDialog(BuildContext context, {void Function(int success, 
     return null;
   }
 
-  bool isRowValid(Map<String, String> row) {
-    return row['nome']?.trim().isNotEmpty == true &&
-        row['categoria']?.trim().isNotEmpty == true &&
-        row['quantidade']?.trim().isNotEmpty == true &&
-        row['valor de venda']?.trim().isNotEmpty == true;
-  }
-
   await ADialogV2.show(
     context: context,
     title: AppLocalizations.of(context)!.importFile,
+    useInternalScroll: true,
+    width: 1400,
     content: [
       StatefulBuilder(
         builder: (context, setState) {
-          final headersLower = spreadsheetPages.values.firstOrNull?.first
-                  .map((e) => e.trim().toLowerCase())
-                  .toList() ??
-              [];
-          final missingHeaders =
-              requiredHeaders.where((h) => !headersLower.contains(h)).toList();
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: AButton(
-                  text: AppLocalizations.of(context)!.importFile,
-                  landingIcon: Icons.upload_file,
-                  color: AppColors.primary,
-                  textColor: AppColors.background,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  onPressed: () async {
-                    final result = await FilePicker.platform.pickFiles(
-                      type: FileType.custom,
-                      allowedExtensions: ['csv', 'xlsx'],
-                      withData: true,
-                    );
-
-                    if (result != null) {
-                      final file = result.files.single;
-                      fileName = file.name;
-
-                      try {
-                        spreadsheetPages = await readSpreadsheet(
-                          fileName: fileName!,
-                          bytes: file.bytes,
-                          textPath: file.path,
+          return Flexible(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(
+                    child: AButton(
+                      text: AppLocalizations.of(context)!.importFile,
+                      landingIcon: Icons.upload_file,
+                      color: AppColors.primary,
+                      textColor: AppColors.background,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 12),
+                      onPressed: () async {
+                        final result = await FilePicker.platform.pickFiles(
+                          type: FileType.custom,
+                          allowedExtensions: ['csv', 'xlsx'],
+                          withData: true,
                         );
-                        setState(() {});
-                      } catch (e) {
-                        print('❌ Erro ao importar produto: $e');
-                      }
-                    }
-                  },
-                ),
-              ),
-              if (fileName != null) ...[
-                const SizedBox(height: 16),
-                Text(
-                  '${AppLocalizations.of(context)!.selectedFile}: $fileName',
-                  textAlign: TextAlign.center,
-                ),
-              ],
-              if (spreadsheetPages.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                Text(
-                  AppLocalizations.of(context)!.previewData,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  height: 250,
-                  child: ListView(
-                    children: spreadsheetPages.entries.map((entry) {
+
+                        if (result != null) {
+                          final file = result.files.single;
+                          fileName = file.name;
+
+                          try {
+                            spreadsheetPages = await readSpreadsheet(
+                              fileName: fileName!,
+                              bytes: file.bytes,
+                              textPath: file.path,
+                            );
+
+                            previewItemsMap.clear();
+                            spreadsheetPages.forEach((sheetName, rows) {
+                              final headers = rows.first;
+                              final dataRows = rows.skip(1).toList();
+                              final items = dataRows.map((row) {
+                                final map = <String, String>{};
+                                for (int i = 0;
+                                    i < headers.length && i < row.length;
+                                    i++) {
+                                  map[headers[i]] = row[i];
+                                }
+                                return ImportRow(values: map);
+                              }).toList();
+                              previewItemsMap[sheetName] = items;
+                            });
+
+                            setState(() {});
+                          } catch (e) {
+                            print('❌ Erro ao importar produto: $e');
+                          }
+                        }
+                      },
+                    ),
+                  ),
+                  if (fileName != null) ...[
+                    const SizedBox(height: 16),
+                    Text(
+                      '${AppLocalizations.of(context)!.selectedFile}: $fileName',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                  if (spreadsheetPages.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Text(AppLocalizations.of(context)!.previewData,
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    ...spreadsheetPages.entries.map((entry) {
                       final sheetName = entry.key;
-                      final rows = entry.value;
+                      final sheetRows = entry.value;
+                      final previewItems = previewItemsMap[sheetName] ?? [];
+
+                      final headers = sheetRows.first;
+
+                      final columns = headers.map((header) {
+                        return ATableColumn<ImportRow>(
+                          titleWidget: Text(
+                            header,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          cellBuilder: (context, width, item) {
+                            final value = item.values[header] ?? '';
+                            final rowIndex = previewItems.indexOf(item);
+                            final isRequired =
+                                requiredHeaders.contains(header.toLowerCase());
+
+                            return AFieldText(
+                              identifier: '$sheetName-$header-$rowIndex',
+                              initialValue: value,
+                              required: isRequired,
+                              height: 40,
+                              label: null,
+                              padding: const EdgeInsets.all(4),
+                              onChanged: (val) {
+                                item.values[header] = val ?? '';
+                                setState(() {});
+                              },
+                            );
+                          },
+                        );
+                      }).toList();
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,143 +188,82 @@ Future<void> showImportDialog(BuildContext context, {void Function(int success, 
                           Text('📄 $sheetName',
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 6),
-                          ...rows.map((row) => Text(row.join(' | '))),
-                          const Divider(),
+                          const SizedBox(height: 8),
+                          Theme(
+                            data: Theme.of(context).copyWith(
+                              secondaryHeaderColor: AppColors.primary,
+                            ),
+                            child: SizedBox(
+                              height: 300,
+                              child: ATable<ImportRow>(
+                                columns: columns,
+                                loadItems: (limit, offset) async =>
+                                    previewItems,
+                                loaderLimit: 100,
+                                striped: true,
+                                customRowColor: (item) =>
+                                    item.isValid ? null : Colors.red.shade200,
+                              ),
+                            ),
+                          ),
+                          const Divider(thickness: 1),
                         ],
                       );
-                    }).toList(),
-                  ),
-                ),
-                if (missingHeaders.isNotEmpty) ...[
-                  const SizedBox(height: 12),
-                  Text(
-                    '${AppLocalizations.of(context)!.missingFields}: ${missingHeaders.join(', ')}',
-                    style: const TextStyle(
-                        color: Colors.red, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
+                    }),
+                    const SizedBox(height: 16),
+                    Center(
+                      child: AButton(
+                        text: AppLocalizations.of(context)!.importData,
+                        textColor: AppColors.background,
+                        color: previewItemsMap.values
+                                .expand((e) => e)
+                                .every((e) => e.isValid)
+                            ? AppColors.primary
+                            : Colors.grey,
+                        onPressed: previewItemsMap.values
+                                .expand((e) => e)
+                                .every((e) => e.isValid)
+                            ? () async {
+                                final allItems = previewItemsMap.values
+                                    .expand((e) => e)
+                                    .toList();
+                                int success = 0;
+                                int failed = 0;
+
+                                for (final item in allItems) {
+                                  try {
+                                    await API.products.createProduct(
+                                      name: item.values['nome'] ?? '',
+                                      categoryType: parseCategory(
+                                              item.values['categoria']) ??
+                                          '',
+                                      quantity: int.tryParse(
+                                              item.values['quantidade'] ??
+                                                  '') ??
+                                          0,
+                                      value: _parsePrice(
+                                          item.values['valor de venda']),
+                                      accountId: selectedAccount!.id,
+                                    );
+                                    success++;
+                                  } catch (e) {
+                                    failed++;
+                                    print('❌ Erro ao importar produto: $e');
+                                  }
+                                }
+
+                                if (context.mounted) {
+                                  Navigator.of(context).pop(success);
+                                  onCompleted?.call(success, failed);
+                                }
+                              }
+                            : null,
+                      ),
+                    ),
+                  ],
                 ],
-                if (missingHeaders.isEmpty) ...[
-                  const SizedBox(height: 16),
-                  AButton(
-                    text: AppLocalizations.of(context)!.importData,
-                    color: AppColors.primary,
-                    textColor: AppColors.background,
-                    onPressed: () async {
-                      int success = 0;
-                      int failed = 0;
-
-                      for (final page in spreadsheetPages.entries) {
-                        final rows = page.value;
-                        if (rows.isEmpty) continue;
-                        final headers =
-                            rows.first.map((h) => h.trim()).toList();
-
-                        for (int i = 1; i < rows.length; i++) {
-                          final row = rows[i];
-                          final map = <String, String>{};
-                          for (int j = 0;
-                              j < headers.length && j < row.length;
-                              j++) {
-                            map[headers[j]] = row[j];
-                          }
-                          if (!isRowValid(map)) {
-                            rowsToFix.add(map);
-                          }
-                        }
-                      }
-                      if (rowsToFix.isNotEmpty) {
-                        final result = await ADialogV2.show<bool>(
-                          context: context,
-                          title: AppLocalizations.of(context)!.fixMissingData,
-                          content: [
-                            ...rowsToFix.map((row) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: requiredHeaders.map((field) {
-                                  return AFieldText(
-                                    identifier:'$field-${rowsToFix.indexOf(row)}',
-                                    label: '${AppLocalizations.of(context)!.translateField(field)} *',
-                                    initialValue: row[field],
-                                    required: true,
-                                    onChanged: (value) => row[field] = value ?? '',
-                                  );
-                                }).toList(),
-                              );
-                            }),
-                            const SizedBox(height: 16),
-                            AButton(
-                              text: AppLocalizations.of(context)!.confirm,
-                              color: AppColors.primary,
-                              textColor: AppColors.background,
-                              onPressed: () {
-                                Navigator.of(context).pop(true);
-                              },
-                            ),
-                          ],
-                        );
-                        if (result != true) return;
-
-                        for (final row in rowsToFix) {
-                          if (!isRowValid(row)) continue;
-                          try {
-                             await API.products.createProduct(
-                              name: row['nome'] ?? '',
-                              categoryType:parseCategory(row['categoria']) ?? '',
-                              quantity:int.tryParse(row['quantidade'] ?? '') ?? 0,
-                              value: double.tryParse(row['valor de venda']?.replaceAll(',', '.') ?? '0') ??0,
-                              accountId: selectedAccount!.id,
-                            );
-                            success++;
-                          } catch (e) {
-                            failed++;
-                            print('❌ Erro ao importar produto corrigido: $e');
-                          }
-                        }
-                      }
-
-                      for (final page in spreadsheetPages.entries) {
-                        final rows = page.value;
-                        if (rows.isEmpty) continue;
-                        final headers =
-                            rows.first.map((h) => h.trim()).toList();
-
-                        for (int i = 1; i < rows.length; i++) {
-                          final row = rows[i];
-                          final map = <String, String>{};
-                          for (int j = 0;
-                              j < headers.length && j < row.length;
-                              j++) {
-                            map[headers[j]] = row[j];
-                          }
-                          if (!isRowValid(map)) continue;
-
-                          try {
-                            await API.products.createProduct(
-                              name: map['nome'] ?? '',
-                              categoryType:parseCategory(map['categoria']) ?? '',
-                              quantity:int.tryParse(map['quantidade'] ?? '') ?? 0,
-                              value: _parsePrice(map['valor de venda']),
-                              accountId: selectedAccount!.id,
-                            );
-                            success++;
-                          } catch (e) {
-                            failed++;
-                            print('❌ Erro ao importar produto: $e');
-                          }
-                        }
-                      }
-
-                      if (context.mounted) {
-                        Navigator.of(context).pop(success);
-                        onCompleted?.call(success, failed);
-                      }
-                    },
-                  ),
-                ],
-              ]
-            ],
+              ),
+            ),
           );
         },
       ),
