@@ -55,7 +55,8 @@ Future<void> showImportDialog(BuildContext context,
       final content =
           kIsWeb ? utf8.decode(bytes!) : await File(textPath!).readAsString();
       final lines = const LineSplitter().convert(content);
-      final pageData = lines.map((line) => line.split(',')).toList();
+      final isSemicolon = lines.first.contains(';');
+final pageData = lines.map((line) => line.split(isSemicolon ? ';' : ',')).toList();
       parsedData['CSV'] = pageData;
     } else {
       throw Exception(AppLocalizations.of(context)!.unsupportedFileFormat);
@@ -158,7 +159,7 @@ Future<void> showImportDialog(BuildContext context,
                         return ATableColumn<ImportRow>(
                           titleWidget: Text(
                             header,
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                           ),
                           cellBuilder: (context, width, item) {
                             final value = item.values[header] ?? '';
